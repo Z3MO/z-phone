@@ -184,8 +184,14 @@ function AddDIV(data){
                 })
             }
 
+            var GPass = data[element].GPass;
+            if (GPass === null || GPass === undefined || GPass === "null" || GPass === "undefined") {
+                GPass = "";
+            }
+            var EscapedPass = String(GPass).replace(/"/g, '&quot;');
+
             AddOption = `
-            <div class="jobcenter-div-job-group" data-id="${data[element].id}" data-state="${State}" data-pass="${data[element].GPass}" data-status="${data[element].status}">
+            <div class="jobcenter-div-job-group" data-id="${data[element].id}" data-state="${State}" data-pass="${EscapedPass}" data-status="${data[element].status}">
                 <div class="jobcenter-div-job-group-image"><i class="fas fa-users"></i></div>
                 <div class="jobcenter-div-job-group-body-main">
                     ${data[element].GName}
@@ -256,12 +262,22 @@ function AddGroupJobs(data){
 // Join Group Action (from inside member view)
 $(document).on('click', '#btn-join-group', function(e){
     e.preventDefault();
-    JoinPass = $(this).attr('data-pass');
-    JoinID = $(this).data('id');
-    Status = $(this).data('status');
+    // The global variables JoinPass, JoinID, and Status are now set when the group card is clicked.
     ClearPartyInputs();
     if (Status == 'WAITING') {
-        $('#jobcenter-box-new-join').fadeIn(350);
+        // Also check if a password is required for the group
+        if (JoinPass && JoinPass !== "" && JoinPass !== "null" && JoinPass !== "undefined") {
+            $('#jobcenter-box-new-join').fadeIn(350);
+        } else {
+            // No password, join directly
+            var CSN = QB.Phone.Data.PlayerData.citizenid;
+            $.post(`https://${GetParentResourceName()}/jobcenter_JoinTheGroup`, JSON.stringify({
+                PCSN: CSN,
+                id: parseInt(JoinID),
+            }));
+            $('#jobcenter-box-new-player-name').fadeOut(350);
+            QB.Phone.Notifications.Add("fas fa-check-circle", "System", "Joined group successfully!", "#2ecc71", 2500);
+        }
     } else {
         $.post(`https://${GetParentResourceName()}/jobcenter_GroupBusy`, JSON.stringify({}));
     }
@@ -289,7 +305,14 @@ $(document).on('click', '.jobcenter-div-job-group', function(e){
     var id = $(this).data('id');
     var state = $(this).data('state');
     var pass = $(this).attr('data-pass');
+    if (pass === undefined || pass === null) pass = "";
     var status = $(this).data('status');
+
+    // Store group data in global variables to be used by the action buttons inside the modal.
+    // This avoids issues with passing data (like passwords with special characters) through data-attributes.
+    JoinID = id;
+    JoinPass = pass;
+    Status = status;
 
     $.post(`https://${GetParentResourceName()}/jobcenter_CheckPlayerNames`, JSON.stringify({
         id: id,
@@ -309,7 +332,8 @@ $(document).on('click', '.jobcenter-div-job-group', function(e){
             } else if (state === "MEMBER") {
                 ActionBtn = `<div class="jobcenter-group-action-btn" id="btn-leave-group" data-id="${id}" style="background: #f59e0b;"><i class="fas fa-sign-out-alt"></i> Leave Group</div>`;
             } else {
-                ActionBtn = `<div class="jobcenter-group-action-btn" id="btn-join-group" data-id="${id}" data-pass="${pass}" data-status="${status}" style="background: #3b82f6;"><i class="fas fa-sign-in-alt"></i> Join Group</div>`;
+                // The button no longer needs to hold the data, as it's stored globally on card click.
+                ActionBtn = `<div class="jobcenter-group-action-btn" id="btn-join-group" style="background: #3b82f6;"><i class="fas fa-sign-in-alt"></i> Join Group</div>`;
             }
             $('#phone-new-box-main-playername').append(ActionBtn);
             $('#phone-new-box-main-playername').append('<p> </p>');
