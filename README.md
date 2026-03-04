@@ -22,7 +22,7 @@ While standard `qb-phone` and `qb-phone-renewed` provide great functional bases,
 ## 📱 Included Applications
 
 * **Core:** Messages, Dialer, Contacts, Settings, Camera, Gallery.
-* **Services:** Bank, Mail, Yellow Pages, Garage (Track & Manage Vehicles), Taxi.
+* **Services:** Bank, Mail, Proxi(Yellow Pages), Garage (Track & Manage Vehicles), Taxi.
 * **Social:** Pulses (Social Media platform), Party (Group Management), Ping (Location Sharing).
 
 ## 🌿 Also Currently Working On...
