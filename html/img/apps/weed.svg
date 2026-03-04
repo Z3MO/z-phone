@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="jungleBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#004d40" /> <stop offset="100%" stop-color="#00272B" /> </linearGradient>
+
+    <linearGradient id="glassLeafGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#A2FF00" /> <stop offset="80%" stop-color="#00A859" /> </linearGradient>
+
+    <filter id="innerGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8" result="blur"/>
+      <feOffset dx="0" dy="4" result="offsetBlur"/>
+      <feFlood flood-color="#003311" flood-opacity="0.6" result="offsetColor"/>
+      <feComposite in="offsetColor" in2="offsetBlur" operator="in" result="offsetShadow"/>
+      
+      <feGaussianBlur in="SourceAlpha" stdDeviation="12" result="innerBlur"/>
+      <feComposite in="SourceGraphic" in2="innerBlur" operator="arithmetic" k1="0" k2="1" k3="-0.5" k4="0" result="innerGlowResult"/>
+      <feFlood flood-color="#DFFF80" flood-opacity="0.5" result="glowColor"/>
+      <feComposite in="glowColor" in2="innerGlowResult" operator="in" result="finalInnerGlow"/>
+
+      <feMerge>
+        <feMergeNode in="offsetShadow"/>
+        <feMergeNode in="SourceGraphic"/>
+        <feMergeNode in="finalInnerGlow"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" rx="115" fill="url(#jungleBg)" />
+
+  <circle cx="256" cy="280" r="180" fill="#A2FF00" opacity="0.05" filter="url(#innerGlow)" />
+
+  <g filter="url(#innerGlow)" fill="url(#glassLeafGrad)">
+    
+    <circle cx="256" cy="320" r="45" />
+
+    <path d="M 256 320 C 280 320, 310 200, 256 60 C 202 200, 232 320, 256 320 Z" />
+    
+    <path d="M 256 320 C 275 310, 400 230, 420 140 C 330 160, 250 285, 256 320 Z" />
+    <path d="M 256 320 C 237 310, 112 230, 92 140 C 182 160, 262 285, 256 320 Z" />
+
+    <path d="M 256 320 C 270 325, 420 330, 450 270 C 390 300, 260 340, 256 320 Z" />
+    <path d="M 256 320 C 242 325, 92 330, 62 270 C 122 300, 252 340, 256 320 Z" />
+
+    <path d="M 256 320 C 265 330, 340 400, 360 370 C 330 390, 270 350, 256 320 Z" />
+    <path d="M 256 320 C 247 330, 172 400, 152 370 C 182 390, 242 350, 256 320 Z" />
+
+    <path d="M 244 350 Q 256 360 268 350 L 272 460 Q 256 470 240 460 Z" />
+  </g>
+
+  <g fill="#FFFFFF" opacity="0.5">
+    <path d="M 256 90 C 230 210, 248 290, 252 310 L 260 310 C 264 290, 282 210, 256 90 Z" opacity="0.7"/>
+    
+    <path d="M 405 155 C 330 180, 270 280, 265 310 L 275 305 C 280 280, 350 190, 405 155 Z" opacity="0.5"/>
+    <path d="M 107 155 C 182 180, 242 280, 247 310 L 237 305 C 232 280, 162 190, 107 155 Z" opacity="0.5"/>
+
+    <ellipse cx="256" cy="310" rx="25" ry="12" opacity="0.4" />
+  </g>
+
+</svg>

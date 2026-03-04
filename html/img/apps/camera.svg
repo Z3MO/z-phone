@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="darkCamGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3A3F4B" /> <stop offset="100%" stop-color="#1C1E24" /> </linearGradient>
+
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity="0.4"/>
+    </filter>
+
+    <mask id="cameraHoles">
+      <rect width="512" height="512" fill="#FFFFFF" />
+      <circle cx="256" cy="286" r="64" fill="#000000" />
+      <circle cx="360" cy="226" r="16" fill="#000000" />
+    </mask>
+  </defs>
+  
+  <rect width="512" height="512" rx="115" fill="url(#darkCamGrad)" />
+  
+  <g filter="url(#softShadow)">
+    
+    <g mask="url(#cameraHoles)" fill="#FFFFFF">
+      <rect x="126" y="140" width="46" height="36" rx="18" />
+      
+      <rect x="186" y="130" width="140" height="50" rx="25" />
+      
+      <rect x="86" y="166" width="340" height="220" rx="50" />
+    </g>
+    
+    <circle cx="256" cy="286" r="42" fill="none" stroke="#FFFFFF" stroke-width="10" />
+    
+    <circle cx="256" cy="286" r="16" fill="#FFFFFF" />
+
+  </g>
+</svg>

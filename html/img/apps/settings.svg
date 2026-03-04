@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="settingsGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6A707C" /> <stop offset="100%" stop-color="#2D313A" /> </linearGradient>
+
+    <mask id="gearHole">
+      <rect width="512" height="512" fill="#FFFFFF" />
+      <circle cx="256" cy="256" r="56" fill="#000000" />
+    </mask>
+
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <rect width="512" height="512" rx="115" fill="url(#settingsGrad)" />
+  
+  <g filter="url(#softShadow)">
+    
+    <g mask="url(#gearHole)" fill="#FFFFFF" stroke="#FFFFFF" stroke-linecap="round">
+      
+      <line x1="256" y1="116" x2="256" y2="396" stroke-width="64" />
+      <line x1="256" y1="116" x2="256" y2="396" stroke-width="64" transform="rotate(45 256 256)" />
+      <line x1="256" y1="116" x2="256" y2="396" stroke-width="64" transform="rotate(90 256 256)" />
+      <line x1="256" y1="116" x2="256" y2="396" stroke-width="64" transform="rotate(135 256 256)" />
+
+      <circle cx="256" cy="256" r="112" stroke="none" />
+
+    </g>
+    
+  </g>
+</svg>

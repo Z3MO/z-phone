@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2DEB7B" /> <stop offset="100%" stop-color="#0D923F" /> </linearGradient>
+
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  
+  <rect width="512" height="512" rx="115" fill="url(#greenGrad)" />
+  
+  <g filter="url(#softShadow)">
+    
+    <path d="M 370 110 Q 430 150 430 230" 
+          fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" opacity="0.8" />
+    <path d="M 410 70 Q 490 130 480 250" 
+          fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round" opacity="0.4" />
+
+    <g transform="rotate(-42 256 256)">
+      
+      <path d="M 160 256 Q 256 140 352 256" 
+            fill="none" 
+            stroke="#FFFFFF" 
+            stroke-width="50" 
+            stroke-linecap="round" />
+            
+      <rect x="125" y="216" width="70" height="96" rx="35" fill="#FFFFFF" />
+      
+      <rect x="317" y="216" width="70" height="96" rx="35" fill="#FFFFFF" />
+
+      <circle cx="160" cy="245" r="5" fill="#0D923F" opacity="0.2" />
+      <circle cx="160" cy="265" r="5" fill="#0D923F" opacity="0.2" />
+      <circle cx="160" cy="285" r="5" fill="#0D923F" opacity="0.2" />
+
+    </g>
+  </g>
+</svg>

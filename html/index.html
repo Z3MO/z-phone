@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.2.9/purify.min.js" integrity="sha512-VOTFfd4vxPpuE98m9UQTN7j2N2/Blw44lZMhRTnZQqA2gOHq7Yvn5bdIDjjAZuFqqkDtppcjMW+dN3GYbhM94g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Font File's -->
+    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Yellowtail&display=swap" rel="stylesheet">
+    <!-- Font Awesome File's -->
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/all.css"/>
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/sharp-solid.css"/>
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/sharp-regular.css"/>
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/sharp-light.css"/>
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/duotone.css"/>
+
+    <!-- Additional Fontawesome Pro+ Icons for v7.2.0 -->
+
+    <!-- Sharp Duotone -->
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/sharp-duotone-solid.css"/>
+    <!-- Chisel -->
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/chisel-regular.css"/>
+    <!-- Etch -->
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/etch-solid.css"/>
+    <!-- Graphite -->
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/graphite-thin.css"/>
+    <!-- Jelly -->
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/jelly-regular.css"/>
+    <!-- Notdog -->
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/notdog-solid.css"/>
+    <!-- Slab -->
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/slab-regular.css"/>
+    <!-- Thumb Print -->
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/thumbprint-light.css"/>
+    <!-- Utility -->
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/utility-semibold.css"/>
+    <!-- Whiteboard -->
+    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/whiteboard-semibold.css"/>
+    <title>z-phone</title>
+
+    <!-- CSS File's -->
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/settings.css">
+    <link rel="stylesheet" href="./css/phone.css">
+    <link rel="stylesheet" href="./css/pulses.css">
+    <link rel="stylesheet" href="./css/bank.css">
+    <link rel="stylesheet" href="./css/message.css">
+    <link rel="stylesheet" href="./css/garage.css">
+    <link rel="stylesheet" href="./css/yellowpages.css">
+    <link rel="stylesheet" href="./css/mail.css">
+    <link rel="stylesheet" href="./css/taxi.css">
+    <link rel="stylesheet" href="./css/gallery.css">
+    <link rel="stylesheet" href="./css/camera.css">
+    <link rel="stylesheet" href="./css/ping.css">
+    <link rel="stylesheet" href="./css/calculator.css">
+    <link rel="stylesheet" href="./css/party.css">
+   <!-- <link rel="stylesheet" href="./css/crypto.css">
+   <link rel="stylesheet" href="./css/houses.css">
+    <link rel="stylesheet" href="./css/documents.css">
+   <link rel="stylesheet" href="./css/lsbn.css">
+   <link rel="stylesheet" href="./css/group-chats.css">-->
+
+    <!-- CDN's -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> <!-- JQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.js" integrity="sha512-hkvXFLlESjeYENO4CNi69z3A1puvONQV5Uh+G4TUDayZxSLyic5Kba9hhuiNLbHqdnKNMk2PxXKm0v7KDnWkYA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> <!-- Bootstrap -->
+    <script src="https://code.jquery.com/color/jquery.color-2.2.0.min.js" integrity="sha256-aSe2ZC5QeunlL/w/7PsVKmV+fa0eDbmybn/ptsKHR6I=" crossorigin="anonymous"></script> <!-- Color CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.css" integrity="sha512-vEia6TQGr3FqC6h55/NdU3QSM5XR6HSl5fW71QTKrgeER98LIMGwymBVM867C1XHIkYD9nMTfWK2A0xcodKHNA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"> <!-- Bootstrap -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script src="./js/jquery.timeago.js"></script>
+</head>
+    <body style="background-color: transparent !important";>
+        <div id="popup">
+            <div class="popupclass">
+                <div id="close"></div>
+            </div>
+        </div>
+        <div class="container disableSelection">
+            <img src="./img/phone-frame.svg" class="phone-frame">
+            <div id="phone-side-button-power"></div>
+            <div class="phone-container phone-background">
+                <!-- Phone Header -->
+                <div class="phone-header">
+                    <div id="phone-time">08:05</div>
+                    <div id="phone-icons">
+                        <i class="fa-solid fa-signal" id="phone-signal" data-toggle="tooltip" data-placement="left" title="5G"></i>
+                        <i class="fa-solid fa-sun" id="phone-sun" data-toggle="tooltip" data-placement="left" title="Weather Unavailable"></i>
+                        <i class="fa-solid fa-battery-full" id="phone-battery"></i>
+                    </div>
+                </div>
+
+                <!-- Phone Notification -->
+                <div class="phone-notification-container">
+                    <div class="notification-icon"></div>
+                    <div class="notification-title"></div>
+                    <div class="notification-text"></div>
+                </div>
+
+                <div class="phone-notification-container-new">
+                    <div class="notification-icon-new"></div>
+                    <div class="notification-title-new"></div>
+                    <div class="notification-text-new"></div>
+                    <div class="notification-accept"></div>
+                    <div class="notification-deny"></div>
+                </div>
+
+                <div class="screen-notifications-container">
+                    <div class="screen-notification-icon"><i class="fa-brands fa-twitter"></i></div>
+                    <div class="screen-notification-title"><p>New Tweet!</p></div>
+                    <div class="screen-notification-content"><p>This is a test notification </p></div>
+                </div>
+
+                <div class="phone-currentcall-container">
+                    <div class="phone-currentcall-icon"><i class="fa-solid fa-phone"></i></div>
+                    <div class="phone-currentcall-title">Outgoing call</div>
+                    <div class="phone-currentcall-contact">with 0612345678</div>
+                </div>
+
+                <!-- Home Applications -->
+                <div class="phone-applications">
+                    <!-- Home Screen Pages Container -->
+                    <div class="phone-home-pages">
+                        <div class="phone-page-container">
+                            <!-- First page with widgets will be dynamically generated -->
+                            <!-- Additional pages will be dynamically generated here -->
+                        </div>
+                        <!-- Page Indicators -->
+                        <div class="page-indicators">
+                            <!-- Dots will be dynamically generated here -->
+                        </div>
+                    </div>
+
+                    <!-- App Drawer (Bottom Quick Access) - Only shown on non-home pages -->
+                    <div class="phone-footer-applications">
+                        <div class="phone-application dock-app" data-appslot="1"></div>
+                        <div class="phone-application dock-app" data-appslot="2"></div>
+                        <div class="phone-application dock-app" data-appslot="3"></div>
+                        <div class="phone-application dock-app" data-appslot="4"></div>
+                        <div class="phone-footer-bar"></div>
+                    </div>
+                </div>   
+
+                <!-- New Action Feedback Frame -->
+                <div class="phone-action-feedback">
+                    <div class="feedback-container">
+                        <div class="feedback-content loading">
+                            <div class="feedback-spinner">
+                                <svg viewBox="0 0 50 50">
+                                    <circle class="spinner-track" cx="25" cy="25" r="20" fill="none" stroke-width="4"></circle>
+                                    <circle class="spinner-path" cx="25" cy="25" r="20" fill="none" stroke-width="4"></circle>
+                                </svg>
+                            </div>
+                            <span class="feedback-text">Processing...</span>
+                        </div>
+                        <div class="feedback-content success" style="display: none;">
+                            <div class="feedback-icon">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                            <span class="feedback-text">Success!</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Container for all application's -->
+                <div class="phone-application-container">
+                    <!-- Start Phone app-->
+                    <div class="phone-call-app">
+                        <div class="phone-call-incoming">
+                            <div class="phone-call-incoming-title">Incoming Call</div>
+                            <div class="phone-call-incoming-caller">Unknown Number</div>
+                            <div class="phone-call-incoming-picture"></div>
+
+                            <i class="fa-solid fa-phone" id="incoming-answer"></i>
+                            <i class="fa-solid fa-phone" id="incoming-deny"></i>
+                        </div>
+
+                        <div class="phone-call-outgoing">
+                            <div class="phone-call-outgoing-title">Calling...</div>
+                            <div class="phone-call-outgoing-caller">Unknown Number</div>
+                            <div class="phone-call-outgoing-picture"></div>
+
+                            <i class="fa-solid fa-phone" id="outgoing-cancel"></i>
+                        </div>
+
+                        <div class="phone-call-ongoing">
+                            <div class="phone-call-ongoing-title">Ongoing</div>
+                            <div class="phone-call-ongoing-caller">Unknown Number</div>
+                            <div class="phone-call-ongoing-picture"></div>
+                            <div class="phone-call-ongoing-time">05:05</div>
+
+                            <i class="fa-solid fa-phone" id="ongoing-cancel"></i>
+                        </div>
+                    </div>
+
+                    <div class="phone-app">
+                        <div class="phone-app-header">
+                            <p>Contacts</p>
+                            <span id="total-contacts">0 contacts</span>
+                        </div>
+
+                        <div class="phone-contacts">
+                            <div class="phone-contacts-header">
+                                <input type="text" id="contact-search" placeholder="Contact name" spellcheck="false">
+                                <i id="phone-search-icon" class="fa-solid fa-magnifying-glass"></i>
+                                <i id="phone-plus-icon" class="fa-solid fa-plus"></i>
+                            </div>
+
+                            <div class="phone-contact-list">
+                            </div>
+                        </div>
+
+                        <div class="phone-recent">
+                            <div class="phone-recent-header"><p>Call History</p></div>
+
+                            <div class="phone-recent-calls">
+                                <div class="phone-recent-call"> <div class="phone-recent-call-image">P</div> <div class="phone-recent-call-name">Pieter Post</div> <div class="phone-recent-call-type"><i class="fa-solid fa-phone-slash"></i></div> <div class="phone-recent-call-time">12:05</div> </div>
+                            </div>
+                        </div>
+
+                        <div class="phone-suggestedcontacts">
+                            <div class="phone-suggestedcontacts-header">
+                                Suggested Contacts
+                                <p class="amount-of-suggested-contacts">0 contacts</p>
+                            </div>
+
+                            <div class="suggested-contacts">
+                            </div>
+                        </div>
+
+                        <div class="phone-keypad noselect">
+                            <div id="phone-keypad-input"></div>
+
+                            <div class="phone-keypad-keys">
+                                <div class="phone-keypad-key" data-keypadvalue="1">1</div>
+                                <div class="phone-keypad-key" data-keypadvalue="2">2</div>
+                                <div class="phone-keypad-key" data-keypadvalue="3">3</div>
+                                <div class="phone-keypad-key" data-keypadvalue="4">4</div>
+                                <div class="phone-keypad-key" data-keypadvalue="5">5</div>
+                                <div class="phone-keypad-key" data-keypadvalue="6">6</div>
+                                <div class="phone-keypad-key" data-keypadvalue="7">7</div>
+                                <div class="phone-keypad-key" data-keypadvalue="8">8</div>
+                                <div class="phone-keypad-key" data-keypadvalue="9">9</div>
+                                <div class="phone-keypad-key" data-keypadvalue="*">*</div>
+                                <div class="phone-keypad-key" data-keypadvalue="0">0</div>
+                                <div class="phone-keypad-key" data-keypadvalue="#">#</div>
+                            </div>
+                            <div class="phone-keypad-key-call"><i class="fa-solid fa-phone"></i></div>
+                        </div>
+
+                        <div class="phone-add-contact">
+                            <div class="phone-add-contact-header"><p>Add Contact</p></div>
+
+                            <i id="phone-add-contact-name-icon" class="fa-solid fa-user"></i>
+                            <input type="text" class="phone-add-contact-name" placeholder="Contact Name" required spellcheck="false">
+
+                            <i id="phone-add-contact-number-icon" class="fa-solid fa-phone"></i>
+                            <input type="number" class="phone-add-contact-number" placeholder="Phone number" required spellcheck="false">
+
+                            <i id="phone-add-contact-iban-icon" class="fa-solid fa-money-check-dollar"></i>
+                            <input type="text" class="phone-add-contact-iban" placeholder="Bank nr. (Not required)" required spellcheck="false">
+
+                            <div class="phone-add-contact-buttons">
+                                <div class="phone-add-contact-button" id="add-contact-save"><p>Save</p></div>
+                                <div class="phone-add-contact-button" id="add-contact-cancel"><p>Cancel</p></div>
+                            </div>
+                        </div>
+
+                        <div class="phone-edit-contact">
+                            <div class="phone-edit-contact-header"><p>Add Contact</p></div>
+
+                            <i id="phone-edit-contact-name-icon" class="fa-solid fa-user"></i>
+                            <input type="text" class="phone-edit-contact-name" placeholder="Contact Name" required spellcheck="false">
+
+                            <i id="phone-edit-contact-number-icon" class="fa-solid fa-phone"></i>
+                            <input type="number" class="phone-edit-contact-number" placeholder="Phone number" required spellcheck="false">
+
+                            <i id="phone-edit-contact-iban-icon" class="fa-solid fa-money-check-dollar"></i>
+                            <input type="text" class="phone-edit-contact-iban" placeholder="Bank nr. (Not required)" required spellcheck="false">
+
+                            <div class="phone-edit-contact-buttons">
+                                <div class="phone-edit-contact-button" id="edit-contact-save"><p>Save</p></div>
+                                <div class="phone-edit-contact-button" id="edit-contact-delete"><p>Delete</p></div>
+                                <div class="phone-edit-contact-button" id="edit-contact-cancel"><p>Cancel</p></div>
+                            </div>
+                        </div>
+
+                        <div class="phone-app-footer">
+                            <div class="phone-app-footer-button" data-phonefootertab="suggestedcontacts">
+                                <i class="fa-solid fa-user-plus"></i>
+                            </div>
+                            <div class="phone-app-footer-button" data-phonefootertab="keypad">
+                                <i class="fa-solid fa-list-ol"></i>
+                            </div>
+                            <div class="phone-app-footer-button" data-phonefootertab="recent">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+                            <div class="phone-app-footer-button phone-selected-footer-tab" data-phonefootertab="contacts">
+                                <i class="fa-solid fa-address-book"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Start Messages app-->
+                    <div class="whatsapp-app">
+                        <div class="whatsapp-header">
+                            <i class="fa-solid fa-plus" id="whatsapp-newconvo-icon"></i>
+                            <span id="whatsapp-search-text">Message</span>
+                        </div>
+
+                        <div class="phone-menu-body" id="whatsapp-box-new-add-new">
+                            <div class="phone-menu-main">
+                                <input placeholder="Number" class="phone-menu-text whatsapp-input-number" type="number" maxlength="6" min="0">
+                                <textarea class="phone-menu-big-text whatsapp-input-message" placeholder="Message" type="text" maxlength="200"></textarea>
+                                <div class="phone-menu-footer">
+                                    <div class="phone-menu-button phone-menu-cancel" id="box-new-cancel">Cancel</div>
+                                    <div class="phone-menu-button phone-menu-accept" id="whatsapp-save-note-for-doc">Send</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="whatsapp-chats">
+                        </div>
+                        <div class="whatsapp-openedchat">
+                            <div class="whatsapp-header-footer-openedchat">
+                                <div class="whatsapp-openedchat-picture"></div>
+                                <div class="whatsapp-openedchat-name"><p></p></div>
+                                <div class="whatsapp-openedchat-number"><p></p></div>
+                                <i id="whatsapp-openedchat-back" class="fa-solid fa-chevron-left"></i>
+                                <i id="whatsapp-openedchat-call" class="fa-solid fa-phone"></i>
+                            </div>
+                            <div class="whatsapp-openedchat-messages"></div>
+                            <div class="whatsapp-openedchat-input">
+                                <input type="text" id="whatsapp-openedchat-message" placeholder="Send message" spellcheck="false">
+                                <i class="fa-solid fa-paper-plane" id="whatsapp-openedchat-send"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Messages app-->
+
+                    <!-- END Camera app-->
+                    <div class="camera-app">
+                        <div class="camera-homescreen">
+                            <div class="camera-image">
+                                <div class="loader"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END Camera app-->                    
+
+                    <!-- Start Settings app-->
+                    <div class="settings-app">
+                        <div class="settings-app-tab-appereance">
+                            <div class="settings-header-large">Settings</div>
+                            
+                            <div class="settings-profile-card">
+                                <img src="" class="settings-profile-img" style="display:none;">
+                                <div class="settings-profile-avatar-placeholder"><i class="fa-solid fa-user"></i></div>
+                                <div class="settings-profile-info">
+                                    <div class="settings-profile-name">Loading...</div>
+                                    <div class="settings-profile-number">Loading...</div>
+                                </div>
+                            </div>
+
+                            <div class="settings-menu-group">
+                                <div class="settings-menu-item settings-app-tab" data-settingstab="background">
+                                    <div class="settings-icon-box" style="background: linear-gradient(135deg, #FF2D55, #FF375F);"><i class="fa-solid fa-wallpaper"></i></div>
+                                    <div class="settings-text">Wallpaper</div>
+                                    <i class="fa-solid fa-chevron-right settings-chevron"></i>
+                                </div>
+                                <div class="settings-menu-item settings-app-tab" data-settingstab="profilepicture">
+                                    <div class="settings-icon-box" style="background: linear-gradient(135deg, #007AFF, #0A84FF);"><i class="fa-solid fa-user-circle"></i></div>
+                                    <div class="settings-text">Avatar</div>
+                                    <i class="fa-solid fa-chevron-right settings-chevron"></i>
+                                </div>
+                            </div>
+
+                            <div class="settings-menu-group">
+                                <div class="settings-menu-item settings-app-tab" data-settingstab="info">
+                                    <div class="settings-icon-box" style="background: linear-gradient(135deg, #8E8E93, #98989D);"><i class="fa-solid fa-info"></i></div>
+                                    <div class="settings-text">Device Info</div>
+                                    <i class="fa-solid fa-chevron-right settings-chevron"></i>
+                                </div>
+                            </div>
+
+                            <div class="settings-version">
+                                <p>z-phone v2.0</p>
+                            </div>
+                        </div>
+
+                        <div class="settings-background-tab">
+                            <div class="settings-app-header"><p>Background</p></div>
+
+                            <div class="background-options">
+                                <div class="background-option" data-background="zphone-1">
+                                    <div class="background-option-icon"><img src="./img/backgrounds/zphone-1.png" class="phone-backgrounds"></div>
+                                    <div class="background-option-title">Vanilla</div>
+                                </div>
+                                <div class="background-option" data-background="zphone-2">
+                                    <div class="background-option-icon"><img src="./img/backgrounds/zphone-2.png" class="phone-backgrounds"></div>
+                                    <div class="background-option-title">Krishan-Arjun</div>
+                                </div>
+                                <div class="background-option" data-background="zphone-3">
+                                    <div class="background-option-icon"><img src="./img/backgrounds/zphone-3.png" class="phone-backgrounds"></div>
+                                    <div class="background-option-title">Supra</div>
+                                </div>
+                                <div class="background-option" data-background="zphone-4">
+                                    <div class="background-option-icon"><img src="./img/backgrounds/zphone-4.png" class="phone-backgrounds"></div>
+                                    <div class="background-option-title">Spiderman</div>
+                                </div>
+                                <div class="background-option" data-background="zphone-5">
+                                    <div class="background-option-icon"><img src="./img/backgrounds/zphone-5.png" class="phone-backgrounds"></div>
+                                    <div class="background-option-title">Blue-Sky</div>
+                                </div>
+                                <div class="background-option" data-background="zphone-6">
+                                    <div class="background-option-icon"><img src="./img/backgrounds/zphone-6.png" class="phone-backgrounds"></div>
+                                    <div class="background-option-title">Orange Abstract</div>
+                                </div>
+                                <div class="background-option" data-background="zphone-7">
+                                    <div class="background-option-icon"><img src="./img/backgrounds/zphone-7.png" class="phone-backgrounds"></div>
+                                    <div class="background-option-title">Red Moon</div>
+                                </div>
+                                <div class="background-option" data-background="zphone-8">
+                                    <div class="background-option-icon"><img src="./img/backgrounds/zphone-8.png" class="phone-backgrounds"></div>
+                                    <div class="background-option-title">Cyberpunk</div>
+                                </div>
+                                <div class="background-option" data-background="custom-background">
+                                    <div class="background-option-icon" style="display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05);"><i class="fa-solid fa-image" style="font-size: 5vh; color: rgba(255,255,255,0.5);"></i></div>
+                                    <div class="background-option-title">Custom</div>
+                                </div>
+                            </div>
+
+                            <div class="background-buttons">
+                                <div class="background-button" id="cancel-background">
+                                    <p>Back</p>
+                                </div>
+                                <div class="background-button" id="accept-background">
+                                    <p>Set</p>
+                                </div>
+                            </div>
+
+                            <div class="background-custom">
+                                <div class="custom-modal-content">
+                                    <div class="background-custom-title">Personalized Background</div>
+                                    <input type="text" class="custom-background-input" placeholder="URL (.jpg/.png)" spellcheck="false">
+    
+                                    <div class="custom-background-preview">
+                                        <img src="" id="background-preview-image">
+                                    </div>
+    
+                                    <div class="background-custom-buttons">
+                                        <div class="custom-background-button" id="accept-custom-background"><p>Confirm</p></div>
+                                        <div class="custom-background-button" id="cancel-custom-background"><p>Cancel</p></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-profilepicture-tab">
+                            <div class="settings-app-header"><p>Avatar</p></div>
+
+                            <div class="profilepicture-options">
+                                <div class="profilepicture-option" data-profilepicture="default">
+                                    <div class="profilepicture-option-icon" style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #3a7bd5, #3a6073);"><i class="fa-solid fa-user" style="font-size: 5vh; color: rgba(255,255,255,0.9);"></i></div>
+                                    <div class="profilepicture-option-title"> Default </div>
+                                    <div class="profilepicture-option-description">Default avatar</div>
+                                    <div class="profilepicture-option-current"><i class="fa-solid fa-circle-check"></i></div>
+                                </div>
+                                <div class="profilepicture-option" data-profilepicture="custom-profilepicture">
+                                    <div class="profilepicture-option-icon" style="display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05);"><i class="fa-solid fa-user-pen" style="font-size: 5vh; color: rgba(255,255,255,0.5);"></i></div>
+                                    <div class="profilepicture-option-title">Custom</div>
+                                    <div class="profilepicture-option-description">Personalize your avatar</div>
+                                </div>
+                            </div>
+
+                            <div class="profilepicture-buttons">
+                                <div class="profilepicture-button" id="cancel-profilepicture">
+                                    <p>Back</p>
+                                </div>
+                                <div class="profilepicture-button" id="accept-profilepicture">
+                                    <p>Set</p>
+                                </div>
+                            </div>
+
+                            <div class="profilepicture-custom">
+                                <div class="custom-modal-content">
+                                    <div class="profilepicture-custom-title">Personalized Avatar</div>
+                                    <input type="text" class="custom-profilepicture-input" placeholder="URL (.jpg/.png)" spellcheck="false">
+    
+                                    <div class="custom-profilepicture-preview">
+                                        <img src="" id="profilepicture-preview-image">
+                                    </div>
+    
+                                    <div class="profilepicture-custom-buttons">
+                                        <div class="custom-profilepicture-button" id="accept-custom-profilepicture"><p>Confirm</p></div>
+                                        <div class="custom-profilepicture-button" id="cancel-custom-profilepicture"><p>Cancel</p></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-info-tab">
+                            <div class="settings-app-header"><p>Info</p></div>
+                                <div class="details-money-types">
+                                    <div class="details-moneys-body-main">
+                                        <div class="details-icon-class"><i style="color: #09f015;"  class="fa-solid fa-wallet"></i></div>
+                                        <div class="details-text-class details-cashmoney">$0901</div>
+                                    </div>
+                                    <div class="details-moneys-body-main">
+                                        <div class="details-icon-class"><i style="color: #e7f70e;" class="fa-solid fa-piggy-bank"></i></div>
+                                        <div class="details-text-class details-bankmoney">$0901</div>
+                                    </div>
+                                    <div class="details-moneys-body-main">
+                                        <div class="details-icon-class"><i style="color: #fdb417;" class="fa-solid fa-id-card"></i></div>
+                                        <div class="details-text-class details-stateid" >CLM21795</div>
+                                    </div>
+                                    <div class="details-moneys-body-main">
+                                        <div class="details-icon-class"><i style="color: #30a6dd;" class="fa-solid fa-mobile-screen-button"></i></div>
+                                        <div class="details-text-class details-phone" >0901</div>
+                                    </div>
+                                </div>
+                                <div class="details-list"></div>
+
+                            <div class="background-buttons">
+                                <div class="background-button" id="cancel-info">
+                                    <p>Back</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END Settings app-->
+
+                    <!-- Start Ping App -->
+                    <div class="ping-app">
+                        <img class="imagepingapp" src="img/map.png">
+                        <div class="ping-header">
+                            <input class="ping-menu-text ierplol" type="number" maxlength="4"><i class="fa-solid fa-id-card-clip" id="ping-menu-icon"></i>
+                            <div style="display: block;" id="ping-send" class="ping-sender-piinger"><i class="fa-solid fa-map-pin"></i>SEND PING</div>
+                        </div>
+                    </div>
+                    <!-- End Ping App -->
+
+                    <!-- Start Mail app-->
+                    <div class="mail-app">
+                        <div class="mail-home">
+                            <div class="mail-header">
+                                <span id="mail-header-text">Inbox</span>
+                                <div class="mail-search-wrapper">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" id="mail-search" placeholder="Search" spellcheck="false">
+                                </div>
+                            </div>
+                            <div class="mail-list"></div>
+                        </div>
+                        <div class="mail-details-view">
+                            <div class="mail-details-header">
+                                <i class="fa-solid fa-chevron-left" id="mail-back"></i>
+                                <span id="mail-details-sender"></span>
+                            </div>
+                            <div class="mail-details-content"></div>
+                        </div>
+                    </div>
+                    <!-- End Mail app-->                    
+
+                    <!-- Start Proxi app-->
+                    <div class="proxi-app">
+                        <div class="proxi-home">
+                            <div class="proxi-header">
+                                <span id="proxi-feed-text">Proxi</span>
+                                <i class="fa-solid fa-magnifying-glass" id="proxi-search-icon"></i>
+                                <input type="text" id="proxi-search" placeholder="" spellcheck="false">
+                            </div>
+                            <div class="proxi-list"></div>
+                            <div class="create-proxi">
+                                <i class="fa-solid fa-plus test-icon" data-toggle="tooltip" title="Create Ad"></i>
+                            </div>
+                        </div>
+
+                        <div class="phone-menu-body" id="proxi-box-textt">
+                            <div class="phone-menu-main">
+                                <input class="phone-menu-text proxi-box-image-input" placeholder="URL (JPG/PNG)" type="text">
+                                <textarea class="phone-menu-big-text proxi-box-textt-input" placeholder='Message' type="text" maxlength="200"></textarea>
+                                <div class="phone-menu-footer">
+                                    <div class="phone-menu-button phone-menu-cancel" id="proxi-cancel">Cancel</div>
+                                    <div class="phone-menu-button phone-menu-accept" id="proxi-sendmessage-chat">Post</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Proxi app-->
+                    
+                    <!-- Start Pulses app-->
+                    <div class="pulses-app">
+                        <div class="pulses-home-tab"></div>
+                        <div class="phone-menu-body" id="pulse-box-text">
+                            <div class="phone-menu-main">
+                                <input class="phone-menu-text pulse-box-image-input" placeholder="URL (JPG/PNG)" type="text"></input>
+                                <textarea class="phone-menu-big-text pulse-box-text-input" placeholder="Message" type="text" maxlength="200"></textarea>
+                                <div class="pulse-anonymous">
+                                    <input type="checkbox" id="anonymous-pulse" name="anonymous-pulse">
+                                    <label for="anonymous-pulse">Anonymous</label>
+                                </div>
+                                <div class="phone-menu-footer">
+                                    <div class="phone-menu-button phone-menu-cancel"  id="box-new-cancel">Cancel</div>
+                                    <div class="phone-menu-button phone-menu-accept" id="pulse-sendmessage-chat">Pulse</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- New Footer for Pulses App -->
+                        <div class="pulses-footer">
+                            <div class="footer-icon footer-icon-pulses active">
+                                <i class="fas fa-wave-pulse"></i>
+                                <span class="footer-icon-text" style="color: #1DA1F2; text-shadow: 0 0 5px #1DA1F2, 0 0 10px #1DA1F2;">Pulses</span>
+                            </div>
+                            <div class="footer-icon footer-icon-new-pulse">
+                                <i class="fa-solid fa-plus"></i>
+                            </div>
+                            <div class="footer-icon footer-icon-profile">
+                                <i class="fa-solid fa-user"></i>
+                                <span class="footer-icon-text">Profile</span>
+                            </div>
+                        </div>
+                        <!-- End New Footer -->
+                    </div>
+                    <!-- End Pulses app-->
+
+                    <!-- Start Party App -->
+                    <div class="party-app">
+                        <div class="phone-menu-body" id="jobcenter-box-new-dashboard">
+                            <div class="phone-menu-main">
+                                <input class="phone-menu-text jobcenter-input-group-name" placeholder="Group Name" type="text" maxlength="15">
+                                <input class="phone-menu-text jobcenter-input-password" placeholder="Group Password" type="text">
+                                <input class="phone-menu-text jobcenter-input-password2" placeholder="Confirm Password" type="text">
+                                <div class="phone-menu-footer">
+                                    <div class="phone-menu-button phone-menu-cancel" id="box-new-cancel">Cancel</div>
+                                    <div class="phone-menu-button phone-menu-accept" id="jobcenter-submit-create-group">Create</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="phone-menu-body" id="jobcenter-box-new-join">
+                            <div class="phone-menu-main">
+                                <input class="phone-menu-text jobcenter-input-join-password" placeholder="Enter Password" type="password">
+                                <div class="phone-menu-footer">
+                                    <div class="phone-menu-button phone-menu-cancel" id="box-new-cancel">Cancel</div>
+                                    <div class="phone-menu-button phone-menu-accept" id="jobcenter-submit-join-group">Join</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="phone-menu-body" id="jobcenter-box-new-player-name">
+                            <div class="jobcenter-playerlist">
+                                <div class="jobcenter-playerlist-header">Members</div>
+                                <div class="phone-new-box-main" id="phone-new-box-main-playername"></div>
+                                <div class="phone-menu-button jobcenter-playerlist-leave" id="box-new-cancel"><i class="fa-sharp fa-solid fa-angle-left"></i></div>
+                            </div>
+                        </div>       
+                                   
+                        <div class="jobcenter-text-header">
+                            <div class="party-header-left">
+                                <i class="fa-solid fa-tree-palm party-logo-tree"></i>
+                                <div class="party-header-text-group">
+                                    <span class="party-word">Party</span>
+                                    <span class="app-word">APP</span>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-plus party-plus-icon" id="party-plus-action"></i>
+                        </div>
+                        
+                        <div class="jobcenter-header">
+                            <div class="party-footer-tab active" id="party-tab-groups">
+                                <i class="fa-solid fa-users"></i>
+                                <span>Groups</span>
+                            </div>
+                            <div class="party-footer-tab" id="party-tab-jobs">
+                                <i class="fa-solid fa-briefcase"></i>
+                                <span>Jobs</span>
+                            </div>
+                        </div>
+                        <!-- All Jobs List -->
+                        <div class="job-list"></div>
+                        <!-- Main Page for created jobs -->
+                        <div class="jobcenter-list"></div>
+                        <!-- Job Stage Page -->
+                        <div class="jobcenter-Groupjob"></div>
+                        <div class="jobcenter-groupjob-timer">
+                            <p><span id="minutes">00</span>:<span id="seconds">00</span>:<span id="tens">00</span></p>
+                        </div>
+                    </div>
+                    <!-- End Party App -->
+
+                    <!-- Start Calculator App -->
+                    <div class="calculator-app">
+                        <div class="calculator-header">
+                            <p>Calculator</p>
+                        </div>
+
+                        <div class="calculator-list">
+                            <form name="calc" class="calc">
+                                <input id="monitorcalc" type="text" value="" disabled name="display">
+                                <input id="shakhescalc" type="button" value="AC" onclick="ac()">
+                                <input id="shakhescalc" type="button" value="C" onclick="c()">
+                                <input id="shakhescalc" type="button" value="%" onclick="data(this.value)">
+                                <input id="minishalhcalc" type="button" value="-" onclick="data(this.value)">
+                                <input id="" type="button" value="1" onclick="data(this.value)">
+                                <input id="" type="button" value="2" onclick="data(this.value)">
+                                <input id="" type="button" value="3" onclick="data(this.value)">
+                                <input id="minishalhcalc" type="button" value="*" onclick="data(this.value)">
+                                <input id="" type="button" value="4" onclick="data(this.value)">
+                                <input id="" type="button" value="5" onclick="data(this.value)">
+                                <input id="" type="button" value="6" onclick="data(this.value)">
+                                <input id="minishalhcalc" type="button" value="/" onclick="data(this.value)">
+                                <input id="" type="button" value="7" onclick="data(this.value)">
+                                <input id="" type="button" value="8" onclick="data(this.value)">
+                                <input id="" type="button" value="9" onclick="data(this.value)">
+                                <input id="minishalhcalc" type="button" value="+" onclick="data(this.value)">
+                                <input id="" type="button" value="." onclick="data(this.value)">
+                                <input id="" type="button" value="0" onclick="data(this.value)">
+                                <input id="" type="button" value="=" onclick="equal()">
+                                <div style="clear: both;"></div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- End Calculator App -->
+
+                    <!-- Start Gallery app-->
+                    <div class="gallery-app">
+                        <div class="gallery-app-header">
+                            My Gallery
+                        </div>
+                        <div class="gallery-homescreen">
+                            <div class="gallery-images">
+                            </div>
+                        </div>
+
+                        <div class="gallery-detailscreen">
+                            <div class="gallery-details">
+                                <div class="imagedata"><img class="image" id="imagedata" style="width: 100%;" src="" alt=""></div>
+                                <div class="make-post-button">
+                                    <div id="return-button" data-toggle="tooltip" title="Return">
+                                        <i class="fa-solid fa-rotate-left"></i>
+                                    </div>
+                                    <div id="delete-button" data-toggle="tooltip" title="Delete">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </div>
+                                    <div id="gallery-coppy-button" data-toggle="tooltip" title="Copy Link">
+                                        <i class="fa-solid fa-copy"></i>
+                                    </div>
+                                    <div id="make-post-button" data-toggle="tooltip" title="Share">
+                                        <i class="fa-solid fa-share-from-square"></i>
+                                    </div> 
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gallery-postscreen">
+                            <div class="gallery-details">
+                                <div class="imageTweetData"><textarea id="new-textarea" spellcheck="false" required></textarea></div>
+                                <div class="posts-button">
+                                    <div id="tweet-button">
+                                        <i class="fa-brands fa-twitter fa-lg"></i>
+                                    </div>
+                                    <div id="advert-button">
+                                        <i class="fa-solid fa-rectangle-ad fa-lg"></i>
+                                    </div>
+                                </div>
+                                <div class="return-button">
+                                    <div id="returndetail-button">
+                                        RETURN
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END Gallery app-->
+
+                    <!-- Start garages app-->
+                    <div class="garage-app">
+                        <span id="garage-search-text">Garages</span>
+                        <div class="garage-app-header">
+                            <i class="fa-solid fa-magnifying-glass" id="garage-search-icon"></i>
+                            <input type="text" id="garage-search" placeholder="" spellcheck="false">
+                        </div>
+                        <div class="garage-homescreen">
+                            <div class="garage-vehicles"></div>
+                        </div>
+
+                        <div class="phone-menu-body" id="garage-sellvehicle-menu">
+                            <div class="phone-menu-main">
+                                <input class="phone-menu-text garage-sellvehicle-stateid" type="number" placeholder="State ID" maxlength="3">
+                                <input class="phone-menu-text garage-sellvehicle-price" type="number" placeholder="Price" maxlength="8">
+                                <div class="phone-menu-footer">
+                                    <div class="phone-menu-button phone-menu-cancel" id="box-new-cancel">Cancel</div>
+                                    <div class="phone-menu-button phone-menu-accept" id="garage-sellvehicle">Sell</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END Garages app-->
+
+                    <!-- Start Taxi app-->
+                    <div class="taxi-app">
+                        <div class="taxis-list"></div>
+                    </div>
+                    <!-- END Taxi app-->
+
+                    <div class="bank-app">
+                        <div class="bank-app-loading">
+                            <img src="./img/apps/bank-logo.png" class="qbank-logo">
+                        </div>
+                        <div class="bank-app-loaded">
+                            <div class="bank-app-header">
+                                <div data-headertype="accounts" class="bank-app-header-button bank-app-header-button-selected"> <i class="fa-solid fa-align-left"></i> <p>Accounts</p> </div>
+                                <div data-headertype="invoices" class="bank-app-header-button"> <i class="fa-solid fa-file-invoice"></i> <p>Invoices</p> </div>
+                            </div>
+
+                            <div class="bank-app-accounts">
+                                <div class="circles">
+                                    <div class="circle circle-1"></div>
+                                    <div class="circle circle-2"></div>
+                                </div>
+
+                                <div class="bank-app-account">
+                                    <div class="logo"><img src="https://raw.githubusercontent.com/dasShounak/freeUseImages/main/Visa-Logo-PNG-Image.png" alt="Visa"></div>
+                                    <div class="chip"><img src="https://raw.githubusercontent.com/dasShounak/freeUseImages/main/chip.png" alt="chip"></div>
+                                    <input type="text" class="bank-app-account-number" id="iban-account" readonly spellcheck="false">
+                                    <div class="bank-app-account-balance">&#36; 5000,00</div>
+                                    <div class="ring"></div>
+                                </div>
+
+                                <div class="bank-app-account-actions">
+                                    <i id="transfer-money" class="fa-solid fa-right-left bank-app-account-action-transfer"></i>
+                                </div>
+                            </div>
+
+                            <div class="bank-app-transfer">
+                                <div class="bank-app-transfer-header">Transfer Money</div>
+
+                                <i class="bank-transfer-iban-icon fa-solid fa-credit-card"></i>
+                                <input type="text" id="bank-transfer-iban" class="bank-transfer-input" required spellcheck="false">
+                                <i class="bank-transfer-mycontacts-icon fa-solid fa-address-book"></i>
+
+                                <i class="bank-transfer-amount-icon fa-solid fa-dollar-sign"></i>
+                                <input type="number" min="0" oninput="this.value = Math.abs(this.value)" id="bank-transfer-amount" class="bank-transfer-input" required spellcheck="false">
+
+                                <div class="bank-app-transfer-buttons">
+                                    <div class="bank-app-transfer-button" id="accept-transfer">Transfer</div>
+                                    <div class="bank-app-transfer-button" id="cancel-transfer">Cancel</div>
+                                </div>
+                            </div>
+
+                            <div class="bank-app-invoices">
+                                <div class="bank-app-invoices-list">
+                                    <!-- <div class="bank-app-invoice"> <div class="bank-app-invoice-title">Betaalverzoek <span style="font-size: 1vh; color: gray;">(Afzender: 0612345678)</span></div> <div class="bank-app-invoice-amount">&#36; 5000,-</div> <div class="bank-app-invoice-buttons"> <i class="fa-solid fa-circle-check pay-invoice"></i> <i class="fa-solid fa-circle-xmark decline-invoice"></i> </div> </div> -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bank-app-my-contacts">
+                            <div class="bank-app-my-contacts-header">My Contacts</div>
+                            <div class="bank-app-my-contacts-list-header">
+                                <input type="text" id="bank-app-my-contact-search" placeholder="Contact name" spellcheck="false">
+                            </div>
+                            <div class="bank-app-my-contacts-list">
+                                <!-- <div class="bank-app-my-contact"> <div class="bank-app-my-contact-firstletter">P</div> <div class="bank-app-my-contact-name">Pieter Post</div> </div> -->
+                            </div>
+                            <div class="bank-app-my-contacts-list-back">Return</div>
+                        </div>
+                    </div>
+
+                    <!-- Start Housing app-->
+                    <!-- <div class="houses-app">
+                        <div class="houses-app-header">
+                            <div class="houses-app-header-tab houses-app-header-tab-selected" data-housetab="myhouses"><p>Houses</p></div>
+                            <div class="houses-app-header-tab" data-housetab="mykeys"><p>Keys</p></div>
+                        </div>
+
+                        <div class="house-app-myhouses-container">
+                            <div class="myhouses-house">
+                                <div class="myhouse-house-icon"><i class="fa-solid fa-house"></i></div>
+                                <div class="myhouse-house-titel">Grove St. 1 | Tier 1</div>
+                                <div class="myhouse-house-details"><i class="fa-solid fa-key"></i>&nbsp;&nbsp;5</div>
+                            </div>
+                        </div>
+
+                        <div class="house-app-mykeys-container">
+                        </div>
+
+                        <div class="phone-menu-body" id="house-transfer-new-box">
+                            <div class="phone-menu-main">
+                                <div class="phone-menu-button phone-menu-cancel" id="box-new-cancel">Cancel</div>
+                                <div class="phone-menu-button phone-menu-accept" id="myhouse-option-transfer-confirm">Submit</div>
+                                <input class="phone-menu-text myhouse-option-transfer-container-citizenid" placeholder="CSN" type="text">
+                            </div>
+                        </div>
+
+                        <div class="myhouses-options-container">
+                            <div class="myhouses-options">
+                                <div class="myhouses-options-header">Grove St. 1</div>
+                                <div class="myhouses-option" id="myhouse-option-transfer">TRANSFER</div>
+                                <div class="myhouses-option" id="myhouse-option-keys">KEYS</div>
+                                <br>
+                                <br>
+                                <div class="myhouses-option" id="myhouse-option-close">CLOSE</div>
+                            </div>
+
+                            <div class="myhouse-option-transfer-container">
+                                <div class="myhouse-option-transfer-container-header">Transfer House</div>
+                                <input class="myhouse-option-transfer-container-citizenid" type="text" spellcheck="false" placeholder="CSN" required>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <br>
+                                <div class="myhouses-option" id="myhouse-option-transfer-confirm">CONFIRM</div>
+                                <div class="myhouses-option" id="myhouse-option-transfer-back">RETURN</div>
+                            </div>
+
+                            <div class="myhouse-option-keys-container">
+                                <div class="keys-container">
+                                </div>
+                                <div class="myhouses-option" id="myhouse-option-keys-back">RETURN</div>
+                            </div>
+                        </div>
+                    </div>-->
+                    <!-- End Housing app-->
+
+                    <!-- Start Wezeal News app-->
+                    <!--<div class="lsbn-app">
+
+                        <div class="phone-menu-body" id="lsbn-box-new-add-text">
+                            <div class="phone-menu-main">
+                                <div class="phone-menu-button phone-menu-cancel" id="box-new-cancel">Cancel</div>
+                                <div class="phone-menu-button phone-menu-accept" id="lsbn-submit-to-send-text">Submit</div>
+                                <input class="phone-menu-text lsbn-input-doo" placeholder="URL (JPG/PNG)" type="text">
+                                <textarea class="phone-menu-big-text lsbn-input-yek" placeholder="Text" type="text" maxlength="100"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="lsbn-header">
+                            <div class="lsbn-send-news-for-chat" data-toggle="tooltip" title="Send News"><i class="fa-solid fa-bullhorn"></i></div>
+                            <img class="lsbn-logo-style" src="https://weazelnews.sadoj-rp.fr/wp-content/uploads/2021/06/Weazel_logo_site.png">
+                        </div>
+
+                        <div class="lsbn-list">
+                        </div>
+                    </div>-->
+                    <!-- End Wezeal News app-->
+
+                    <!-- Start Documnets app-->
+                    <!--<div class="documents-app">
+
+                        <div class="phone-menu-body" id="documents-box-new-add-new">
+                            <div class="phone-menu-main">
+                                <div class="phone-menu-button phone-menu-cancel" id="box-new-cancel">Cancel</div>
+                                <div class="phone-menu-button phone-menu-accept" id="documents-save-note-for-doc">Submit</div>
+                                <input class="phone-menu-text documents-input-title" placeholder="Title" type="text" maxlength="20">
+                                <textarea id="documents-textarea" spellcheck="false" required placeholder="" maxlength="4000"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="phone-menu-body" id="documents-send-stateid">
+                            <div class="phone-menu-main">
+                                <div class="phone-menu-button phone-menu-cancel" id="box-new-cancel">Cancel</div>
+                                <div class="phone-menu-button phone-menu-accept" id="documents-send-perm">Send</div>
+                                <input class="phone-menu-text documents-input-stateid" placeholder="State ID" type="text" maxlength="3">
+                            </div>
+                        </div>
+
+                        <div class="documents-header">
+                            <div class="documents-tupe-text-btn" data-toggle="tooltip" title="New Text"><i class="fa-solid fa-pen-to-square"></i></div>
+                            <span id="documents-search-text">Search</span>
+                            <i class="fa-solid fa-magnifying-glass" id="documents-search-icon"></i>
+                            <input type="text" id="documents-search" placeholder="" spellcheck="false">
+
+                            <div class="documents-dropdown">
+                                <div class="documents-select">
+                                    <span>Type</span>
+                                    <i class="fa fa-chevron-left"></i>
+                                </div>
+                                <input type="hidden" name="gender">
+                                <ul class="documents-dropdown-menu"></ul>
+                            </div>
+
+                            <div class="documents-extra-buttons">
+                                <div class="documents-extra-button" id="documents-share-local" data-toggle="tooltip" title="Share (Local)"><i class="fa-solid fa-share-nodes"></i></div>
+                                <div class="documents-extra-button" id="documents-share-perm" data-toggle="tooltip" title="Share (Permanent)"><i class="fa-solid fa-share"></i></div>
+                                <div class="documents-extra-button" id="documents-delete" data-toggle="tooltip" title="Delete"><i class="fa-solid fa-trash"></i></div>
+                                <div class="documents-extra-button" id="documents-save" data-toggle="tooltip" title="Save"><i class="fa-solid fa-floppy-disk"></i></div>
+                            </div>
+
+                            <div class="documents-extra-buttons-registration">
+                                <div class="documents-extra-button-registration" id="documents-share-local" data-toggle="tooltip" title="Share (Local)"><i class="fa-solid fa-share-nodes"></i></div>
+                            </div>
+                        </div>
+
+                        <div class="documents-list">
+                        </div>
+                    </div>-->
+                    <!-- End Documnets app-->
+
+                    <!-- Start Crypto app-->
+                    <!--<div class="crypto-app">
+                        <div class="crypto-header">
+                            <span id="crypto-search-text">crypto</span>
+                            <i class="fa-solid fa-magnifying-glass" id="crypto-search-icon"></i>
+                            <input type="text" id="crypto-search" placeholder="" spellcheck="false">
+                        </div>
+
+                        <div class="crypto-lists"></div>
+
+                        <div class="phone-menu-body" id="crypto-purchase-tab">
+                            <div class="phone-menu-main">
+                                <div class="phone-menu-button phone-menu-cancel" id="box-new-cancel">Cancel</div>
+                                <div class="phone-menu-button phone-menu-accept" id="crypto-send-purchase">Buy</div>
+                                <input class="phone-menu-text crypto-amount" placeholder="Amount" type="text" maxlength="4">
+                            </div>
+                        </div>
+                        <div class="phone-menu-body" id="crypto-sell-tab">
+                            <div class="phone-menu-main">
+                                <div class="phone-menu-button phone-menu-cancel" id="box-new-cancel">Cancel</div>
+                                <div class="phone-menu-button phone-menu-accept" id="crypto-send-sell">Sell</div>
+                                <input class="phone-menu-text crypto-amount-sell" placeholder="Amount" type="text" maxlength="4">
+                            </div>
+                        </div>
+
+                        <div class="phone-menu-body" id="crypto-exchange-tab">
+                            <div class="phone-menu-main">
+                                <div class="phone-menu-button phone-menu-cancel" id="box-new-cancel">Cancel</div>
+                                <div class="phone-menu-button phone-menu-accept" id="crypto-send-exchange">Exchange</div>
+                                <input class="phone-menu-text crypto-stateid-exchange" placeholder="State ID" type="text" maxlength="3">
+                                <input class="phone-menu-text crypto-amount-exchange" placeholder="Amount" type="text" maxlength="4">
+                            </div>
+                        </div>
+                    </div>-->
+                    <!-- End Crptyo app-->
+
+                    <!-- Start DarkWeb app-->
+                    <!--<div class="group-chats-app">
+                        <div class="chat-room-header">
+                            <div class="chat-room-view-rooms" id="open-owned-rooms"><i class="fa-solid fa-book-open-reader"></i></div>
+                            <div class="chat-room-title"><i class="fa-brands fa-discord"></i> Discord</div>
+                            <div class="chat-room-join-room" id="open-private-rooms"><i class="fa-solid fa-square-plus"></i></div>
+                        </div>
+
+                        <h5 class="group-chats-title">OFFICIAL CHANNELS</h5>
+                        <div class="pinned-chats" id="pinned-rooms-list"></div>
+
+                        <div id="joined-rooms-container">
+                            <h5 class="group-chats-title">YOUR JOINED CHANNELS</h5>
+                            <div class="group-chats" id="joined-rooms-list"></div>
+                        </div>
+
+                        <h5 class="group-chats-title">PUBLIC CHANNELS</h5>
+                        <div id="no-public-rooms-notice">There are currently no registered channels!</div>
+                        <div class="group-chats" id="public-rooms-list"></div>
+
+                        <div class="chat-room-view" style="display: none;">
+                            <div class="chat-room-header">
+                                <div class="chat-room-back"><i class="fa-solid fa-align-justify"></i></div>
+                                <div class="chat-room-pin" id="search-messages"><i class="fa-solid fa-magnifying-glass"></i></div>
+                                <div class="chat-room-title"><i class="fa-solid fa-hashtag"></i>  <span></span></div>
+                                <div class="chat-room-pin" id="pinned-messages"><i class="fa-solid fa-thumbtack"></i></div>
+                                <div class="chat-room-memberslist"><i class="fa-solid fa-users"></i></div>
+                            </div>
+                            <div class="secured-banner">This channel is operating under a secured VPN</div>  
+                            <div class="chat-room-container">
+                                <div class="search-results">
+                                    <a href="#" id="close-search"><i class="fa-solid fa-xmark"></i></a>
+                                    <input type="text" class="button-outlined" id="search-message" placeholder="Search for a message." style="padding-right: 25px">
+                
+                                    <div id="no-search-notice">There are no messages matching your search.</div>
+                                    <div class="search-contents" id="search-messages-content"></div>
+                                </div>
+                                <div class="pinned-results">
+                                    <div id="no-pinned-notice">There are currently no pinned messages in this channel.</div>
+
+                                    <div class="search-contents" id="pinned-messages-content"></div>
+                                </div>
+                                <div class="chat-view-container">
+                                    <div class="chat-view"></div>
+                                </div>
+                                <div class="chat-send-message">
+                                    <a href="#" id="send-message"><i class="fa-solid fa-paper-plane"></i></a>
+                                    <input type="text" class="send-chat-message" id="submit-message" placeholder="Press [Enter] to send.">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="chat-members-view" style="display:none;">
+                            <div class="members-list-actions">
+                                <div id="members-back-btn"><i class="fa-solid fa-circle-arrow-left"></i> Back</div>
+                                <div class="chat-room-join"><a href="#" id="join-room"><i class="fa-solid fa-plus"></i> Join</a></div>
+                                <div class="chat-room-leave"><a href="#" id="leave-room"><i class="fa-solid fa-circle-minus"></i> Leave</a></div>
+                            </div>
+                            <h5 style="text-align: center;">Members</h5>
+                            <div id="members-list">
+                            </div>
+                        </div>
+
+                        <div class="chat-modal" id="owned-rooms-list" style="display: none;">
+                            <div class="close-button" id="owned-rooms-list-close"><i class="fa-solid fa-xmark"></i></div>
+                            <h4 class="group-chats-title" style="text-align: center;">YOUR CHANNELS</h4>
+                            
+                            <div id="no-owned-rooms-notice">You do not own any rooms.</div>
+
+                            <div id="owned-room-items"></div>
+                        </div>
+                        <div class="chat-modal" id="options-room-code" style="display: none;">
+                            <div class="close-button" id="options-room-code-close"style="margin-top: 10px;">
+                                <div class="phone-menu-button phone-menu-info" id="disc-create-channel">Create</div>
+                                <div class="phone-menu-button phone-menu-info" id="disc-join-channel" style="margin-right: 40px;">Join</div>
+                                <i class="fa-solid fa-xmark"style="margin-top: -10px;"></i>
+                            </div>
+                        </div>
+                        <div class="chat-modal" id="create-room-code" style="display: none;">
+                            <div class="close-button" id="create-room-code-close">
+                                <span style="font-size: 1.0rem; margin-right: 3.4rem;">Channel Name</span>
+                                <input class="phone-menu-text create-room-name" style="left:-1.5rem;" type="text">
+                                <span style="font-size: 0.8rem; margin-right: 1.78rem; white-space: nowrap; margin-top: 2.0rem;">Channel Password(Optional)</span>
+                                <input class="phone-menu-text create-room-passcode" style="left:-1.5rem;" type="text">
+                                <p> </p>
+                                <div class="phone-menu-button phone-menu-cancel" id="create-room-cancel" style="margin-top: 1.9rem;margin-right: 1.2rem;">Cancel</div>
+                                <div class="phone-menu-button phone-menu-accept" id="create-room-confirm" style="margin-top: 1.9rem;margin-right: 2.2rem;">Submit</div>
+                            </div>
+                        </div>
+                        <div class="chat-modal" id="join-room-code" style="display: none;">
+                            <div class="close-button" id="join-room-code-close"><i class="fa-solid fa-xmark"></i></div>
+
+                            <h4 class="group-chats-title">JOIN A CHANNEL BY CODE</h4>
+
+                            <div class="room-join-code">
+                                <input type="text" class="button-outlined room-input-code" maxlength=5 placeholder="42069">
+                                <h5 class="group-chats-title">Enter A Code</h5>
+                            </div> 
+                        </div>
+                        <div class="chat-modal" id="enter-room-pin" style="display: none;">
+                            <div class="close-button" id="enter-room-pin-close"><i class="fa-solid fa-xmark"></i></div>
+
+                            <h4 class="group-chats-title">Enter Passcode: <span id="room-name-pin"></span></h4>
+
+                            <div class="room-join-code">
+                                <input type="password" class="button-outlined room-input-code" id="room-pin-input" maxlength=50 placeholder="XXXXXX">
+                                <h5 style="text-align: center">This room is private, please enter the passcode.</h5>
+                            </div> 
+                        </div>
+                        <div class="chat-modal" id="confirm-deactivation" style="display: none;">
+                            <div class="close-button" id="confirm-deactivation-close"><i class="fa-solid fa-xmark"></i></div>
+
+                            <h4 class="group-chats-title" style="text-align: center;">Are you sure you want to close this channel? Messages will be lost forever.</h4>
+
+                            <div class="confirm-buttons">
+                                <a href="#" class="confirm">Confirm</a>
+                                <a href="#" class="reject">Cancel</a>
+                            </div> 
+                        </div>
+                        <div class="modal-overlay" style="display: none;"></div>
+                    </div>
+                </div>-->
+                <!-- End DarkWeb app-->
+
+                <!-- Phone Home Button -->
+                <div class="phone-footer">
+                    <div class="phone-home-button-class phone-tab-button"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- JavaScript File's -->
+        <script src="./js/config.js"></script>
+        <script src="./js/app.js"></script>
+        <script src="./js/phone.js"></script>
+        <script src="./js/settings.js"></script>
+        <script src="./js/pulses.js"></script>
+        <script src="./js/bank.js"></script>
+        <script src="./js/message.js"></script>
+        <script src="./js/garage.js"></script>
+        <script src="./js/yellowpages.js"></script>
+        <script src="./js/mail.js"></script>
+        <script src="./js/taxi.js"></script>
+        <script src="./js/gallery.js"></script>
+        <script src="./js/camera.js"></script>
+        <script src="./js/ping.js"></script>
+        <script src="./js/calculator.js"></script>
+        <script src="./js/party.js"></script>
+        <!--<script src="./js/crypto.js"></script>
+        <script src="./js/houses.js"></script>
+        <script src="./js/group-chats.js"></script>
+        <script src="./js/employment.js"></script>
+        <script src="./js/documents.js"></script>
+        <script src="./js/lsbn.js"></script>-->
+        <script type="text/javascript">$('#whatsapp-openedchat-message').emojioneArea({inline: true, searchPosition: "bottom", shortnames: true})</script>
+    </body>
+</html>

@@ -1,0 +1,11 @@
+<svg width="330" height="650" viewBox="0 0 330 650" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Side Buttons -->
+    <path d="M0 100h4v30H0zM0 160h4v30H0zM326 130h4v50h-4z" fill="#111"/>
+    
+    <!-- Main Body with Screen Cutout -->
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M4 40c0-22.091 17.909-40 40-40h242c22.091 0 40 17.909 40 40v570c0 22.091-17.909 40-40 40H44c-22.091 0-40-17.909-40-40V40zm7 0c0-18.225 14.775-33 33-33h242c18.225 0 33 14.775 33 33v570c0 18.225-14.775 33-33 33H44c-18.225 0-33-14.775-33-33V40z" fill="#1a1a1a"/>
+    
+    <!-- Camera and Speaker -->
+    <circle cx="165" cy="20" r="3" fill="#080808"/>
+    <rect x="135" y="16" width="60" height="3" rx="1.5" fill="#080808"/>
+</svg>
