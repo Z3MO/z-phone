@@ -5,7 +5,7 @@
     src: url(https://jsbin-user-assets.s3.amazonaws.com/rafaelcastrocouto/password.ttf);
 }
 
-input.jobcenter-input-password, input.jobcenter-input-password2 {
+input.jobcenter-input-password, input.jobcenter-input-password2, .jobcenter-input-join-password {
     font-family: 'password';
 }
 
@@ -410,6 +410,10 @@ input.jobcenter-input-password, input.jobcenter-input-password2 {
     bottom: 0;
     position: absolute;
     z-index: 20;
+}
+
+.phone-menu-body#jobcenter-box-new-join {
+    z-index: 25;
 }
 
 .jobcenter-playerlist-header {
