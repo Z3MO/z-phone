@@ -51,5 +51,5 @@ This project would not be possible without the incredible foundation built by th
 
 ### 📫 Connect With Me
 *Built with 💻 and ☕ for the FiveM Community.*
-* 📺 **YouTube:** [Check out my dev streams & RP content](LINK_TO_YOUR_YOUTUBE)
-* 💬 **Discord:** Add me at `YOUR_DISCORD_USERNAME` or [Join my Server](LINK_TO_YOUR_DISCORD_SERVER)
+* 📺 **YouTube:** [Check out my dev streams & RP content](www.youtube.com/@Zemoadityatomar)
+* 💬 **Discord:** Add me at `zemo4994` or [Join my Server]( https://discord.gg/ekYJeWB )
