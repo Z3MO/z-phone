@@ -1,0 +1,15 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Restart FiveM Resource",
+			"type": "shell",
+			"command": "Write-Host",
+			"args": [
+				"Phone UI updated with Samsung One UI style - Restart your FiveM resource to see changes"
+			],
+			"group": "build",
+			"isBackground": false
+		}
+	]
+}

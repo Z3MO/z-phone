@@ -170,7 +170,7 @@ local function setJobStatus(groupID, status, stages)
     if not m then return end
     for i=1, #m do
         if m[i] then
-            TriggerClientEvent("qb-phone:client:AddGroupStage", m[i], status, stages)
+            TriggerClientEvent("qb-phone:client:RefreshGroupsApp", m[i], EmploymentGroup)
         end
     end
 end exports('setJobStatus', setJobStatus)
@@ -313,12 +313,21 @@ QBCore.Functions.CreateCallback('qb-phone:server:getAllGroups', function(source,
     end
 end)
 
-QBCore.Functions.CreateCallback('qb-phone:server:jobcenter_CheckPlayerNames', function(_, cb, csn)
-    local Names = {}
-    for _, v in pairs(EmploymentGroup[csn].members) do
-        Names[#Names+1] = v.name
+QBCore.Functions.CreateCallback('qb-phone:server:jobcenter_CheckPlayerNames', function(_, cb, groupID)
+    local ResponseData = {
+        members = {},
+        tasks = {}
+    }
+    if EmploymentGroup[groupID] then
+        for _, v in pairs(EmploymentGroup[groupID].members) do
+            table.insert(ResponseData.members, {
+                name = v.name,
+                isLeader = (v.Player == EmploymentGroup[groupID].leader)
+            })
+        end
+        ResponseData.tasks = EmploymentGroup[groupID].stage or {}
     end
-    cb(Names)
+    cb(ResponseData)
 end)
 
 

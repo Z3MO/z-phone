@@ -390,15 +390,25 @@ input.jobcenter-input-password, input.jobcenter-input-password2, .jobcenter-inpu
 
 .jobcenter-group-action-btn {
     width: 100%;
-    padding: 1.5vh;
-    margin-top: 2vh;
+    padding: 1.2vh;
+    margin-top: 1.5vh;
     border-radius: 1vh;
     text-align: center;
     font-weight: 600;
+    font-size: 1.4vh;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     color: white;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.1vh;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.jobcenter-group-action-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
 }
 
 /* Members List*/
@@ -413,50 +423,86 @@ input.jobcenter-input-password, input.jobcenter-input-password2, .jobcenter-inpu
 }
 
 .phone-menu-body#jobcenter-box-new-join {
-    z-index: 25;
+    z-index: 1000;
 }
 
 .jobcenter-playerlist-header {
-    font-size: 4vh;
-    text-align: center;
-    color: #f9fafb;
+    font-family: 'Teko', sans-serif;
+    font-size: 3vh;
+    text-align: left;
+    color: #ffffff;
     position: absolute;
-    top: 6%;
+    top: 6vh;
+    left: 3.5vw;
+    line-height: 3.5vh;
     width: 100%;
-    font-weight: 700;
+    letter-spacing: 0.1vh;
+    text-shadow: -0.15vh -0.15vh 0 #000, 0.15vh -0.15vh 0 #000, -0.15vh 0.15vh 0 #000, 0.15vh 0.15vh 0 #000, 0.4vh 0.4vh 0 #000;
+    pointer-events: none;
+    z-index: 10;
+    font-weight: 600;
+    text-transform: uppercase;
+    white-space: nowrap;
 }
 
 .jobcenter-playerlist-name {
-    color: white;
+    background: rgba(30, 30, 40, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1.8vh;
+    margin-bottom: 1.5vh;
+    padding: 1.2vh 1.5vh;
     display: flex;
     align-items: center;
-    width: 100%;
-    font-size: 1.6vh;
-    margin-bottom: 1vh;
-    padding: 1.5vh;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 1vh;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: none;
-    box-sizing: border-box;
-    transition: all 0.2s ease;
-    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
 }
 
 .jobcenter-playerlist-name:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 102, 230, 0.15);
+    border-color: #ff66e6;
+    box-shadow: 0 4px 15px rgba(255, 102, 230, 0.2);
+}
+
+.jobcenter-playerlist-name .jobcenter-div-job-group-image {
+    width: 5vh;
+    height: 5vh;
+    border-radius: 50%;
+    font-size: 2vh;
+    margin-right: 2vh;
+    border: 2px solid rgba(255,255,255,0.1);
+}
+
+.jobcenter-div-job-group-image.leader {
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+    box-shadow: 0 4px 10px rgba(253, 160, 133, 0.4);
+    color: #fff;
+}
+
+.jobcenter-div-job-group-image.member {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 4px 10px rgba(118, 75, 162, 0.4);
+    color: #fff;
+}
+
+.jobcenter-member-name {
+    font-family: 'Teko', sans-serif;
+    font-size: 2.5vh;
+    font-weight: 500;
+    color: #ffffff;
+    letter-spacing: 0.1vh;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    text-transform: uppercase;
 }
 
 .jobcenter-playerlist-leave {
     position: absolute;
-    top: 2vh;
-    left: 2vh;
+    top: 6vh;
+    left: 2.5vh;
     transform: none;
-    width: 4.5vh;
-    height: 4.5vh;
+    width: 3.2vh;
+    height: 3.2vh;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 0.8vh;
@@ -464,16 +510,17 @@ input.jobcenter-input-password, input.jobcenter-input-password2, .jobcenter-inpu
     align-items: center;
     justify-content: center;
     color: #ff66e6;
-    font-size: 2.5vh;
+    font-size: 1.6vh;
     cursor: pointer;
     transition: all 0.2s ease;
     z-index: 100;
 }
 
 .jobcenter-playerlist-leave:hover {
+    transform: translateY(-2px);
     background: rgba(255, 102, 230, 0.15);
-    box-shadow: 0 0 15px rgba(255, 102, 230, 0.3);
-    transform: scale(1.1);
+    border-color: #ff66e6;
+    box-shadow: 0 4px 10px rgba(255, 102, 230, 0.2);
 }
 
 #phone-new-box-main-playername {
@@ -483,100 +530,152 @@ input.jobcenter-input-password, input.jobcenter-input-password2, .jobcenter-inpu
     left: 5%;
     right: 5%;
     margin: 0;
-    height: calc(100% - 24vh);
-    overflow-y: auto;
+    height: calc(100% - 14vh);
+    overflow: hidden;
     padding-bottom: 1vh;
+    display: flex;
+    flex-direction: column;
 }
 
 #phone-new-box-main-playername::-webkit-scrollbar {
     display: none;
 }
 
-/* Stage List*/
-.jobcenter-Groupjob {
-    font-family: 'Barlow Condensed', sans-serif;
-    margin-top: 0;
-    width: 90%;
-    display: flex;
-    flex-direction: column;
-    gap: 1vh;
-    padding: 0;
-    position: absolute;
-    top: 18vh;
-    left: 5%;
-    overflow-y: auto;
-    height: calc(100% - 26vh);
-    z-index: 15;
-    pointer-events: auto;
- }
-
- .jobcenter-Groupjob::-webkit-scrollbar {
-    display: none;
-  }
-
- .jobcenter-div-active-stagee {
-    font-weight: 500;
-    width: 100%;
-    padding: 1.5vh;
-    background: rgba(255, 255, 255, 0.05);
-    display: flex;
-    align-items: center;
-    gap: 1.5vh;
-    border-radius: 1vh;
-    color: white;
-    font-size: 1.6vh;
-    position: relative;
-    height: auto;
-    word-break: break-word;
-    box-sizing: border-box;
-    border: 1px solid rgba(255, 255, 255, 0.05);
- }
-
- .isDone {
-    text-decoration: none;
-    background: rgba(16, 185, 129, 0.1);
-    border-color: rgba(16, 185, 129, 0.3);
-    color: #10b981;
- }
-
- .isDone::after {
-    background: #10b981 !important;
- }
-
- .jobcenter-div-active-stagee::after {
-    content: '';
-    background: #ef4444;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 0.5vh;
-    height: 100%;
-    position: absolute;
-    border-radius: 1vh 0 0 1vh;
- }
-
- .jobcenter-div-active-stagee::before {
-    display: none;
- }
-
-.jobcenter-job-value {
-    position: absolute;
-    right: 1.5vh;
-    bottom: auto;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 1.4vh;
-    font-weight: 600;
-    color: #a1a1aa;
+/* New Task Timeline Styles */
+.jobcenter-task-list-header {
+    font-family: 'Teko', sans-serif;
+    font-size: 2.2vh;
+    color: #ff66e6;
+    text-transform: uppercase;
+    text-align: center;
+    margin-top: 1vh;
+    margin-bottom: 2vh;
+    letter-spacing: 0.1vh;
+    text-shadow: 0 0 10px rgba(255, 102, 230, 0.4);
 }
 
-.jobcenter-groupjob-timer {
-    display: none;
-    width: 100%;
-    font-size: 2.5vh;
-    top: 10%;
-    position: absolute;
-    color: white;
-    text-align: center;
+.jobcenter-task-list-container {
+    position: relative;
+    padding: 0 1vh;
     margin: 0;
+}
+
+.task-timeline-item {
+    position: relative;
+    padding-left: 4vh;
+    padding-bottom: 2.5vh;
+}
+
+.task-timeline-item .task-timeline-connector {
+    position: absolute;
+    left: 1.2vh;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.task-timeline-item:last-child .task-timeline-connector {
+    display: none;
+}
+
+.task-timeline-item .task-timeline-dot {
+    position: absolute;
+    left: 0;
+    top: 0.5vh;
+    width: 2.5vh;
+    height: 2.5vh;
+    border-radius: 50%;
+    background: #302b63;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    z-index: 1;
+}
+
+.task-timeline-content {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 1.5vh;
+    border-radius: 1vh;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.task-timeline-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.8vh;
+    font-weight: 600;
+    color: #fff;
+}
+
+.task-timeline-progress {
+    font-family: 'Teko', sans-serif;
+    font-size: 2vh;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.task-timeline-item.completed .task-timeline-dot {
+    background: #10b981;
+    border-color: #10b981;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.task-timeline-item.completed .task-timeline-connector {
+    background: #10b981;
+}
+
+.task-timeline-item.completed .task-timeline-title {
+    text-decoration: line-through;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.task-timeline-item.completed .task-timeline-progress {
+    color: #10b981;
+}
+
+.task-timeline-item.active:not(.completed) .task-timeline-dot {
+    background: #ff66e6;
+    border-color: #ff66e6;
+    box-shadow: 0 0 10px rgba(255, 102, 230, 0.5);
+    animation: pulseDot 1.5s infinite;
+}
+
+@keyframes pulseDot {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.jobcenter-members-section {
+    width: 100%;
+    margin-bottom: 1vh;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.jobcenter-members-section::-webkit-scrollbar {
+    display: none;
+}
+
+.jobcenter-tasks-section {
+    width: 100%;
+    margin-bottom: 1vh;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 1.5vh;
+    padding: 1.5vh 0;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    max-height: 25vh;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+.jobcenter-tasks-section::-webkit-scrollbar {
+    display: none;
+}
+
+.jobcenter-actions-section {
+    width: 100%;
+    padding-bottom: 1vh;
+    flex-shrink: 0;
 }

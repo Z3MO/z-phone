@@ -138,16 +138,6 @@ RegisterNetEvent('qb-phone:client:RefreshGroupsApp', function(Groups, finish)
     })
 end)
 
-
-RegisterNetEvent('qb-phone:client:AddGroupStage', function(_, stage)
-    inJob = true
-    status = _
-    SendNUIMessage({
-        action = "addGroupStage",
-        status =  stage
-    })
-end)
-
 RegisterNetEvent('qb-phone:client:UpdateGroupId', function(id)
     GroupID = id
     if id == 0 then

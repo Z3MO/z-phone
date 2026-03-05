@@ -129,40 +129,17 @@ $(document).ready(function(){
     window.addEventListener('message', function(event) {
         switch(event.data.action) {
             case "refreshApp":
-                // Reset to Groups view on refresh
                 $(".jobcenter-list").stop().css({"display": "block", "left": "5%", "opacity": "1"});
                 $(".job-list").stop().css({"display": "none"});
                 $(".party-plus-icon").stop().css({"display": "flex", "opacity": "1"});
-                $(".jobcenter-header").css({"display": "flex"}); // Show footer
+                $(".jobcenter-header").css({"display": "flex"});
                 $(".jobcenter-text-header").css({"display": "flex"});
-                $(".jobcenter-Groupjob").css({"margin-top": "47%"});
-                clearInterval(Interval);
-                tens = "00";
-                seconds = "00";
-                minutes = "00";
-                appendTens.innerHTML = tens;
-                appendSeconds.innerHTML = seconds;
-                appendminutes.innerHTML = minutes;
-                $(".jobcenter-groupjob-timer").css({"display": "none"});
-            AddDIV(event.data.data)
-            break;
-            case "addGroupStage":
-                AddGroupJobs(event.data.status)
-            break;
-        }
-    })
-});
-
-$(document).ready(function(){
-    window.addEventListener('message', function(event) {
-        switch(event.data.action) {
-            case "GroupAddDIV":
-                if(event.data.showPage && event.data.job != "WAITING"){
-                    AddGroupJobs(event.data.stage)
-                } else {
-                    AddDIV(event.data.data)
+                // Ensure member list is hidden on refresh
+                if ($('#jobcenter-box-new-player-name').is(':visible')) {
+                    $('#jobcenter-box-new-player-name').fadeOut(100);
                 }
-            break;
+                AddDIV(event.data.data);
+                break;
         }
     })
 });
@@ -209,56 +186,6 @@ function AddDIV(data){
     }
 }
 
-function AddGroupJobs(data){
-    var AddOption;
-    $(".jobcenter-Groupjob").html("");
-    $(".jobcenter-Groupjob").css({"margin-top": "23%"});
-    $(".jobcenter-list").html("");
-    $(".jobcenter-list").css({"display": "none"});
-    $(".party-plus-icon").css({"display": "none"});
-    $(".jobcenter-header").css({"display": "none"}); // Hide footer during active job
-    $(".jobcenter-text-header").css({"display": "none"});
-    clearInterval(Interval);
-    Interval = setInterval(startTimer, 10);
-    if(data) {
-
-
-        for (const [k, v] of Object.entries(data)) {
-            let max = 1;
-            let count = 0;
-            if (v.max) {
-                max = v.max
-            }
-            if (v.count) {
-                count = v.count
-            }
-            if (v.isDone) {
-                AddOption =
-                `
-                <div class="jobcenter-div-active-stagee isDone">
-                <p class="jobcenter-job-value"> ${max} / ${max}</p>
-                    <i style="margin-bottom:15px; class="jobcenter-div-active-stage${v.id}">${v.name}</i>
-                </div>
-                `
-            } else {
-                AddOption =
-                `
-                <div class="jobcenter-div-active-stagee">
-                <p class="jobcenter-job-value"> ${count} / ${max} </p>
-                    <i style="margin-bottom:15px;" class="jobcenter-div-active-stage${v.id}">${v.name}</i>
-                </div>
-                `
-            }
-            $('.jobcenter-Groupjob').append(AddOption);
-        }
-    } else {
-        $(".jobcenter-list").css({"display": "block"});
-        $(".jobcenter-header").css({"display": "flex"});
-        $(".party-plus-icon").css({"display": "flex"});
-        $(".jobcenter-Groupjob").css({"margin-top": "47%"});
-    }
-}
-
 // Join Group Action (from inside member view)
 $(document).on('click', '#btn-join-group', function(e){
     e.preventDefault();
@@ -266,7 +193,8 @@ $(document).on('click', '#btn-join-group', function(e){
     ClearPartyInputs();
     if (Status == 'WAITING') {
         // Also check if a password is required for the group
-        if (JoinPass && JoinPass !== "" && JoinPass !== "null" && JoinPass !== "undefined") {
+        if (JoinPass && String(JoinPass) !== "" && String(JoinPass) !== "null" && String(JoinPass) !== "undefined") {
+            $('#jobcenter-box-new-player-name').fadeOut(350);
             $('#jobcenter-box-new-join').fadeIn(350);
         } else {
             // No password, join directly
@@ -302,11 +230,11 @@ $(document).on('click', '#jobcenter-submit-join-group', function(e){
 // Click on Group Card to open details
 $(document).on('click', '.jobcenter-div-job-group', function(e){
     e.preventDefault();
-    var id = $(this).data('id');
+    var id = $(this).attr('data-id');
     var state = $(this).data('state');
     var pass = $(this).attr('data-pass');
     if (pass === undefined || pass === null) pass = "";
-    var status = $(this).data('status');
+    var status = $(this).attr('data-status');
 
     // Store group data in global variables to be used by the action buttons inside the modal.
     // This avoids issues with passing data (like passwords with special characters) through data-attributes.
@@ -315,17 +243,58 @@ $(document).on('click', '.jobcenter-div-job-group', function(e){
     Status = status;
 
     $.post(`https://${GetParentResourceName()}/jobcenter_CheckPlayerNames`, JSON.stringify({
-        id: id,
-        }), function(Data){
+        id: parseInt(id),
+        }), function(ResponseData){
            ClearPartyInputs();
            $('#jobcenter-box-new-player-name').fadeIn(350);
            $("#phone-new-box-main-playername").html("");
-            for (const [k, v] of Object.entries(Data)) {
-                var AddOption = `<div class="jobcenter-playerlist-name"><div class="jobcenter-div-job-group-image"><i class="fas fa-users"></i></div>${v}`
-                $('#phone-new-box-main-playername').append(AddOption);
+           
+            // 1. Render Members Section
+            var membersSection = $('<div class="jobcenter-members-section"></div>');
+            for (const [k, v] of Object.entries(ResponseData.members)) {
+                var icon = v.isLeader ? "fa-crown" : "fa-user";
+                var roleClass = v.isLeader ? "leader" : "member";
+                var AddOption = `<div class="jobcenter-playerlist-name"><div class="jobcenter-div-job-group-image ${roleClass}"><i class="fas ${icon}"></i></div><div class="jobcenter-member-name">${v.name}</div></div>`
+                membersSection.append(AddOption);
+            }
+            $('#phone-new-box-main-playername').append(membersSection);
+            
+            // 2. Render Tasks Section
+            if (ResponseData.tasks && Object.keys(ResponseData.tasks).length > 0) {
+                var tasksSection = $('<div class="jobcenter-tasks-section"></div>');
+                tasksSection.append('<div class="jobcenter-task-list-header">OBJECTIVES</div>');
+                var taskListContainer = $('<div class="jobcenter-task-list-container"></div>');
+                tasksSection.append(taskListContainer);
+
+                let firstActiveFound = false;
+                for (const [k, v] of Object.entries(ResponseData.tasks)) {
+                    let max = v.max || 1;
+                    let count = v.count || 0;
+                    let isDone = v.isDone;
+                    let statusClass = isDone ? 'completed' : '';
+                    let activeClass = '';
+
+                    if (!isDone && !firstActiveFound) {
+                        activeClass = 'active';
+                        firstActiveFound = true;
+                    }
+
+                    var taskHTML = `
+                        <div class="task-timeline-item ${statusClass} ${activeClass}">
+                            <div class="task-timeline-connector"></div>
+                            <div class="task-timeline-dot"></div>
+                            <div class="task-timeline-content">
+                                <div class="task-timeline-title">${v.name}</div>
+                                <div class="task-timeline-progress">${count}/${max}</div>
+                            </div>
+                        </div>`;
+                    taskListContainer.append(taskHTML);
+                }
+                $('#phone-new-box-main-playername').append(tasksSection);
             }
             
-            // Add Action Button based on State
+            // 3. Render Action Button Section
+            var actionsSection = $('<div class="jobcenter-actions-section"></div>');
             var ActionBtn = "";
             if (state === "LEADER") {
                 ActionBtn = `<div class="jobcenter-group-action-btn" id="btn-delete-group" data-id="${id}" style="background: #ef4444;"><i class="fas fa-trash-alt"></i> Delete Group</div>`;
@@ -335,8 +304,8 @@ $(document).on('click', '.jobcenter-div-job-group', function(e){
                 // The button no longer needs to hold the data, as it's stored globally on card click.
                 ActionBtn = `<div class="jobcenter-group-action-btn" id="btn-join-group" style="background: #3b82f6;"><i class="fas fa-sign-in-alt"></i> Join Group</div>`;
             }
-            $('#phone-new-box-main-playername').append(ActionBtn);
-            $('#phone-new-box-main-playername').append('<p> </p>');
+            actionsSection.append(ActionBtn);
+            $('#phone-new-box-main-playername').append(actionsSection);
     });
 });
 
@@ -361,45 +330,3 @@ $(document).on('click', '#btn-leave-group', function(e){
     }));
     $('#jobcenter-box-new-player-name').fadeOut(350);
 });
-
-var minutes = 00;
-var seconds = 00;
-var tens = 00;
-var appendTens = document.getElementById("tens")
-var appendSeconds = document.getElementById("seconds")
-var appendminutes = document.getElementById("minutes")
-var buttonStart = document.getElementById('button-start');
-var buttonStop = document.getElementById('button-stop');
-var buttonReset = document.getElementById('button-reset');
-var Interval ;
-
-function startTimer () {
-    tens++;
-
-    if(tens <= 9){
-      appendTens.innerHTML = "0" + tens;
-    }
-
-    if (tens > 9){
-      appendTens.innerHTML = tens;
-
-    }
-
-    if (tens > 99) {
-      seconds++;
-      appendSeconds.innerHTML = "0" + seconds;
-      tens = 0;
-      appendTens.innerHTML = "0" + 0;
-    }
-
-    if (seconds > 9){
-      appendSeconds.innerHTML = seconds;
-    }
-
-    if (seconds > 60){
-        minutes++;
-        appendminutes.innerHTML = "0" + minutes;
-        seconds = 0;
-        appendSeconds.innerHTML = "0" + 0;
-      }
-  }
