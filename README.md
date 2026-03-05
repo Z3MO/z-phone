@@ -1,5 +1,49 @@
 # z-phone
 Z-Phone: A premium FiveM phone script for QBCore. Features a unified dark UI, custom SVG icons, streamlined apps, and content-creator friendly design.
+Home Page
+https://i.vgy.me/nOo5iG.png
+
+Next Pages
+https://i.vgy.me/8ms9OA.png
+https://i.vgy.me/kERWZE.png
+
+Calculator
+https://i.vgy.me/toFBrv.png
+
+Settings
+https://i.vgy.me/vsBDR9.png
+https://i.vgy.me/avIAth.png
+https://i.vgy.me/S2Rnoz.png
+https://i.vgy.me/szyye4.png
+
+Maps
+https://i.vgy.me/dD3c3s.png
+
+Party Application
+https://i.vgy.me/9kYVlp.png
+https://i.vgy.me/RtGjHJ.png
+https://i.vgy.me/XRPi6m.png
+https://i.vgy.me/4VEopW.png
+
+Pulses (Socail Media)
+https://i.vgy.me/GZlqJN.png
+https://i.vgy.me/x9Ugqt.png
+https://i.vgy.me/QWVepp.png
+
+Proxi(Marketplace)
+https://i.vgy.me/mjeHXC.png
+https://i.vgy.me/SSSdrc.png
+
+Mail
+https://i.vgy.me/6aCRkI.png
+https://i.vgy.me/ZqhWBa.png
+https://i.vgy.me/E9nqlt.png
+
+WeedMarket(soon)
+Phone Dialer(soon)
+Garage(soon)
+Messages(soon)
+Darkchat(soon)
 # 📱 Z-Phone (Advanced QBCore Phone)
 
 ![FiveM](https://img.shields.io/badge/FiveM-F4A90A?style=for-the-badge&logo=fivem&logoColor=white)
