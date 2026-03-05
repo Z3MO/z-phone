@@ -1,50 +1,3 @@
-# z-phone
-Z-Phone: A premium FiveM phone script for QBCore. Features a unified dark UI, custom SVG icons, streamlined apps, and content-creator friendly design.
-
-Home Page
-https://i.vgy.me/nOo5iG.png
-
-Next Pages
-https://i.vgy.me/8ms9OA.png
-https://i.vgy.me/kERWZE.png
-
-Calculator
-https://i.vgy.me/toFBrv.png
-
-Settings
-https://i.vgy.me/vsBDR9.png
-https://i.vgy.me/avIAth.png
-https://i.vgy.me/S2Rnoz.png
-https://i.vgy.me/szyye4.png
-
-Maps
-https://i.vgy.me/dD3c3s.png
-
-Party Application
-https://i.vgy.me/9kYVlp.png
-https://i.vgy.me/RtGjHJ.png
-https://i.vgy.me/XRPi6m.png
-https://i.vgy.me/4VEopW.png
-
-Pulses (Socail Media)
-https://i.vgy.me/GZlqJN.png
-https://i.vgy.me/x9Ugqt.png
-https://i.vgy.me/QWVepp.png
-
-Proxi(Marketplace)
-https://i.vgy.me/mjeHXC.png
-https://i.vgy.me/SSSdrc.png
-
-Mail
-https://i.vgy.me/6aCRkI.png
-https://i.vgy.me/ZqhWBa.png
-https://i.vgy.me/E9nqlt.png
-
-WeedMarket(soon)
-Phone Dialer(soon)
-Garage(soon)
-Messages(soon)
-Darkchat(soon)
 # 📱 Z-Phone (Advanced QBCore Phone)
 
 ![FiveM](https://img.shields.io/badge/FiveM-F4A90A?style=for-the-badge&logo=fivem&logoColor=white)
@@ -53,28 +6,55 @@ Darkchat(soon)
 
 **Z-Phone** is a highly customized, fully redesigned smartphone resource for the QBCore Framework. Built from the ground up to replace the clunky, outdated interfaces of older phone scripts, Z-Phone introduces a modern, dark-mode, frosted-glass aesthetic designed for high-tier roleplay servers and content creators.
 
-## ✨ What Makes Z-Phone Different? (The Changes)
+---
+
+## 📸 Screenshots
+
+### Home & Navigation
+| Home Page | App Drawer | Calculator | Maps |
+|:---:|:---:|:---:|:---:|
+| <img src="https://i.vgy.me/nOo5iG.png" width="200"> | <img src="https://i.vgy.me/8ms9OA.png" width="200"><br><img src="https://i.vgy.me/kERWZE.png" width="200"> | <img src="https://i.vgy.me/toFBrv.png" width="200"> | <img src="https://i.vgy.me/dD3c3s.png" width="200"> |
+
+### Party Application
+| Active Party | Tasks | Jobs | Details |
+|:---:|:---:|:---:|:---:|
+| <img src="https://i.vgy.me/9kYVlp.png" width="200"> | <img src="https://i.vgy.me/RtGjHJ.png" width="200"> | <img src="https://i.vgy.me/XRPi6m.png" width="200"> | <img src="https://i.vgy.me/4VEopW.png" width="200"> |
+
+### Pulses (Social Media) & Mail
+| Feed | Profile | Mail Inbox | Reading Mail |
+|:---:|:---:|:---:|:---:|
+| <img src="https://i.vgy.me/GZlqJN.png" width="200"> | <img src="https://i.vgy.me/QWVepp.png" width="200"><br><img src="https://i.vgy.me/x9Ugqt.png" width="200"> | <img src="https://i.vgy.me/6aCRkI.png" width="200"><br><img src="https://i.vgy.me/E9nqlt.png" width="200"> | <img src="https://i.vgy.me/ZqhWBa.png" width="200"> |
+
+### Proxi (Marketplace) & Settings
+| Proxi Market | Item Details | Settings 1 | Settings 2 |
+|:---:|:---:|:---:|:---:|
+| <img src="https://i.vgy.me/mjeHXC.png" width="200"> | <img src="https://i.vgy.me/SSSdrc.png" width="200"> | <img src="https://i.vgy.me/vsBDR9.png" width="200"><br><img src="https://i.vgy.me/avIAth.png" width="200"> | <img src="https://i.vgy.me/S2Rnoz.png" width="200"><br><img src="https://i.vgy.me/szyye4.png" width="200"> |
+
+---
+
+## ✨ What Makes Z-Phone Different?
 
 While standard `qb-phone` and `qb-phone-renewed` provide great functional bases, they often lack the premium, cohesive UI expected in modern FiveM servers. Z-Phone was built to bridge that gap. 
 
 **Key Improvements & Differences:**
 * **"Zero Sharp Edges" Aesthetic:** A completely overhauled HTML/CSS frontend featuring matte dark tones, glowing neon accents, and frosted-glass depth effects. 
-* **Streamlined Codebase:** Removed unnecessary bloat. Unused or highly-specific apps (like Documents, Crypto, and Houses) have been separated into a `Not-used` archive, ensuring the active phone runs buttery smooth with zero UI lag.
-* **Redesigned App Ecosystem:** Every core app (Bank, Messages, Garage, Pulses, Yellow Pages) has been visually unified so the phone feels like a single operating system, not a collection of random scripts.
+* **Streamlined Codebase:** Removed unnecessary bloat. Unused or highly-specific apps (like Documents, Crypto, and Houses) have been separated into a `Not-used` archive.
+* **Redesigned App Ecosystem:** Every core app has been visually unified so the phone feels like a single operating system, not a collection of random scripts.
 * **Custom SVGs & Icons:** Replaced pixelated image icons with crisp, scalable SVGs for flawless rendering on any monitor resolution.
 * **Content-Creator Friendly:** Designed specifically with streamers in mind, ensuring the UI looks incredible on video and live streams without obstructing gameplay.
 
 ## 📱 Included Applications
 
 * **Core:** Messages, Dialer, Contacts, Settings, Camera, Gallery.
-* **Services:** Bank, Mail, Proxi(Yellow Pages), Garage (Track & Manage Vehicles), Taxi.
+* **Services:** Bank, Mail, Proxi (Yellow Pages/Marketplace), Garage (Track & Manage Vehicles), Taxi.
 * **Social:** Pulses (Social Media platform), Party (Group Management), Ping (Location Sharing).
 
 ## 🌿 Also Currently Working On...
 
-Beyond Z-Phone, I am actively developing an advanced **Weed Script & Underground Marketplace**. This upcoming script pushes criminal RP to the next level by introducing:
-* A fully functional digital marketplace for buying/selling product.
-* **Player-Owned Strain Stats:** Players can cultivate, cross-breed, and name their own unique strains, complete with dynamic stats, varying potencies, and custom effects. 
+I am actively expanding Z-Phone's capabilities and developing companion scripts. **Coming soon:**
+* **New Phone Apps:** Phone Dialer overhaul, Garage updates, dark-themed Messages, and Darkchat.
+* **Advanced Weed Script & Underground Marketplace:** Pushing criminal RP to the next level by introducing a fully functional digital marketplace for buying/selling product.
+* **Player-Owned Strain Stats:** Players will be able to cultivate, cross-breed, and name their own unique strains, complete with dynamic stats, varying potencies, and custom effects. 
 
 ## 🤝 Inspirations & Credits
 
@@ -96,5 +76,5 @@ This project would not be possible without the incredible foundation built by th
 
 ### 📫 Connect With Me
 *Built with 💻 and ☕ for the FiveM Community.*
-* 📺 **YouTube:** [Check out my dev streams & RP content](www.youtube.com/@Zemoadityatomar)
-* 💬 **Discord:** Add me at `zemo4994` or [Join my Server]( https://discord.gg/ekYJeWB )
+* 📺 **YouTube:** [Check out my dev streams & RP content](https://www.youtube.com/@Zemoadityatomar)
+* 💬 **Discord:** Add me at `zemo4994` or [Join my Server](https://discord.gg/ekYJeWB)
