@@ -6,6 +6,18 @@ var SelectedSuggestion = null;
 var AmountOfSuggestions = 0;
 var keyPadHTML;
 
+var _contactSearchTimer = null;
+$(document).on("keyup", "#contact-search", function() {
+    var input = this;
+    clearTimeout(_contactSearchTimer);
+    _contactSearchTimer = setTimeout(function() {
+        var value = input.value.toLowerCase();
+        $(".phone-contact-list .phone-contact").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        });
+    }, 150);
+});
+
 $(document).on('click', '.phone-app-footer-button', function(e){
     e.preventDefault();
 
@@ -58,9 +70,12 @@ $(document).on("click", "#phone-search-icon", function(e){
 });
 
 QB.Phone.Functions.SetupRecentCalls = function(recentcalls) {
-    $(".phone-recent-calls").html("");
+    var container = $(".phone-recent-calls");
+    container.html("");
 
     recentcalls = recentcalls.reverse();
+
+    var fragment = document.createDocumentFragment();
 
     $.each(recentcalls, function(i, recentCall){
         var FirstLetter = (recentCall.name).charAt(0);
@@ -68,17 +83,21 @@ QB.Phone.Functions.SetupRecentCalls = function(recentcalls) {
         var IconStyle = "color: #e74c3c;";
         if (recentCall.type === "outgoing") {
             TypeIcon = 'fas fa-phone-volume';
-            var IconStyle = "color: #2ecc71;";
+            IconStyle = "color: #2ecc71;";
         }
         if (recentCall.anonymous) {
             FirstLetter = "A";
             recentCall.name = "Anonymous";
         }
-        var elem = '<div class="phone-recent-call" id="recent-'+i+'"><div class="phone-recent-call-image">'+FirstLetter+'</div> <div class="phone-recent-call-name">'+recentCall.name+'</div> <div class="phone-recent-call-type"><i class="'+TypeIcon+'" style="'+IconStyle+'"></i></div> <div class="phone-recent-call-time">'+recentCall.time+'</div> </div>'
-
-        $(".phone-recent-calls").append(elem);
-        $("#recent-"+i).data('recentData', recentCall);
+        var div = document.createElement('div');
+        div.className = "phone-recent-call";
+        div.id = "recent-"+i;
+        div.innerHTML = '<div class="phone-recent-call-image">'+FirstLetter+'</div> <div class="phone-recent-call-name">'+recentCall.name+'</div> <div class="phone-recent-call-type"><i class="'+TypeIcon+'" style="'+IconStyle+'"></i></div> <div class="phone-recent-call-time">'+recentCall.time+'</div>';
+        $(div).data('recentData', recentCall);
+        fragment.appendChild(div);
     });
+
+    container[0].appendChild(fragment);
 }
 
 $(document).on('click', '.phone-recent-call', function(e){
@@ -185,7 +204,8 @@ $(document).on('click', ".phone-keypad-key-call", function(e){
 
 QB.Phone.Functions.LoadContacts = function(myContacts) {
     var ContactsObject = $(".phone-contact-list");
-    $(ContactsObject).html("");
+    var container = ContactsObject[0];
+    container.innerHTML = "";
     var TotalContacts = 0;
 
     $(".phone-contacts").hide();
@@ -194,29 +214,25 @@ QB.Phone.Functions.LoadContacts = function(myContacts) {
 
     $(".phone-"+CurrentFooterTab).show();
 
-    $("#contact-search").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $(".phone-contact-list .phone-contact").filter(function() {
-          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-        });
-    });
-
     if (myContacts !== null) {
+        var fragment = document.createDocumentFragment();
         $.each(myContacts, function(i, contact){
             contact.name = DOMPurify.sanitize(contact.name , {
                 ALLOWED_TAGS: [],
                 ALLOWED_ATTR: []
             });
-            if (contact.name == '') contact.name = 'Unknown Contact'
-            var ContactElement = '<div class="phone-contact" data-contactid="'+i+'"><div class="phone-contact-firstletter" style="background-color: dodgerblue;">'+((contact.name).charAt(0)).toUpperCase()+'</div><div class="phone-contact-name">'+contact.name+'</div><div class="phone-contact-actions"><i class="fas fa-sort-down"></i></div><div class="phone-contact-action-buttons"> <i class="fas fa-phone-volume" id="phone-start-call"></i> <i class="fa-solid fa-message" id="new-chat-phone"></i> <i class="fas fa-user-edit" id="edit-contact"></i> </div></div>'
-            if (contact.status) {
-                ContactElement = '<div class="phone-contact" data-contactid="'+i+'"><div class="phone-contact-firstletter" style="background-color: #fc4e03;;">'+((contact.name).charAt(0)).toUpperCase()+'</div><div class="phone-contact-name">'+contact.name+'</div><div class="phone-contact-actions"><i class="fas fa-sort-down"></i></div><div class="phone-contact-action-buttons"> <i class="fas fa-phone-volume" id="phone-start-call"></i> <i class="fa-solid fa-message" id="new-chat-phone"></i> <i class="fas fa-user-edit" id="edit-contact"></i> </div></div>'
-            }
-            TotalContacts = TotalContacts + 1
-            $(ContactsObject).append(ContactElement);
-            $("[data-contactid='"+i+"']").data('contactData', contact);
+            if (contact.name === '') contact.name = 'Unknown Contact';
+            var div = document.createElement('div');
+            div.className = "phone-contact";
+            div.setAttribute('data-contactid', i);
+            var bgColor = contact.status ? '#fc4e03' : 'dodgerblue';
+            div.innerHTML = '<div class="phone-contact-firstletter" style="background-color: '+bgColor+';">'+((contact.name).charAt(0)).toUpperCase()+'</div><div class="phone-contact-name">'+contact.name+'</div><div class="phone-contact-actions"><i class="fas fa-sort-down"></i></div><div class="phone-contact-action-buttons"> <i class="fas fa-phone-volume" id="phone-start-call"></i> <i class="fa-solid fa-message" id="new-chat-phone"></i> <i class="fas fa-user-edit" id="edit-contact"></i> </div>';
+            $(div).data('contactData', contact);
+            fragment.appendChild(div);
+            TotalContacts++;
         });
-        $("#total-contacts").text(TotalContacts+ " contacts");
+        container.appendChild(fragment);
+        $("#total-contacts").text(TotalContacts + " contacts");
     } else {
         $("#total-contacts").text("0 contacten #SAD");
     }
@@ -663,16 +679,22 @@ QB.Phone.Functions.AnswerCall = function(CallData) {
 }
 
 QB.Phone.Functions.SetupSuggestedContacts = function(Suggested) {
-    $(".suggested-contacts").html("");
+    var container = $(".suggested-contacts")[0];
+    container.innerHTML = "";
     AmountOfSuggestions = Suggested.length;
     if (AmountOfSuggestions > 0) {
         $(".amount-of-suggested-contacts").html(AmountOfSuggestions + " contacts");
         Suggested = Suggested.reverse();
+        var fragment = document.createDocumentFragment();
         $.each(Suggested, function(index, suggest){
-            var elem = '<div class="suggested-contact" id="suggest-'+index+'"> <i class="fas fa-exclamation-circle"></i> <span class="suggested-name">'+suggest.name[0]+' '+suggest.name[1]+' &middot; <span class="suggested-number">'+suggest.number+'</span></span> </div>';
-            $(".suggested-contacts").append(elem);
-            $("#suggest-"+index).data('SuggestionData', suggest);
+            var div = document.createElement('div');
+            div.className = "suggested-contact";
+            div.id = "suggest-"+index;
+            div.innerHTML = '<i class="fas fa-exclamation-circle"></i> <span class="suggested-name">'+suggest.name[0]+' '+suggest.name[1]+' &middot; <span class="suggested-number">'+suggest.number+'</span></span>';
+            $(div).data('SuggestionData', suggest);
+            fragment.appendChild(div);
         });
+        container.appendChild(fragment);
     } else {
         $(".amount-of-suggested-contacts").html("0 contacts");
     }

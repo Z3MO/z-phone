@@ -54,6 +54,47 @@ QB.Phone.Data = {
 
 QB.Phone.Data.MaxSlots = 16;
 
+QB.Phone.AppIntervals = {};
+QB.Phone.Elements = {};
+
+QB.Phone.Functions.Debounce = function(func, delay) {
+    var timer;
+    return function() {
+        var context = this, args = arguments;
+        clearTimeout(timer);
+        timer = setTimeout(function() {
+            func.apply(context, args);
+        }, delay);
+    };
+};
+
+QB.Phone.Functions.StartAppIntervals = function(appName) {
+    var cont = document.querySelector('.container');
+    if (cont) cont.classList.remove('phone-intervals-paused');
+    if (appName === 'home' || appName === null) {
+        if (!QB.Phone.AppIntervals.widgetClock) {
+            QB.Phone.AppIntervals.widgetClock = setInterval(function() {
+                var now = new Date();
+                var timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                var dateString = now.toLocaleDateString([], {weekday: 'short', month: 'short', day: 'numeric'});
+                $(".widget-time .time-display").text(timeString);
+                $(".widget-time .date-display").text(dateString);
+            }, 60000);
+        }
+    }
+};
+
+QB.Phone.Functions.StopAppIntervals = function(appName) {
+    if (appName === 'all' || appName === 'home' || appName === null) {
+        var cont = document.querySelector('.container');
+        if (cont) cont.classList.add('phone-intervals-paused');
+        if (QB.Phone.AppIntervals.widgetClock) {
+            clearInterval(QB.Phone.AppIntervals.widgetClock);
+            QB.Phone.AppIntervals.widgetClock = null;
+        }
+    }
+};
+
 OpenedChatData = {
     number: null,
 }
@@ -135,44 +176,52 @@ QB.Phone.Functions.SetupApplications = function(data) {
     var remainingPageApps = pageApps.slice(4); // Start from app 5 onwards
     var allRemainingApps = [...remainingPageApps, ...dockApps]; // Combine remaining page apps with dock apps
     var additionalPages = Math.ceil(allRemainingApps.length / appsPerPage);
-    
+
+    var pageContainerFragment = document.createDocumentFragment();
+
     for (let page = 0; page < additionalPages; page++) {
-        var pageElement = $('<div class="phone-page"></div>');
-        
+        var pageElement = document.createElement('div');
+        pageElement.className = 'phone-page';
+        var pageFragment = document.createDocumentFragment();
+
         for (let i = 0; i < appsPerPage; i++) {
             var appIndex = page * appsPerPage + i;
+            var appDiv = document.createElement('div');
             if (appIndex < allRemainingApps.length) {
                 var app = allRemainingApps[appIndex];
-                var customStyle = app.style ? `style="${app.style}"` : '';
-                var iconElement = app.icon.startsWith('fa') ? 
-                    `<i class="ApplicationIcon ${app.icon}" ${customStyle}></i>` : 
-                    (app.icon.includes('.') ? `<img class="ApplicationIcon" src="./img/apps/${app.icon}" ${customStyle}>` : `<img class="ApplicationIcon" src="./img/apps/${app.icon}.png" ${customStyle}>`);
-                    
-                var appElement = $(`
-                    <div class="phone-application" data-appslot="${app.slot}" data-app="${app.app}">
-                        ${iconElement}
-                        <p class="application-description">${app.tooltipText}</p>
-                        <div class="app-unread-alerts">0</div>
-                    </div>
-                `);
-                
-                pageElement.append(appElement);
+                var customStyle = app.style ? ` style="${app.style}"` : '';
+                var iconHTML = app.icon.startsWith('fa') ?
+                    `<i class="ApplicationIcon ${app.icon}"${customStyle}></i>` :
+                    (app.icon.includes('.') ? `<img class="ApplicationIcon" src="./img/apps/${app.icon}"${customStyle}>` : `<img class="ApplicationIcon" src="./img/apps/${app.icon}.png"${customStyle}>`);
+                appDiv.className = 'phone-application';
+                appDiv.setAttribute('data-appslot', app.slot);
+                appDiv.setAttribute('data-app', app.app);
+                appDiv.innerHTML = iconHTML + '<p class="application-description">' + app.tooltipText + '</p><div class="app-unread-alerts">0</div>';
             } else {
                 // Add empty slot to maintain grid
-                pageElement.append('<div class="phone-application empty-slot"></div>');
+                appDiv.className = 'phone-application empty-slot';
             }
+            pageFragment.appendChild(appDiv);
         }
-        
-        $(".phone-page-container").append(pageElement);
+
+        pageElement.appendChild(pageFragment);
+        pageContainerFragment.appendChild(pageElement);
     }
+
+    document.querySelector('.phone-page-container').appendChild(pageContainerFragment);
 
     // Setup page indicators (only show if there are multiple pages)
     var totalPages = 1 + additionalPages;
+    var pageIndicatorsEl = document.querySelector('.page-indicators');
     if (totalPages > 1) {
+        var dotFragment = document.createDocumentFragment();
         for (let i = 0; i < totalPages; i++) {
-            var dotClass = i === 0 ? 'page-dot active' : 'page-dot';
-            $(".page-indicators").append(`<div class="${dotClass}" data-page="${i}"></div>`);
+            var dot = document.createElement('div');
+            dot.className = i === 0 ? 'page-dot active' : 'page-dot';
+            dot.setAttribute('data-page', i);
+            dotFragment.appendChild(dot);
         }
+        pageIndicatorsEl.appendChild(dotFragment);
         $(".page-indicators").show();
     } else {
         $(".page-indicators").hide();
@@ -242,42 +291,34 @@ QB.Phone.Functions.CreateHomePage = function(apps, dockApps) {
     `);
     
     // Add main apps to the apps section (first 4 apps)
+    var homeAppsSection = homePageElement.find('.home-apps-section')[0];
+    var homeAppsFragment = document.createDocumentFragment();
     for (let i = 0; i < Math.min(4, apps.length); i++) {
         var app = apps[i];
-        var customStyle = app.style ? `style="${app.style}"` : '';
-        var iconElement = app.icon.startsWith('fa') ? 
-            `<i class="ApplicationIcon ${app.icon}" ${customStyle}></i>` : 
-            (app.icon.includes('.') ? `<img class="ApplicationIcon" src="./img/apps/${app.icon}" ${customStyle}>` : `<img class="ApplicationIcon" src="./img/apps/${app.icon}.png" ${customStyle}>`);
-            
-        var appElement = $(`
-            <div class="phone-application" data-appslot="${app.slot}" data-app="${app.app}">
-                ${iconElement}
-                <p class="application-description">${app.tooltipText}</p>
-                <div class="app-unread-alerts">0</div>
-            </div>
-        `);
-        
-        homePageElement.find('.home-apps-section').append(appElement);
+        var customStyle = app.style ? ` style="${app.style}"` : '';
+        var iconHTML = app.icon.startsWith('fa') ?
+            `<i class="ApplicationIcon ${app.icon}"${customStyle}></i>` :
+            (app.icon.includes('.') ? `<img class="ApplicationIcon" src="./img/apps/${app.icon}"${customStyle}>` : `<img class="ApplicationIcon" src="./img/apps/${app.icon}.png"${customStyle}>`);
+        var appDiv = document.createElement('div');
+        appDiv.className = 'phone-application';
+        appDiv.setAttribute('data-appslot', app.slot);
+        appDiv.setAttribute('data-app', app.app);
+        appDiv.innerHTML = iconHTML + '<p class="application-description">' + app.tooltipText + '</p><div class="app-unread-alerts">0</div>';
+        homeAppsFragment.appendChild(appDiv);
     }
-    
+    homeAppsSection.appendChild(homeAppsFragment);
+
     // Add quick access apps to the quick section (dock apps)
     // Note: Leave this section empty since dock apps appear in the dock area
     // The quick access section will remain empty to maintain the 4-app limit on home page
-    
+
     return homePageElement;
 }
 
 QB.Phone.Functions.UpdateWidgets = function() {
-    // Update time widget every minute
-    setInterval(function() {
-        var now = new Date();
-        var timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        var dateString = now.toLocaleDateString([], {weekday: 'short', month: 'short', day: 'numeric'});
-        
-        $(".widget-time .time-display").text(timeString);
-        $(".widget-time .date-display").text(dateString);
-    }, 60000);
-    
+    // Use AppIntervals management for the clock interval
+    QB.Phone.Functions.StartAppIntervals('home');
+
     // Update bank balance if player data is available
     if (QB.Phone.Data.PlayerData.money) {
         $(".widget-stats .stats-value").text(`$${QB.Phone.Data.PlayerData.money.bank || 0}`);
@@ -506,6 +547,7 @@ QB.Phone.Functions.Open = function(data) {
     QB.Phone.Animations.BottomSlideUp('.container', 800, 0);
     QB.Phone.Animations.BottomSlideUp('.container', 500, 0);
     QB.Phone.Data.IsOpen = true;
+    QB.Phone.Functions.StartAppIntervals('home');
 }
 
 QB.Phone.Functions.ToggleApp = function(app, show) {
@@ -542,6 +584,7 @@ QB.Phone.Functions.Close = function() {
     QB.Phone.Animations.BottomSlideDown('.container', 500, -100);
     $.post(`https://${GetParentResourceName()}/Close`);
     QB.Phone.Data.IsOpen = false;
+    QB.Phone.Functions.StopAppIntervals('all');
 }
 
 QB.Phone.Functions.CloseApplication = function() {
@@ -597,6 +640,7 @@ QB.Phone.Functions.CloseApplication = function() {
     }
 
     QB.Phone.Data.currentApplication = null;
+    QB.Phone.Functions.StartAppIntervals('home');
 }
 
 QB.Phone.Functions.HeaderTextColor = function(newColor, Timeout) {
@@ -1462,5 +1506,14 @@ $(document).on('mouseup touchend', function(e) {
             'transform': 'translateY(0) scale(1)',
             'border-radius': '0px'
         });
+    }
+});
+
+// Visibility change listener: pause/resume intervals when the browser tab is hidden/visible
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        QB.Phone.Functions.StopAppIntervals('all');
+    } else if (QB.Phone.Data.IsOpen) {
+        QB.Phone.Functions.StartAppIntervals(QB.Phone.Data.currentApplication || 'home');
     }
 });

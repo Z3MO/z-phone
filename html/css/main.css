@@ -1329,3 +1329,84 @@ body {
 .custom-control, .custom-switch, .custom-control-input {
     color: white
 }
+
+/* =============================================
+   GPU ACCELERATION & PERFORMANCE OPTIMIZATIONS
+   ============================================= */
+
+/* GPU-accelerated scroll containers – reduce layout reflows */
+.phone-contact-list,
+.phone-recent-calls,
+.suggested-contacts {
+    contain: content;
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+/* Ensure phone background uses GPU layer */
+.phone-background {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}
+
+/* Pause widget animations when the phone is closed (class toggled by JS) */
+.phone-intervals-paused .phone-widget {
+    animation-play-state: paused;
+}
+
+/* =============================================
+   REDUCED MOTION SUPPORT
+   ============================================= */
+@media (prefers-reduced-motion: reduce) {
+    /* Disable decorative widget animations */
+    .phone-widget {
+        animation: none !important;
+    }
+
+    /* Simplify app hover/active transitions to transform-only */
+    .phone-application,
+    .phone-application:hover,
+    .phone-application:active,
+    .home-apps-section .phone-application,
+    .home-apps-section .phone-application:hover,
+    .home-apps-section .phone-application:active,
+    .home-quick-section .phone-application,
+    .home-quick-section .phone-application:hover,
+    .home-quick-section .phone-application:active,
+    .dock-app,
+    .dock-app:hover,
+    .dock-app:active {
+        transition: transform 0.1s ease !important;
+    }
+
+    /* Disable page slide transition */
+    .phone-page-container {
+        transition: none !important;
+    }
+
+    /* Disable page dot scale animation */
+    .page-dot,
+    .page-dot:hover,
+    .page-dot.active {
+        transition: none !important;
+        transform: none !important;
+    }
+
+    /* Disable battery circle animation */
+    .circle {
+        animation: none !important;
+        stroke-dasharray: 75 100;
+    }
+
+    /* Disable music wave animation */
+    .music-wave span {
+        animation: none !important;
+        height: 50% !important;
+    }
+
+    /* Simplify phone container slide animation */
+    .container {
+        transition: opacity 0.2s ease !important;
+    }
+}
