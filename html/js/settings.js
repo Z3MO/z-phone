@@ -83,6 +83,9 @@ $(document).on('click', '.settings-app-tab', function(e){
     if (PressedTab == "background") {
         $(".settings-"+PressedTab+"-tab").css({"display":"block", "left":"100%", "top":"0"}).animate({"left":"0"}, 300);
         QB.Phone.Settings.OpenedTab = PressedTab;
+
+        // Lazy-load background thumbnails the first time this tab is opened
+        QB.Phone.LazyLoader.loadIn('.settings-background-tab');
         
         // Update Background Checkmarks
         $(".background-option-current").remove();

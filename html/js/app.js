@@ -373,6 +373,10 @@ $(document).on('click', '.phone-application', function(e){
 
                 QB.Phone.Data.currentApplication = PressedApplication;
 
+                // Resolve any lazy images for this app, then mount its component
+                QB.Phone.LazyLoader.loadForApp(PressedApplication);
+                QB.Phone.ComponentManager.mount(PressedApplication);
+
                 if (PressedApplication == "pulses") {
                     CurrentPulsesView = "feed";
                     CurrentPulsesTab = "recent";
@@ -554,6 +558,8 @@ QB.Phone.Functions.Open = function(data) {
     QB.Phone.Animations.BottomSlideUp('.container', 500, 0);
     QB.Phone.Data.IsOpen = true;
     QB.Phone.Functions.StartAppIntervals('home');
+    // Invalidate DataSync cache so stale values are re-rendered on next update
+    QB.Phone.DataSync.invalidateAll();
 }
 
 QB.Phone.Functions.ToggleApp = function(app, show) {
@@ -591,6 +597,8 @@ QB.Phone.Functions.Close = function() {
     $.post(`https://${GetParentResourceName()}/Close`);
     QB.Phone.Data.IsOpen = false;
     QB.Phone.Functions.StopAppIntervals('all');
+    QB.Phone.ComponentManager.unmountAll();
+    QB.Phone.DataSync.invalidateAll();
 }
 
 QB.Phone.Functions.CloseApplication = function() {
@@ -599,6 +607,9 @@ QB.Phone.Functions.CloseApplication = function() {
     CanOpenApp = false;
     
     var AppToClose = QB.Phone.Data.currentApplication;
+
+    // Unmount the component before animation so cleanup runs immediately
+    QB.Phone.ComponentManager.unmount(AppToClose);
 
     QB.Phone.Animations.TopSlideUp('.phone-application-container', 300, -100, function() {
         QB.Phone.Functions.ToggleApp(AppToClose, "none");
@@ -1190,10 +1201,15 @@ $(document).ready(function(){
                 QB.Phone.Functions.SetupAppWarnings(event.data.AppData);
                 break;
             case "UpdateBank":
-                QB.Phone.Elements.bankAccountBalance.html("&#36; "+event.data.NewBalance);
-                QB.Phone.Elements.bankAccountBalance.data('balance', event.data.NewBalance);
+                // Smart sync: only touch the DOM if the balance value changed
+                QB.Phone.DataSync.update('bankBalance', event.data.NewBalance, function(val) {
+                    QB.Phone.Elements.bankAccountBalance.html("&#36; " + val);
+                    QB.Phone.Elements.bankAccountBalance.data('balance', val);
+                });
+                QB.Phone.EventBus.emit('phone:bankUpdate', { balance: event.data.NewBalance });
                 break;
             case "UpdateChat":
+                QB.Phone.EventBus.emit('phone:newMessage', event.data);
                 if (QB.Phone.Data.currentApplication == "whatsapp") {
                     if (OpenedChatData.number !== null && OpenedChatData.number == event.data.chatNumber) {
                         QB.Phone.Functions.SetupChatMessages(event.data.chatData);
@@ -1213,6 +1229,7 @@ $(document).ready(function(){
                 });
                 break;
             case "IncomingCallAlert":
+                QB.Phone.EventBus.emit('phone:incomingCall', event.data);
                 $.post(`https://${GetParentResourceName()}/HasPhone`, JSON.stringify({}), function(HasPhone){
                     if (HasPhone) {
                         IncomingCallAlert(event.data.CallData, event.data.Canceled, event.data.AnonymousCall);
@@ -1236,11 +1253,19 @@ $(document).ready(function(){
                 if (!QB.Phone.Data.IsOpen) {
                     QB.Phone.Animations.BottomSlideUp('.container', 250, -50);
                 }
-                QB.Phone.Elements.callOngoingTime.html(timeString);
-                QB.Phone.Elements.currentCallTitle.html(event.data.Name);
-                QB.Phone.Elements.currentCallContact.html(timeString);
+                // Smart sync: only update call time display when the second actually ticks
+                QB.Phone.DataSync.update('callTime', timeString, function(ts) {
+                    QB.Phone.Elements.callOngoingTime.html(ts);
+                    QB.Phone.Elements.currentCallContact.html(ts);
+                });
+                QB.Phone.DataSync.update('callTitle', event.data.Name, function(name) {
+                    QB.Phone.Elements.currentCallTitle.html(name);
+                });
                 break;
             case "CancelOngoingCall":
+                QB.Phone.EventBus.emit('phone:callEnded', {});
+                QB.Phone.DataSync.invalidate('callTime');
+                QB.Phone.DataSync.invalidate('callTitle');
                 QB.Phone.Animations.TopSlideUp('.phone-application-container', 250, -50);
                 setTimeout(function(){
                     QB.Phone.Functions.ToggleApp("phone-call", "none");
@@ -1253,6 +1278,7 @@ $(document).ready(function(){
                 QB.Phone.Functions.LoadContacts(event.data.Contacts);
                 break;
             case "UpdateMails":
+                QB.Phone.EventBus.emit('phone:newMail', event.data);
                 QB.Phone.Functions.SetupMails(event.data.Mails);
                 break;
             case "RefreshProxis":
@@ -1262,6 +1288,7 @@ $(document).ready(function(){
                 break;
             case "UpdatePulses":
                 console.log('UpdatePulses received:', JSON.stringify(event.data.Pulses));
+                QB.Phone.EventBus.emit('phone:newPost', event.data);
                 if (QB.Phone.Data.currentApplication == "pulses") {
                     QB.Phone.Notifications.LoadPulses(event.data.Pulses, event.data.hasVPN, false, true);
                 }
@@ -1280,6 +1307,7 @@ $(document).ready(function(){
                 }
                 break;
             case "UpdateGarages":
+                QB.Phone.EventBus.emit('phone:garageUpdate', event.data);
                 $.post(`https://${GetParentResourceName()}/SetupGarageVehicles`, JSON.stringify({}), function(Vehicles){
                     SetupGarageVehicles(Vehicles);
                 })
