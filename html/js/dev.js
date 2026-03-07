@@ -275,14 +275,79 @@
                 { fullname: "Sultan RS", plate: "DEV001", state: "Stored", garage: "Alta Garage", fuel: "84%", engine: 92, body: 88, paymentsleft: 0 },
                 { fullname: "Baller ST", plate: "DEV002", state: "Out", garage: "Legion Garage", fuel: "57%", engine: 76, body: 80, paymentsleft: 2 }
             ],
-            taxiDrivers: {
-                taxi: {
+            servicesDirectory: [
+                {
+                    Job: "police",
+                    Label: "Police",
+                    Tag: "Emergency",
+                    Description: "Report incidents, request backup, or ask for officer support.",
+                    Accent: "#2563eb",
+                    Icon: "fa-solid fa-shield-halved",
+                    MessageTemplate: "Hello officer, I need assistance.",
                     Players: [
-                        { Name: "Dispatch One", Phone: "555800" },
-                        { Name: "Dispatch Two", Phone: "555801" }
+                        { Name: "Officer Rivera", Phone: "555110", Job: "police", Tag: "Emergency", Label: "Police" }
+                    ]
+                },
+                {
+                    Job: "ambulance",
+                    Label: "EMS",
+                    Tag: "Medical",
+                    Description: "Medical response, patient transport, and welfare checks.",
+                    Accent: "#ef4444",
+                    Icon: "fa-solid fa-truck-medical",
+                    MessageTemplate: "Hi EMS, I need medical assistance.",
+                    Players: [
+                        { Name: "Medic Harper", Phone: "555120", Job: "ambulance", Tag: "Medical", Label: "EMS" }
+                    ]
+                },
+                {
+                    Job: "taxi",
+                    Label: "Taxi",
+                    Tag: "Transport",
+                    Description: "Rides, pickups, and city travel requests.",
+                    Accent: "#3b82f6",
+                    Icon: "fa-solid fa-taxi",
+                    MessageTemplate: "Hi, I need a pickup when you are available.",
+                    Players: [
+                        { Name: "Dispatch One", Phone: "555800", Job: "taxi", Tag: "Transport", Label: "Taxi" },
+                        { Name: "Dispatch Two", Phone: "555801", Job: "taxi", Tag: "Transport", Label: "Taxi" }
+                    ]
+                },
+                {
+                    Job: "mechanic",
+                    Label: "Mechanic",
+                    Tag: "Repair",
+                    Description: "Roadside repairs, diagnostics, and vehicle support.",
+                    Accent: "#f59e0b",
+                    Icon: "fa-solid fa-screwdriver-wrench",
+                    MessageTemplate: "Hi, I need help with my vehicle.",
+                    Players: [
+                        { Name: "Casey Wrench", Phone: "555130", Job: "mechanic", Tag: "Repair", Label: "Mechanic" }
+                    ]
+                },
+                {
+                    Job: "tow",
+                    Label: "Tow",
+                    Tag: "Roadside",
+                    Description: "Impounds, recoveries, and towing support.",
+                    Accent: "#14b8a6",
+                    Icon: "fa-solid fa-truck-pickup",
+                    MessageTemplate: "Hi, I need a tow when you are free.",
+                    Players: []
+                },
+                {
+                    Job: "realestate",
+                    Label: "Real Estate",
+                    Tag: "Housing",
+                    Description: "Property viewings, rentals, and housing questions.",
+                    Accent: "#8b5cf6",
+                    Icon: "fa-solid fa-house",
+                    MessageTemplate: "Hi, I would like to ask about a property.",
+                    Players: [
+                        { Name: "Morgan Keys", Phone: "555140", Job: "realestate", Tag: "Housing", Label: "Real Estate" }
                     ]
                 }
-            }
+            ]
         };
     }
 
@@ -306,7 +371,10 @@
                     MetaData: { ...defaultState.phoneData.MetaData, ...((parsed.phoneData && parsed.phoneData.MetaData) || {}) },
                     Contacts: Array.isArray(parsed.phoneData && parsed.phoneData.Contacts) ? parsed.phoneData.Contacts : defaultState.phoneData.Contacts
                 },
-                whatsappChats: Array.isArray(parsed.whatsappChats) ? parsed.whatsappChats : defaultState.whatsappChats
+                whatsappChats: Array.isArray(parsed.whatsappChats) ? parsed.whatsappChats : defaultState.whatsappChats,
+                servicesDirectory: Array.isArray(parsed.servicesDirectory)
+                    ? parsed.servicesDirectory
+                    : (parsed.taxiDrivers ? parsed.taxiDrivers : defaultState.servicesDirectory)
             };
         } catch {
             return createDefaultState();
@@ -651,7 +719,7 @@
             case "SetupGarageVehicles":
                 return clone(mockState.garageVehicles);
             case "GetAvailableTaxiDrivers":
-                return clone(mockState.taxiDrivers);
+                return clone(mockState.servicesDirectory || mockState.taxiDrivers || []);
             case "GetGalleryData":
                 return clone(mockState.gallery);
             case "DeleteImage":

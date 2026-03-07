@@ -46,7 +46,7 @@ While standard `qb-phone` and `qb-phone-renewed` provide great functional bases,
 ## 📱 Included Applications
 
 * **Core:** Messages, Dialer, Contacts, Settings, Camera, Gallery.
-* **Services:** Bank, Mail, Proxi (Yellow Pages/Marketplace), Garage (Track & Manage Vehicles), Taxi.
+* **Services:** Bank, Mail, Proxi (Yellow Pages/Marketplace), Garage (Track & Manage Vehicles), Services directory.
 * **Social:** Pulses (Social Media platform), Party (Group Management), Ping (Location Sharing).
 
 ## 🧪 Local Browser Dev Preview
@@ -56,7 +56,7 @@ You can now preview the phone UI in a normal browser without joining your FiveM 
 ### How it works
 
 - When `html/index.html` is opened from `localhost`, `127.0.0.1`, `file://`, or with `?dev=1`, the frontend enables a **browser-only dev mode**.
-- Dev mode stubs the NUI requests and loads **mock contacts, chats, mail, pulses, invoices, garage vehicles, taxi drivers, and gallery data** from local browser storage.
+- Dev mode stubs the NUI requests and loads **mock contacts, chats, mail, pulses, invoices, garage vehicles, services staff, and gallery data** from local browser storage.
 - Changes you make in the UI are persisted in `localStorage` until you press **Reset data** in the dev badge.
 
 ### Recommended usage
