@@ -14,6 +14,13 @@
  */
 
 // ─────────────────────────────────────────────────────────────────────────────
+// 0. Namespace bootstrap (idempotent – safe to run again from app.js)
+//    core.js loads before app.js, so QB must be initialised here first.
+// ─────────────────────────────────────────────────────────────────────────────
+window.QB       = window.QB       || {};
+window.QB.Phone = window.QB.Phone || {};
+
+// ─────────────────────────────────────────────────────────────────────────────
 // 1. Event Bus
 //    Usage:
 //      QB.Phone.EventBus.on('phone:newMessage', handler);

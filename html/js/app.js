@@ -1,10 +1,10 @@
-QB = {}
-QB.Phone = {}
-QB.Screen = {}
-QB.Phone.Functions = {}
-QB.Phone.Animations = {}
-QB.Phone.Notifications = {}
-QB.Phone.Notifications.Custom = {}
+window.QB       = window.QB       || {};
+window.QB.Phone = window.QB.Phone || {};
+QB.Screen = QB.Screen || {};
+QB.Phone.Functions = QB.Phone.Functions || {};
+QB.Phone.Animations = QB.Phone.Animations || {};
+QB.Phone.Notifications = QB.Phone.Notifications || {};
+QB.Phone.Notifications.Custom = QB.Phone.Notifications.Custom || {};
 
 // Samsung One UI Easing Functions
 QB.Phone.Animations.SamsungEasing = {
