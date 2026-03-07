@@ -69,9 +69,6 @@ This project would not be possible without the incredible foundation built by th
 
 1. **Free to Use:** You are completely free to use Z-Phone on your FiveM server. 
 2. **Modification:** You may edit, modify, and tweak the HTML/CSS/Lua files to fit the specific needs of your community.
-3. **NO Commercial Use (Do Not Sell):** You are **STRICTLY PROHIBITED** from taking this code, modifying it, and selling it, locking it behind a Patreon, or claiming it as your own paid work. 
-4. **Redistribution:** If you fork this repository or share it, you **must** leave this README intact and provide appropriate credit to this original GitHub repository.
-
 ---
 
 ### 📫 Connect With Me
