@@ -1,7 +1,8 @@
 var WhatsappSearchActive = false;
 var OpenedChatPicture = null;
 var ExtraButtonsOpen = false;
-const MESSAGE_IMAGE_REGEX = /\.(?:jpg|jpeg|gif|png)(?:\?.*)?$/i;
+const IMAGE_FILE_EXTENSION_REGEX = /\.(?:jpg|jpeg|gif|png)(?:\?.*)?$/i;
+const EMPTY_MESSAGES_TEXT = "No messages yet";
 
 $( "input[type=text], textarea, input[type=number], input[type=tel]" ).focusin(function(e) {
     e.preventDefault();
@@ -44,8 +45,8 @@ function sanitizeText(value) {
     }).trim();
 }
 
-function sanitizeNumericValue(value) {
-    return String(value ?? "").replace(/\D/g, "").slice(0, 15);
+function sanitizePhoneNumber(value) {
+    return String(value ?? "").replace(/\D/g, "").slice(0, 6);
 }
 
 function sanitizeImageUrl(urlValue) {
@@ -55,7 +56,7 @@ function sanitizeImageUrl(urlValue) {
     }
 
     const trimmedUrl = rawUrl.trim();
-    if (trimmedUrl === "" || !MESSAGE_IMAGE_REGEX.test(trimmedUrl)) {
+    if (trimmedUrl === "" || !IMAGE_FILE_EXTENSION_REGEX.test(trimmedUrl)) {
         return null;
     }
 
@@ -75,7 +76,7 @@ function sanitizeImageUrl(urlValue) {
 
 function getMessagePreview(messageData) {
     if (!messageData) {
-        return "No messages yet";
+        return EMPTY_MESSAGES_TEXT;
     }
 
     if (messageData.type === "picture") {
@@ -88,7 +89,7 @@ function getMessagePreview(messageData) {
 
     const safeMessage = sanitizeText(messageData.message);
     if (safeMessage === "") {
-        return "No messages yet";
+        return EMPTY_MESSAGES_TEXT;
     }
 
     return safeMessage.length > 38 ? `${safeMessage.slice(0, 38)}…` : safeMessage;
@@ -101,8 +102,20 @@ function setOpenedChatHeader(name, number) {
 
 function createWhatsappEmptyState() {
     const emptyState = document.createElement("div");
+    const icon = document.createElement("i");
+    const title = document.createElement("div");
+    const description = document.createElement("div");
+
     emptyState.className = "whatsapp-empty-state";
-    emptyState.innerHTML = '<i class="fa-regular fa-comments"></i><div class="whatsapp-empty-state-title">No conversations yet</div><div class="whatsapp-empty-state-text">Start a new message to see your chats here.</div>';
+    icon.className = "fa-regular fa-comments";
+    title.className = "whatsapp-empty-state-title";
+    title.textContent = "No conversations yet";
+    description.className = "whatsapp-empty-state-text";
+    description.textContent = "Start a new message to see your chats here.";
+
+    emptyState.appendChild(icon);
+    emptyState.appendChild(title);
+    emptyState.appendChild(description);
     return emptyState;
 }
 
@@ -132,7 +145,7 @@ function createChatElement(chat, index) {
     nameElement.appendChild(nameParagraph);
 
     lastMessageElement.className = "whatsapp-chat-lastmessage";
-    lastMessageParagraph.textContent = lastMessage.message;
+    lastMessageParagraph.textContent = getMessagePreview(lastMessage);
     lastMessageElement.appendChild(lastMessageParagraph);
 
     lastMessageTimeElement.className = "whatsapp-chat-lastmessagetime";
@@ -168,20 +181,24 @@ function createMessageElement(message, sender) {
         messageElement.textContent = sanitizeText(message.message);
     } else if (message.type === "location") {
         messageElement = document.createElement("div");
-        const icon = document.createElement("span");
+        const label = document.createElement("span");
+        const markerIcon = document.createElement("i");
         const timeElement = document.createElement("div");
 
         messageElement.className = `whatsapp-openedchat-message whatsapp-openedchat-message-${sender} whatsapp-shared-location`;
         messageElement.dataset.x = message.data.x;
         messageElement.dataset.y = message.data.y;
 
-        icon.innerHTML = '<i class="fas fa-map-marker-alt" style="font-size: 1vh;"></i> Location';
-        icon.style.fontSize = "1.2vh";
+        label.style.fontSize = "1.2vh";
+        markerIcon.className = "fas fa-map-marker-alt";
+        markerIcon.style.fontSize = "1vh";
+        label.appendChild(markerIcon);
+        label.appendChild(document.createTextNode(" Location"));
 
         timeElement.className = "whatsapp-openedchat-message-time";
         timeElement.textContent = message.time;
 
-        messageElement.appendChild(icon);
+        messageElement.appendChild(label);
         messageElement.appendChild(timeElement);
     } else if (message.type === "picture") {
         const imageUrl = sanitizeImageUrl(message.data && message.data.url);
@@ -191,7 +208,7 @@ function createMessageElement(message, sender) {
 
         messageElement = document.createElement("div");
         messageElement.className = `whatsapp-openedchat-message-test whatsapp-openedchat-message-test-${sender}`;
-        messageElement.dataset.id = OpenedChatData.number;
+        messageElement.dataset.id = sanitizePhoneNumber(OpenedChatData.number);
 
         const image = document.createElement("img");
         image.className = "wppimage";
@@ -284,7 +301,7 @@ $(document).on('click', '#whatsapp-openedchat-back', function(e){
 QB.Phone.Functions.GetLastMessage = function(messages) {
     var LastMessageData = {
         time: "00:00",
-        message: "No messages yet"
+        message: EMPTY_MESSAGES_TEXT
     }
 
     $.each(messages[messages.length - 1], function(i, msg){
@@ -375,7 +392,7 @@ FormatMessageTime = function() {
 $(document).on('click', '#whatsapp-save-note-for-doc', function(e){
     e.preventDefault();
     var Message = sanitizeText($(".whatsapp-input-message").val()).slice(0, 200);
-    var Number = sanitizeNumericValue($(".whatsapp-input-number").val());
+    var Number = sanitizePhoneNumber($(".whatsapp-input-number").val());
     if (Message !== "" && Number !== ""){
         $.post(`https://${GetParentResourceName()}/SendMessage`, JSON.stringify({
             ChatNumber: Number,
@@ -417,6 +434,14 @@ function detectURLs(message) {
 
 $(document).on('keydown', '#whatsapp-openedchat-message', function(e){
     if (e.key === "Enter" && !e.shiftKey) {
+        const draftMessage = String($(this).val() ?? "");
+        const draftImageUrl = getDetectedImageUrl(draftMessage);
+        const normalizedDraft = sanitizeText(draftImageUrl ? draftMessage.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '') : draftMessage).slice(0, 200);
+
+        if (normalizedDraft === "" && draftImageUrl === null) {
+            return;
+        }
+
         e.preventDefault();
         $("#whatsapp-openedchat-send").trigger("click");
     }
@@ -556,15 +581,15 @@ QB.Phone.Functions.SetupChatMessages = function(cData, NewChatData) {
     } else {
         OpenedChatData.number = NewChatData.number;
         const safeChatName = sanitizeText(NewChatData.name);
-        const formattedNumber = formatPhoneNumber(NewChatData.number || NewChatData.name);
+        const formattedNumber = NewChatData.number ? formatPhoneNumber(NewChatData.number) : "";
 
         ShitterPicture = "./img/default.png";
         $(".whatsapp-openedchat-picture").css({"background-image":"url("+ShitterPicture+")"});
 
-        if (isNaN(NewChatData.name) == true) {
+        if (isNaN(NewChatData.name)) {
             setOpenedChatHeader(safeChatName, formattedNumber);
         } else {
-            setOpenedChatHeader(formattedNumber, "");
+            setOpenedChatHeader(formattedNumber || sanitizeText(NewChatData.name), "");
         }
         $(".whatsapp-openedchat-messages").html("");
         var NewDate = new Date();

@@ -454,6 +454,7 @@
 
 .emojionearea.emojionearea-inline {
     width: 80%;
+    /* Align the emoji editor vertically with the refreshed message pill input. */
     top: 43%;
     left: 5%;
     border: none;
@@ -530,4 +531,16 @@
     max-width: 12vw;
     font-size: 0.6vw;
     line-height: 1.5;
+}
+
+.whatsapp-visually-hidden {
+    position: absolute;
+    width: 0.1rem;
+    height: 0.1rem;
+    padding: 0;
+    margin: -0.1rem;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
