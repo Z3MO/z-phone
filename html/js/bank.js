@@ -1,5 +1,17 @@
 var FoccusedBank = null;
 
+var _bankContactSearchTimer = null;
+$(document).on("keyup", "#bank-app-my-contact-search", function() {
+    var input = this;
+    clearTimeout(_bankContactSearchTimer);
+    _bankContactSearchTimer = setTimeout(function() {
+        var value = input.value.toLowerCase();
+        $(".bank-app-my-contacts-list .bank-app-my-contact").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        });
+    }, 150);
+});
+
 $(document).on('click', '.bank-app-account', function(e){
     var copyText = document.getElementById("iban-account");
     copyText.select();
@@ -178,38 +190,39 @@ $(document).on('click', '.decline-invoice', function(event){
 
 QB.Phone.Functions.LoadBankInvoices = function(invoices) {
     if (invoices !== null) {
-        $(".bank-app-invoices-list").html("");
-
+        var container = document.querySelector('.bank-app-invoices-list');
+        container.innerHTML = "";
+        var fragment = document.createDocumentFragment();
         $.each(invoices, function(i, invoice){
-            var Elem = '<div class="bank-app-invoice" id="invoiceid-'+i+'"> <div class="bank-app-invoice-title">'+invoice.society+' <span style="font-size: 1vh; color: gray;">(Sender: '+invoice.sender+')</span></div> <div class="bank-app-invoice-amount">&#36; '+invoice.amount+'</div> <div class="bank-app-invoice-buttons"> <i class="fas fa-check-circle pay-invoice"></i> <i class="fas fa-times-circle decline-invoice"></i> </div> </div>';
-
-            $(".bank-app-invoices-list").append(Elem);
-            $("#invoiceid-"+i).data('invoicedata', invoice);
+            var div = document.createElement('div');
+            div.className = 'bank-app-invoice';
+            div.id = 'invoiceid-'+i;
+            div.innerHTML = '<div class="bank-app-invoice-title">'+invoice.society+' <span style="font-size: 1vh; color: gray;">(Sender: '+invoice.sender+')</span></div>'
+                + '<div class="bank-app-invoice-amount">&#36; '+invoice.amount+'</div>'
+                + '<div class="bank-app-invoice-buttons"><i class="fas fa-check-circle pay-invoice"></i> <i class="fas fa-times-circle decline-invoice"></i></div>';
+            $(div).data('invoicedata', invoice);
+            fragment.appendChild(div);
         });
+        container.appendChild(fragment);
     }
 }
 
 QB.Phone.Functions.LoadContactsWithNumber = function(myContacts) {
-    var ContactsObject = $(".bank-app-my-contacts-list");
-    $(ContactsObject).html("");
-    var TotalContacts = 0;
-
-    $("#bank-app-my-contact-search").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $(".bank-app-my-contacts-list .bank-app-my-contact").filter(function() {
-          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-        });
-    });
+    var container = document.querySelector('.bank-app-my-contacts-list');
+    container.innerHTML = "";
 
     if (myContacts !== null) {
+        var fragment = document.createDocumentFragment();
         $.each(myContacts, function(i, contact){
-            var RandomNumber = Math.floor(Math.random() * 6);
-            var ContactColor = QB.Phone.ContactColors[RandomNumber];
-            var ContactElement = '<div class="bank-app-my-contact" data-bankcontactid="'+i+'"> <div class="bank-app-my-contact-firstletter">'+((contact.name).charAt(0)).toUpperCase()+'</div> <div class="bank-app-my-contact-name">'+contact.name+'</div> </div>'
-            TotalContacts = TotalContacts + 1
-            $(ContactsObject).append(ContactElement);
-            $("[data-bankcontactid='"+i+"']").data('contactData', contact);
+            var div = document.createElement('div');
+            div.className = 'bank-app-my-contact';
+            div.setAttribute('data-bankcontactid', i);
+            div.innerHTML = '<div class="bank-app-my-contact-firstletter">'+((contact.name).charAt(0)).toUpperCase()+'</div>'
+                + '<div class="bank-app-my-contact-name">'+contact.name+'</div>';
+            $(div).data('contactData', contact);
+            fragment.appendChild(div);
         });
+        container.appendChild(fragment);
     }
 };
 

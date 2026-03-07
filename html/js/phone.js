@@ -122,10 +122,11 @@ $(document).on('click', '.phone-recent-call', function(e){
                         if (QB.Phone.Data.AnonymousCall) {
                             QB.Phone.Notifications.Add("fas fa-phone", "Phone", "You started a anonymous call!");
                         }
-                        $(".phone-call-outgoing").css({"display":"block"});
-                        $(".phone-call-incoming").css({"display":"none"});
-                        $(".phone-call-ongoing").css({"display":"none"});
-                        $(".phone-call-outgoing-caller").html(cData.name);
+                        var El = QB.Phone.Elements;
+                        El.callOutgoing.css({"display":"block"});
+                        El.callIncoming.css({"display":"none"});
+                        El.callOngoing.css({"display":"none"});
+                        El.callOutgoingCaller.html(cData.name);
                         QB.Phone.Functions.HeaderTextColor("white", 400);
                         QB.Phone.Animations.TopSlideUp('.phone-application-container', 400, -160);
                         setTimeout(function(){
@@ -171,10 +172,11 @@ $(document).on('click', ".phone-keypad-key-call", function(e){
             if (status.IsOnline) {
                 if (status.CanCall) {
                     if (!status.InCall) {
-                        $(".phone-call-outgoing").css({"display":"block"});
-                        $(".phone-call-incoming").css({"display":"none"});
-                        $(".phone-call-ongoing").css({"display":"none"});
-                        $(".phone-call-outgoing-caller").html(cData.name);
+                        var El = QB.Phone.Elements;
+                        El.callOutgoing.css({"display":"block"});
+                        El.callIncoming.css({"display":"none"});
+                        El.callOngoing.css({"display":"none"});
+                        El.callOutgoingCaller.html(cData.name);
                         QB.Phone.Functions.HeaderTextColor("white", 400);
                         QB.Phone.Animations.TopSlideUp('.phone-application-container', 400, -160);
                         setTimeout(function(){
@@ -281,51 +283,72 @@ $(document).on('click', '#new-chat-phone', function(e){
 
 var CurrentEditContactData = {}
 
-$(document).on('click', '#edit-contact', function(e){
+$(document).on('click', '#edit-contact, #edit-contact-save, #edit-contact-delete, #edit-contact-cancel', function(e){
     e.preventDefault();
-    var ContactId = $(this).parent().parent().data('contactid');
-    var ContactData = $("[data-contactid='"+ContactId+"']").data('contactData');
+    var id = this.id;
 
-    CurrentEditContactData.name = DOMPurify.sanitize(ContactData.name , {
-        ALLOWED_TAGS: [],
-        ALLOWED_ATTR: []
-    });
-    if (CurrentEditContactData.name == '') CurrentEditContactData.name = 'Hmm, I shouldn\'t be able to do this...'
-    CurrentEditContactData.number = ContactData.number
+    if (id === 'edit-contact') {
+        var ContactId = $(this).parent().parent().data('contactid');
+        var ContactData = $("[data-contactid='"+ContactId+"']").data('contactData');
 
-    $(".phone-edit-contact-header").text(ContactData.name+" Edit")
-    $(".phone-edit-contact-name").val(ContactData.name);
-    $(".phone-edit-contact-number").val(ContactData.number);
-    if (ContactData.iban != null && ContactData.iban != undefined) {
-        $(".phone-edit-contact-iban").val(ContactData.iban);
-        CurrentEditContactData.iban = ContactData.iban
-    } else {
-        $(".phone-edit-contact-iban").val("");
-        CurrentEditContactData.iban = "";
-    }
+        CurrentEditContactData.name = DOMPurify.sanitize(ContactData.name , {
+            ALLOWED_TAGS: [],
+            ALLOWED_ATTR: []
+        });
+        if (CurrentEditContactData.name === '') CurrentEditContactData.name = 'Hmm, I shouldn\'t be able to do this...'
+        CurrentEditContactData.number = ContactData.number
 
-    QB.Phone.Animations.TopSlideDown(".phone-edit-contact", 200, 0);
-});
+        $(".phone-edit-contact-header").text(ContactData.name+" Edit")
+        $(".phone-edit-contact-name").val(ContactData.name);
+        $(".phone-edit-contact-number").val(ContactData.number);
+        if (ContactData.iban != null && ContactData.iban != undefined) {
+            $(".phone-edit-contact-iban").val(ContactData.iban);
+            CurrentEditContactData.iban = ContactData.iban
+        } else {
+            $(".phone-edit-contact-iban").val("");
+            CurrentEditContactData.iban = "";
+        }
 
-$(document).on('click', '#edit-contact-save', function(e){
-    e.preventDefault();
+        QB.Phone.Animations.TopSlideDown(".phone-edit-contact", 200, 0);
 
-    var ContactName = DOMPurify.sanitize($(".phone-edit-contact-name").val() , {
-        ALLOWED_TAGS: [],
-        ALLOWED_ATTR: []
-    });
-    if (ContactName == '') ContactName = 'Hmm, I shouldn\'t be able to do this...'
-    var ContactNumber = $(".phone-edit-contact-number").val();
-    var ContactIban = $(".phone-edit-contact-iban").val();
+    } else if (id === 'edit-contact-save') {
+        var ContactName = DOMPurify.sanitize($(".phone-edit-contact-name").val() , {
+            ALLOWED_TAGS: [],
+            ALLOWED_ATTR: []
+        });
+        if (ContactName === '') ContactName = 'Hmm, I shouldn\'t be able to do this...'
+        var ContactNumber = $(".phone-edit-contact-number").val();
+        var ContactIban = $(".phone-edit-contact-iban").val();
 
-    if (ContactName != "" && ContactNumber != "") {
-        $.post(`https://${GetParentResourceName()}/EditContact`, JSON.stringify({
+        if (ContactName !== "" && ContactNumber !== "") {
+            $.post(`https://${GetParentResourceName()}/EditContact`, JSON.stringify({
+                CurrentContactName: ContactName,
+                CurrentContactNumber: ContactNumber,
+                CurrentContactIban: ContactIban,
+                OldContactName: CurrentEditContactData.name,
+                OldContactNumber: CurrentEditContactData.number,
+                OldContactIban: CurrentEditContactData.iban,
+            }), function(PhoneContacts){
+                QB.Phone.Functions.LoadContacts(PhoneContacts);
+            });
+            QB.Phone.Animations.TopSlideUp(".phone-edit-contact", 250, -100);
+            setTimeout(function(){
+                $(".phone-edit-contact-number").val("");
+                $(".phone-edit-contact-name").val("");
+            }, 250);
+        } else {
+            QB.Phone.Notifications.Add("fas fa-exclamation-circle", "Edit Contact", "Fill out all fields!");
+        }
+
+    } else if (id === 'edit-contact-delete') {
+        var ContactName = $(".phone-edit-contact-name").val();
+        var ContactNumber = $(".phone-edit-contact-number").val();
+        var ContactIban = $(".phone-edit-contact-iban").val();
+
+        $.post(`https://${GetParentResourceName()}/DeleteContact`, JSON.stringify({
             CurrentContactName: ContactName,
             CurrentContactNumber: ContactNumber,
             CurrentContactIban: ContactIban,
-            OldContactName: CurrentEditContactData.name,
-            OldContactNumber: CurrentEditContactData.number,
-            OldContactIban: CurrentEditContactData.iban,
         }), function(PhoneContacts){
             QB.Phone.Functions.LoadContacts(PhoneContacts);
         });
@@ -333,60 +356,35 @@ $(document).on('click', '#edit-contact-save', function(e){
         setTimeout(function(){
             $(".phone-edit-contact-number").val("");
             $(".phone-edit-contact-name").val("");
-        }, 250)
-    } else {
-        QB.Phone.Notifications.Add("fas fa-exclamation-circle", "Edit Contact", "Fill out all fields!");
+        }, 250);
+
+    } else if (id === 'edit-contact-cancel') {
+        QB.Phone.Animations.TopSlideUp(".phone-edit-contact", 250, -100);
+        setTimeout(function(){
+            $(".phone-edit-contact-number").val("");
+            $(".phone-edit-contact-name").val("");
+        }, 250);
     }
-});
-
-$(document).on('click', '#edit-contact-delete', function(e){
-    e.preventDefault();
-
-    var ContactName = $(".phone-edit-contact-name").val();
-    var ContactNumber = $(".phone-edit-contact-number").val();
-    var ContactIban = $(".phone-edit-contact-iban").val();
-
-    $.post(`https://${GetParentResourceName()}/DeleteContact`, JSON.stringify({
-        CurrentContactName: ContactName,
-        CurrentContactNumber: ContactNumber,
-        CurrentContactIban: ContactIban,
-    }), function(PhoneContacts){
-        QB.Phone.Functions.LoadContacts(PhoneContacts);
-    });
-    QB.Phone.Animations.TopSlideUp(".phone-edit-contact", 250, -100);
-    setTimeout(function(){
-        $(".phone-edit-contact-number").val("");
-        $(".phone-edit-contact-name").val("");
-    }, 250);
-});
-
-$(document).on('click', '#edit-contact-cancel', function(e){
-    e.preventDefault();
-
-    QB.Phone.Animations.TopSlideUp(".phone-edit-contact", 250, -100);
-    setTimeout(function(){
-        $(".phone-edit-contact-number").val("");
-        $(".phone-edit-contact-name").val("");
-    }, 250)
 });
 
 $(document).on('click', '.phone-keypad-key', function(e){
     e.preventDefault();
     var PressedButton = $(this).data('keypadvalue');
+    var $keypadInput = QB.Phone.Elements.keypadInput;
     if (!isNaN(PressedButton)) {
-        keyPadHTML = $("#phone-keypad-input").text();
-        $("#phone-keypad-input").text(keyPadHTML + PressedButton)
-        keyPadHTML = $("#phone-keypad-input").text();
+        keyPadHTML = $keypadInput.text();
+        $keypadInput.text(keyPadHTML + PressedButton);
+        keyPadHTML = $keypadInput.text();
     } else if (PressedButton == "#") {
-        keyPadHTML = $("#phone-keypad-input").text();
-        $("#phone-keypad-input").text(keyPadHTML + PressedButton)
-        keyPadHTML = $("#phone-keypad-input").text();
+        keyPadHTML = $keypadInput.text();
+        $keypadInput.text(keyPadHTML + PressedButton);
+        keyPadHTML = $keypadInput.text();
     } else if (PressedButton == "*") {
         if (ClearNumberTimer == null) {
-            $("#phone-keypad-input").text("Cleared")
+            $keypadInput.text("Cleared");
             ClearNumberTimer = setTimeout(function(){
-                $("#phone-keypad-input").text("");
-                keyPadHTML = $("#phone-keypad-input").text();
+                $keypadInput.text("");
+                keyPadHTML = $keypadInput.text();
                 ClearNumberTimer = null;
             }, 750);
         }
@@ -438,56 +436,55 @@ $(document).on('click', '#phone-plus-icon', function(e){
     QB.Phone.Animations.TopSlideDown(".phone-add-contact", 200, 0);
 });
 
-$(document).on('click', '#add-contact-save', function(e){
+$(document).on('click', '#add-contact-save, #add-contact-cancel', function(e){
     e.preventDefault();
+    var id = this.id;
 
-    var ContactName = DOMPurify.sanitize($(".phone-add-contact-name").val() , {
-        ALLOWED_TAGS: [],
-        ALLOWED_ATTR: []
-    });
-    if (ContactName == '') ContactName = 'Hmm, I shouldn\'t be able to do this...'
-    var ContactNumber = $(".phone-add-contact-number").val();
-    var ContactIban = $(".phone-add-contact-iban").val();
-
-    if (ContactName != "" && ContactNumber != "") {
-        $.post(`https://${GetParentResourceName()}/AddNewContact`, JSON.stringify({
-            ContactName: ContactName,
-            ContactNumber: ContactNumber,
-            ContactIban: ContactIban,
-        }), function(PhoneContacts){
-            QB.Phone.Functions.LoadContacts(PhoneContacts);
+    if (id === 'add-contact-save') {
+        var ContactName = DOMPurify.sanitize($(".phone-add-contact-name").val() , {
+            ALLOWED_TAGS: [],
+            ALLOWED_ATTR: []
         });
+        if (ContactName === '') ContactName = 'Hmm, I shouldn\'t be able to do this...'
+        var ContactNumber = $(".phone-add-contact-number").val();
+        var ContactIban = $(".phone-add-contact-iban").val();
+
+        if (ContactName !== "" && ContactNumber !== "") {
+            $.post(`https://${GetParentResourceName()}/AddNewContact`, JSON.stringify({
+                ContactName: ContactName,
+                ContactNumber: ContactNumber,
+                ContactIban: ContactIban,
+            }), function(PhoneContacts){
+                QB.Phone.Functions.LoadContacts(PhoneContacts);
+            });
+            QB.Phone.Animations.TopSlideUp(".phone-add-contact", 250, -100);
+            setTimeout(function(){
+                $(".phone-add-contact-number").val("");
+                $(".phone-add-contact-name").val("");
+            }, 250);
+
+            if (SelectedSuggestion !== null) {
+                $.post(`https://${GetParentResourceName()}/RemoveSuggestion`, JSON.stringify({
+                    data: $(SelectedSuggestion).data('SuggestionData')
+                }));
+                $(SelectedSuggestion).remove();
+                SelectedSuggestion = null;
+                var amount = parseInt(AmountOfSuggestions);
+                if ((amount - 1) === 0) {
+                    amount = 0;
+                }
+                $(".amount-of-suggested-contacts").html(amount + " contacts");
+            }
+        } else {
+            QB.Phone.Notifications.Add("fas fa-exclamation-circle", "Add Contact", "Fill out all fields!");
+        }
+    } else if (id === 'add-contact-cancel') {
         QB.Phone.Animations.TopSlideUp(".phone-add-contact", 250, -100);
         setTimeout(function(){
             $(".phone-add-contact-number").val("");
             $(".phone-add-contact-name").val("");
-        }, 250)
-
-        if (SelectedSuggestion !== null) {
-            $.post(`https://${GetParentResourceName()}/RemoveSuggestion`, JSON.stringify({
-                data: $(SelectedSuggestion).data('SuggestionData')
-            }));
-            $(SelectedSuggestion).remove();
-            SelectedSuggestion = null;
-            var amount = parseInt(AmountOfSuggestions);
-            if ((amount - 1) === 0) {
-                amount = 0
-            }
-            $(".amount-of-suggested-contacts").html(amount + " contacts");
-        }
-    } else {
-        QB.Phone.Notifications.Add("fas fa-exclamation-circle", "Add Contact", "Fill out all fields!");
+        }, 250);
     }
-});
-
-$(document).on('click', '#add-contact-cancel', function(e){
-    e.preventDefault();
-
-    QB.Phone.Animations.TopSlideUp(".phone-add-contact", 250, -100);
-    setTimeout(function(){
-        $(".phone-add-contact-number").val("");
-        $(".phone-add-contact-name").val("");
-    }, 250)
 });
 
 $(document).on('click', '#phone-start-call', function(e){
@@ -509,10 +506,11 @@ SetupCall = function(cData) {
             if (status.IsOnline) {
                 if (status.CanCall) {
                     if (!status.InCall) {
-                        $(".phone-call-outgoing").css({"display":"block"});
-                        $(".phone-call-incoming").css({"display":"none"});
-                        $(".phone-call-ongoing").css({"display":"none"});
-                        $(".phone-call-outgoing-caller").html(cData.name);
+                        var El = QB.Phone.Elements;
+                        El.callOutgoing.css({"display":"block"});
+                        El.callIncoming.css({"display":"none"});
+                        El.callOngoing.css({"display":"none"});
+                        El.callOutgoingCaller.html(cData.name);
                         QB.Phone.Functions.HeaderTextColor("white", 400);
                         QB.Phone.Animations.TopSlideUp('.phone-application-container', 250, -100);
                         QB.Phone.Animations.TopSlideUp('.'+QB.Phone.Data.currentApplication+"-app", 400, -100);
@@ -555,34 +553,31 @@ CancelOutgoingCall = function() {
     }
 }
 
-$(document).on('click', '#outgoing-cancel', function(e){
+$(document).on('click', '#outgoing-cancel, #incoming-deny, #ongoing-cancel, #incoming-answer', function(e){
     e.preventDefault();
-
-    $.post(`https://${GetParentResourceName()}/CancelOutgoingCall`);
-});
-
-$(document).on('click', '#incoming-deny', function(e){
-    e.preventDefault();
-
-    $.post(`https://${GetParentResourceName()}/DenyIncomingCall`);
-});
-
-$(document).on('click', '#ongoing-cancel', function(e){
-    e.preventDefault();
-
-    $.post(`https://${GetParentResourceName()}/CancelOngoingCall`);
+    var id = this.id;
+    if (id === 'outgoing-cancel') {
+        $.post(`https://${GetParentResourceName()}/CancelOutgoingCall`);
+    } else if (id === 'incoming-deny') {
+        $.post(`https://${GetParentResourceName()}/DenyIncomingCall`);
+    } else if (id === 'ongoing-cancel') {
+        $.post(`https://${GetParentResourceName()}/CancelOngoingCall`);
+    } else if (id === 'incoming-answer') {
+        $.post(`https://${GetParentResourceName()}/AnswerCall`);
+    }
 });
 
 IncomingCallAlert = function(CallData, Canceled, AnonymousCall) {
+    var El = QB.Phone.Elements;
     if (!Canceled) {
         if (!QB.Phone.Data.CallActive) {
             QB.Phone.Animations.TopSlideUp('.phone-application-container', 400, -100);
             QB.Phone.Animations.TopSlideUp('.'+QB.Phone.Data.currentApplication+"-app", 400, -100);
-            $(".phone-call-incoming-caller").html(CallData.name);
+            El.callIncomingCaller.html(CallData.name);
             setTimeout(function(){
-                $(".phone-call-outgoing").css({"display":"none"});
-                $(".phone-call-incoming").css({"display":"block"});
-                $(".phone-call-ongoing").css({"display":"none"});
+                El.callOutgoing.css({"display":"none"});
+                El.callIncoming.css({"display":"block"});
+                El.callOngoing.css({"display":"none"});
                 $(".phone-app").css({"display":"none"});
                 QB.Phone.Functions.HeaderTextColor("white", 400);
                 $("."+QB.Phone.Data.currentApplication+"-app").css({"display":"none"});
@@ -600,10 +595,10 @@ IncomingCallAlert = function(CallData, Canceled, AnonymousCall) {
         QB.Phone.Animations.TopSlideUp('.'+QB.Phone.Data.currentApplication+"-app", 400, -100);
         setTimeout(function(){
             $("."+QB.Phone.Data.currentApplication+"-app").css({"display":"none"});
-            $(".phone-call-outgoing").css({"display":"none"});
-            $(".phone-call-incoming").css({"display":"none"});
-            $(".phone-call-ongoing").css({"display":"none"});
-        }, 400)
+            El.callOutgoing.css({"display":"none"});
+            El.callIncoming.css({"display":"none"});
+            El.callOngoing.css({"display":"none"});
+        }, 400);
         QB.Phone.Functions.HeaderTextColor("white", 300);
         QB.Phone.Data.CallActive = false;
         QB.Phone.Data.currentApplication = null;
@@ -611,45 +606,47 @@ IncomingCallAlert = function(CallData, Canceled, AnonymousCall) {
 }
 
 QB.Phone.Functions.SetupCurrentCall = function(cData) {
+    var El = QB.Phone.Elements;
     if (cData.InCall) {
         CallData = cData;
-        $(".phone-currentcall-container").css({"display":"block"});
+        El.currentCallContainer.css({"display":"block"});
 
         if (!QB.Phone.Data.IsOpen == true) {
             QB.Phone.Animations.BottomSlideUp('.container', 250, -50);
         }
 
         if (cData.CallType == "incoming") {
-            $(".phone-currentcall-title").html("Incoming call");
+            El.currentCallTitle.html("Incoming call");
         } else if (cData.CallType == "outgoing") {
-            $(".phone-currentcall-title").html("Outgoing call");
+            El.currentCallTitle.html("Outgoing call");
         } else if (cData.CallType == "ongoing") {
-            $(".phone-currentcall-title").html("In call ("+cData.CallTime+")");
+            El.currentCallTitle.html("In call ("+cData.CallTime+")");
         }
 
-        $(".phone-currentcall-contact").html(cData.TargetData.name);
+        El.currentCallContact.html(cData.TargetData.name);
     } else {
-        $(".phone-currentcall-container").css({"display":"none"});
+        El.currentCallContainer.css({"display":"none"});
     }
 }
 
 $(document).on('click', '.phone-currentcall-container', function(e){
     e.preventDefault();
 
+    var El = QB.Phone.Elements;
     if (CallData.CallType == "incoming") {
-        $(".phone-call-incoming").css({"display":"block"});
-        $(".phone-call-outgoing").css({"display":"none"});
-        $(".phone-call-ongoing").css({"display":"none"});
+        El.callIncoming.css({"display":"block"});
+        El.callOutgoing.css({"display":"none"});
+        El.callOngoing.css({"display":"none"});
     } else if (CallData.CallType == "outgoing") {
-        $(".phone-call-incoming").css({"display":"none"});
-        $(".phone-call-outgoing").css({"display":"block"});
-        $(".phone-call-ongoing").css({"display":"none"});
+        El.callIncoming.css({"display":"none"});
+        El.callOutgoing.css({"display":"block"});
+        El.callOngoing.css({"display":"none"});
     } else if (CallData.CallType == "ongoing") {
-        $(".phone-call-incoming").css({"display":"none"});
-        $(".phone-call-outgoing").css({"display":"none"});
-        $(".phone-call-ongoing").css({"display":"block"});
+        El.callIncoming.css({"display":"none"});
+        El.callOutgoing.css({"display":"none"});
+        El.callOngoing.css({"display":"block"});
     }
-    $(".phone-call-ongoing-caller").html(CallData.name);
+    El.callOngoingCaller.html(CallData.name);
 
     QB.Phone.Functions.HeaderTextColor("white", 400);
     QB.Phone.Animations.TopSlideUp('.phone-application-container', 250, -100);
@@ -663,17 +660,12 @@ $(document).on('click', '.phone-currentcall-container', function(e){
     QB.Phone.Data.currentApplication = "phone-call";
 });
 
-$(document).on('click', '#incoming-answer', function(e){
-    e.preventDefault();
-
-    $.post(`https://${GetParentResourceName()}/AnswerCall`);
-});
-
 QB.Phone.Functions.AnswerCall = function(CallData) {
-    $(".phone-call-incoming").css({"display":"none"});
-    $(".phone-call-outgoing").css({"display":"none"});
-    $(".phone-call-ongoing").css({"display":"block"});
-    $(".phone-call-ongoing-caller").html(CallData.TargetData.name);
+    var El = QB.Phone.Elements;
+    El.callIncoming.css({"display":"none"});
+    El.callOutgoing.css({"display":"none"});
+    El.callOngoing.css({"display":"block"});
+    El.callOngoingCaller.html(CallData.TargetData.name);
 
     QB.Phone.Functions.Close();
 }

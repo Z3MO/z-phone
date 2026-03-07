@@ -46,31 +46,29 @@ function LoadPlayerMoneys(){
     $(".details-stateid").html(PlayerStateID)
 
     var PlayerLicenses = QB.Phone.Data.PlayerData.metadata.licences;
+    var detailsList = document.querySelector('.details-list');
+    detailsList.innerHTML = "";
 
-    $(".details-list").html("");
-    var AddOption0 = '<div class="details-text-license">Licenses</div>'
-    $('.details-list').append(AddOption0);
+    var fragment = document.createDocumentFragment();
+    var headerDiv = document.createElement('div');
+    headerDiv.className = 'details-text-license';
+    headerDiv.textContent = 'Licenses';
+    fragment.appendChild(headerDiv);
+
     for (const [k, v] of Object.entries(PlayerLicenses)) {
-        if (v) {
-            var firstLetter = k.substring(0, 1);
-            var Fulltext = firstLetter.toUpperCase() + k.replace(firstLetter, '') + " License"
+        var firstLetter = k.substring(0, 1);
+        var Fulltext = firstLetter.toUpperCase() + k.replace(firstLetter, '') + " License";
+        var iconColor = v ? '#00ff9d' : '#ff2d55';
+        var iconCls   = v ? 'fas fa-check-circle' : 'fas fa-times-circle';
 
-            var AddOption = '<div class="details-license-body-main">' +
-                '<div class="details-license-text-class">' + Fulltext + '</div>' +
-                '<div class="details-license-icon-class"><i style="color: #00ff9d;" class="fas fa-check-circle"></i></div>' +
-                '</div>'
-            $('.details-list').append(AddOption);
-        } else {
-            var firstLetter = k.substring(0, 1);
-            var Fulltext = firstLetter.toUpperCase() + k.replace(firstLetter, '') + " License"
-
-            var AddOption = '<div class="details-license-body-main">' +
-                '<div class="details-license-text-class">' + Fulltext + '</div>' +
-                '<div class="details-license-icon-class"><i style="color: #ff2d55;" class="fas fa-times-circle"></i></div>' +
-                '</div>'
-            $('.details-list').append(AddOption);
-        }
+        var rowDiv = document.createElement('div');
+        rowDiv.className = 'details-license-body-main';
+        rowDiv.innerHTML = '<div class="details-license-text-class">'+Fulltext+'</div>'
+            + '<div class="details-license-icon-class"><i style="color: '+iconColor+';" class="'+iconCls+'"></i></div>';
+        fragment.appendChild(rowDiv);
     }
+
+    detailsList.appendChild(fragment);
 }
 
 var PressedBackground = null;

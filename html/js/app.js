@@ -440,13 +440,19 @@ $(document).on('click', '.phone-application', function(e){
                         SetupPlayerHouses(Houses);
                     });
                     $.post(`https://${GetParentResourceName()}/GetPlayerKey`, JSON.stringify({}), function(Keys){
-                        $(".house-app-mykeys-container").html("");
+                        var keysContainer = document.querySelector('.house-app-mykeys-container');
+                        keysContainer.innerHTML = "";
                         if (Keys.length > 0) {
+                            var keysFragment = document.createDocumentFragment();
                             $.each(Keys, function(i, key){
-                                var elem = '<div class="mykeys-key" id="keyid-'+i+'"><span class="mykeys-key-label">' + key.HouseData.adress + '</span> <span class="mykeys-key-sub">Click to set GPS</span> </div>';
-                                $(".house-app-mykeys-container").append(elem);
-                                $("#keyid-"+i).data('KeyData', key);
+                                var div = document.createElement('div');
+                                div.className = 'mykeys-key';
+                                div.id = 'keyid-'+i;
+                                div.innerHTML = '<span class="mykeys-key-label">' + key.HouseData.adress + '</span> <span class="mykeys-key-sub">Click to set GPS</span>';
+                                $(div).data('KeyData', key);
+                                keysFragment.appendChild(div);
                             });
+                            keysContainer.appendChild(keysFragment);
                         }
                     });
                 } else if (PressedApplication == "taxi") {
@@ -859,27 +865,20 @@ QB.Phone.Animations.SamsungAppClose = function(Object, Timeout, callback) {
 QB.Phone.Notifications.Custom.Add = function(icon, title, text, color, timeout, accept, deny) {
     $.post(`https://${GetParentResourceName()}/HasPhone`, JSON.stringify({}), function(HasPhone){
         if (HasPhone) {
+            var El = QB.Phone.Elements;
             if (timeout == null && timeout == undefined) {
                 timeout = 1500;
             }
             if (color != null || color != undefined) {
-                $(".notification-icon-new").css({"color":color});
-                $(".notification-title-new").css({"color":"#FFFFFF"});
-
-                $(".notification-accept").css({"color":"#a6f1a6"});
-                $(".notification-deny").css({"color":"#F28C28"});
-
+                El.notifIconNew.css({"color":color});
+                El.notifTitleNew.css({"color":"#FFFFFF"});
+                El.notifAccept.css({"color":"#a6f1a6"});
+                El.notifDeny.css({"color":"#F28C28"});
             } else if (color == "default" || color == null || color == undefined) {
-                $(".notification-icon-new").css({"color":"#FFFFFF"});
-                $(".notification-title-new").css({"color":"#FFFFFF"});
-
-                if (accept != "NONE"){ // ACCEPT COLOR
-                    $(".notification-accept").css({"color":"#a6f1a6"});
-                }
-                if (deny != "NONE"){ // DENY COLOR
-                    $(".notification-deny").css({"color":"#F28C28"});
-                }
-
+                El.notifIconNew.css({"color":"#FFFFFF"});
+                El.notifTitleNew.css({"color":"#FFFFFF"});
+                if (accept != "NONE") El.notifAccept.css({"color":"#a6f1a6"});
+                if (deny != "NONE")   El.notifDeny.css({"color":"#F28C28"});
             }
             if (!QB.Phone.Data.IsOpen == true) {
                 QB.Phone.Animations.BottomSlideUp('.container', 250, -50);
@@ -887,16 +886,12 @@ QB.Phone.Notifications.Custom.Add = function(icon, title, text, color, timeout, 
 
             QB.Phone.Animations.TopSlideDown(".phone-notification-container-new", 400, 7);
 
-            $(".notification-icon-new").html('<i class="'+icon+'"></i>');
-            $(".notification-title-new").html(title);
-            $(".notification-text-new").html(text);
+            El.notifIconNew.html('<i class="'+icon+'"></i>');
+            El.notifTitleNew.html(title);
+            El.notifTextNew.html(text);
 
-            if (accept != "NONE"){ // ACCEPT SYMBOL
-                $(".notification-accept").html('<i class="'+accept+'"></i>');
-            }
-            if (deny != "NONE"){ // DENY SYMBOL
-                $(".notification-deny").html('<i class="'+deny+'"></i>');
-            }
+            if (accept != "NONE") El.notifAccept.html('<i class="'+accept+'"></i>');
+            if (deny != "NONE")   El.notifDeny.html('<i class="'+deny+'"></i>');
 
             if (timeout != "NONE"){
                 if (QB.Phone.Notifications.Timeout !== undefined || QB.Phone.Notifications.Timeout !== null) {
@@ -906,9 +901,9 @@ QB.Phone.Notifications.Custom.Add = function(icon, title, text, color, timeout, 
                     QB.Phone.Animations.TopSlideUp(".phone-notification-container-new", 400, -10);
                     QB.Phone.Notifications.Timeout = setTimeout(function(){
                         if (!QB.Phone.Data.IsOpen == true) {
-                        QB.Phone.Animations.BottomSlideUp('.container', 250, -70);
+                            QB.Phone.Animations.BottomSlideUp('.container', 250, -70);
                         }
-                    }, 500)
+                    }, 500);
                     QB.Phone.Notifications.Timeout = null;
                 }, timeout);
             }
@@ -919,63 +914,33 @@ QB.Phone.Notifications.Custom.Add = function(icon, title, text, color, timeout, 
 QB.Phone.Notifications.Add = function(icon, title, text, color, timeout) {
     $.post(`https://${GetParentResourceName()}/HasPhone`, JSON.stringify({}), function(HasPhone){
         if (HasPhone) {
+            var El = QB.Phone.Elements;
             if (timeout == null && timeout == undefined) {
                 timeout = 1500;
             }
             if (QB.Phone.Notifications.Timeout == undefined || QB.Phone.Notifications.Timeout == null) {
                 if (color != null || color != undefined) {
-                    $(".notification-icon").css({"color":color});
-                    $(".notification-title").css({"color":color});
+                    El.notifIcon.css({"color":color});
+                    El.notifTitle.css({"color":color});
                 } else if (color == "default" || color == null || color == undefined) {
-                    $(".notification-icon").css({"color":"#e74c3c"});
-                    $(".notification-title").css({"color":"#e74c3c"});
+                    El.notifIcon.css({"color":"#e74c3c"});
+                    El.notifTitle.css({"color":"#e74c3c"});
                 }
                 if (!QB.Phone.Data.IsOpen == true) {
                     QB.Phone.Animations.BottomSlideUp('.container', 250, -50);
                 }
-                    QB.Phone.Animations.TopSlideDown(".phone-notification-container", 400, 7);
+                QB.Phone.Animations.TopSlideDown(".phone-notification-container", 400, 7);
                 if (icon !== "politie") {
                     if (icon.includes('.')) {
-                        $(".notification-icon").html('<img src="./img/apps/'+icon+'" style="width: 2.5vh; height: 2.5vh;">');
+                        El.notifIcon.html('<img src="./img/apps/'+icon+'" style="width: 2.5vh; height: 2.5vh;">');
                     } else {
-                        $(".notification-icon").html('<i class="'+icon+'"></i>');
+                        El.notifIcon.html('<i class="'+icon+'"></i>');
                     }
                 } else {
-                    $(".notification-icon").html('<img src="./img/politie.png" class="police-icon-notify">');
+                    El.notifIcon.html('<img src="./img/politie.png" class="police-icon-notify">');
                 }
-                $(".notification-title").html(title);
-                $(".notification-text").html(text);
-                if (QB.Phone.Notifications.Timeout !== undefined || QB.Phone.Notifications.Timeout !== null) {
-                    clearTimeout(QB.Phone.Notifications.Timeout);
-                }
-                QB.Phone.Notifications.Timeout = setTimeout(function(){
-                    QB.Phone.Animations.TopSlideUp(".phone-notification-container", 400, -10);
-
-                    QB.Phone.Notifications.Timeout = setTimeout(function(){
-                    if (!QB.Phone.Data.IsOpen == true) {
-                    QB.Phone.Animations.BottomSlideDown('.container', 250, -70);
-                    }
-                }, 500)
-                    QB.Phone.Notifications.Timeout = null;
-                }, timeout);
-            } else {
-                if (color != null || color != undefined) {
-                    $(".notification-icon").css({"color":color});
-                    $(".notification-title").css({"color":color});
-                } else {
-                    $(".notification-icon").css({"color":"#e74c3c"});
-                    $(".notification-title").css({"color":"#e74c3c"});
-                }
-                if (!QB.Phone.Data.IsOpen) {
-                    QB.Phone.Animations.BottomSlideUp('.container', 250, -45);
-                }
-                if (icon.includes('.')) {
-                    $(".notification-icon").html('<img src="./img/apps/'+icon+'" style="width: 2.5vh; height: 2.5vh;">');
-                } else {
-                    $(".notification-icon").html('<i class="'+icon+'"></i>');
-                }
-                $(".notification-title").html(title);
-                $(".notification-text").html(text);
+                El.notifTitle.html(title);
+                El.notifText.html(text);
                 if (QB.Phone.Notifications.Timeout !== undefined || QB.Phone.Notifications.Timeout !== null) {
                     clearTimeout(QB.Phone.Notifications.Timeout);
                 }
@@ -983,9 +948,39 @@ QB.Phone.Notifications.Add = function(icon, title, text, color, timeout) {
                     QB.Phone.Animations.TopSlideUp(".phone-notification-container", 400, -10);
                     QB.Phone.Notifications.Timeout = setTimeout(function(){
                         if (!QB.Phone.Data.IsOpen == true) {
-                        QB.Phone.Animations.BottomSlideUp('.container', 250, -70);
+                            QB.Phone.Animations.BottomSlideDown('.container', 250, -70);
                         }
-                    }, 500)
+                    }, 500);
+                    QB.Phone.Notifications.Timeout = null;
+                }, timeout);
+            } else {
+                if (color != null || color != undefined) {
+                    El.notifIcon.css({"color":color});
+                    El.notifTitle.css({"color":color});
+                } else {
+                    El.notifIcon.css({"color":"#e74c3c"});
+                    El.notifTitle.css({"color":"#e74c3c"});
+                }
+                if (!QB.Phone.Data.IsOpen) {
+                    QB.Phone.Animations.BottomSlideUp('.container', 250, -45);
+                }
+                if (icon.includes('.')) {
+                    El.notifIcon.html('<img src="./img/apps/'+icon+'" style="width: 2.5vh; height: 2.5vh;">');
+                } else {
+                    El.notifIcon.html('<i class="'+icon+'"></i>');
+                }
+                El.notifTitle.html(title);
+                El.notifText.html(text);
+                if (QB.Phone.Notifications.Timeout !== undefined || QB.Phone.Notifications.Timeout !== null) {
+                    clearTimeout(QB.Phone.Notifications.Timeout);
+                }
+                QB.Phone.Notifications.Timeout = setTimeout(function(){
+                    QB.Phone.Animations.TopSlideUp(".phone-notification-container", 400, -10);
+                    QB.Phone.Notifications.Timeout = setTimeout(function(){
+                        if (!QB.Phone.Data.IsOpen == true) {
+                            QB.Phone.Animations.BottomSlideUp('.container', 250, -70);
+                        }
+                    }, 500);
                     QB.Phone.Notifications.Timeout = null;
                 }, timeout);
             }
@@ -1118,6 +1113,55 @@ QB.Screen.popDown = function(){
 }
 
 $(document).ready(function(){
+    // ── Selector cache (populated once on DOM-ready) ──────────────────────────
+    QB.Phone.Elements = {
+        // Container
+        container:               $('.container'),
+        phoneAppContainer:       $('.phone-application-container'),
+        phoneHeader:             $('.phone-header'),
+        // Call screens
+        callOutgoing:            $('.phone-call-outgoing'),
+        callIncoming:            $('.phone-call-incoming'),
+        callOngoing:             $('.phone-call-ongoing'),
+        callOutgoingCaller:      $('.phone-call-outgoing-caller'),
+        callIncomingCaller:      $('.phone-call-incoming-caller'),
+        callOngoingCaller:       $('.phone-call-ongoing-caller'),
+        callOngoingTime:         $('.phone-call-ongoing-time'),
+        // Current-call pill
+        currentCallContainer:    $('.phone-currentcall-container'),
+        currentCallTitle:        $('.phone-currentcall-title'),
+        currentCallContact:      $('.phone-currentcall-contact'),
+        // Notifications (standard)
+        notifContainer:          $('.phone-notification-container'),
+        notifIcon:               $('.notification-icon'),
+        notifTitle:              $('.notification-title'),
+        notifText:               $('.notification-text'),
+        // Notifications (custom)
+        notifContainerNew:       $('.phone-notification-container-new'),
+        notifIconNew:            $('.notification-icon-new'),
+        notifTitleNew:           $('.notification-title-new'),
+        notifTextNew:            $('.notification-text-new'),
+        notifAccept:             $('.notification-accept'),
+        notifDeny:               $('.notification-deny'),
+        // WhatsApp
+        whatsappChats:           $('.whatsapp-chats'),
+        whatsappOpenedChat:      $('.whatsapp-openedchat'),
+        whatsappMessages:        $('.whatsapp-openedchat-messages'),
+        whatsappOpenedNumber:    $('.whatsapp-openedchat-number'),
+        whatsappOpenedName:      $('.whatsapp-openedchat-name'),
+        // Phone app sections
+        phoneContacts:           $('.phone-contacts'),
+        phoneRecent:             $('.phone-recent'),
+        phoneKeypad:             $('.phone-keypad'),
+        phoneContactList:        $('.phone-contact-list'),
+        phoneRecentCalls:        $('.phone-recent-calls'),
+        // Keypad input
+        keypadInput:             $('#phone-keypad-input'),
+        // Bank
+        bankAccountBalance:      $('.bank-app-account-balance'),
+    };
+    // ─────────────────────────────────────────────────────────────────────────
+
     window.addEventListener('message', function(event) {
         switch(event.data.action) {
             case "open":
@@ -1146,8 +1190,8 @@ $(document).ready(function(){
                 QB.Phone.Functions.SetupAppWarnings(event.data.AppData);
                 break;
             case "UpdateBank":
-                $(".bank-app-account-balance").html("&#36; "+event.data.NewBalance);
-                $(".bank-app-account-balance").data('balance', event.data.NewBalance);
+                QB.Phone.Elements.bankAccountBalance.html("&#36; "+event.data.NewBalance);
+                QB.Phone.Elements.bankAccountBalance.data('balance', event.data.NewBalance);
                 break;
             case "UpdateChat":
                 if (QB.Phone.Data.currentApplication == "whatsapp") {
@@ -1192,9 +1236,9 @@ $(document).ready(function(){
                 if (!QB.Phone.Data.IsOpen) {
                     QB.Phone.Animations.BottomSlideUp('.container', 250, -50);
                 }
-                $(".phone-call-ongoing-time").html(timeString);
-                $(".phone-currentcall-title").html(event.data.Name);
-                $(".phone-currentcall-contact").html(timeString);
+                QB.Phone.Elements.callOngoingTime.html(timeString);
+                QB.Phone.Elements.currentCallTitle.html(event.data.Name);
+                QB.Phone.Elements.currentCallContact.html(timeString);
                 break;
             case "CancelOngoingCall":
                 QB.Phone.Animations.TopSlideUp('.phone-application-container', 250, -50);
