@@ -37,10 +37,10 @@ $(document).on('click', '.taxi-list-call', function(e){
                 number: InputNum,
                 name: InputNum,
             }
-            $.post(`https://${GetParentResourceName()}/CallContact`, JSON.stringify({
+            QB.Phone.NUI.postLegacy("CallContact", {
                 ContactData: cData,
                 Anonymous: QB.Phone.Data.AnonymousCall,
-            }), function(status){
+            }, function(status) {
                 if (cData.number !== QB.Phone.Data.PlayerData.charinfo.phone) {
                     if (status.IsOnline) {
                         if (status.CanCall) {

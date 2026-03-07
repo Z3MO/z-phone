@@ -63,7 +63,7 @@ $(document).on('click', '.mail-item', function(e) {
     // Mark as read
     if (!mailData.read) {
         $(this).removeClass('unread');
-        $.post(`https://${GetParentResourceName()}/SetMailRead`, JSON.stringify({ mailId: mailData.mailid }));
+        QB.Phone.NUI.postLegacy("SetMailRead", { mailId: mailData.mailid });
     }
 
     // Populate details view
@@ -114,12 +114,12 @@ $(document).on('click', '.mail-accept-button', function(e) {
     e.stopPropagation();
     var mailData = $('.mail-details-content').data('mailData');
     if (mailData && mailData.button) {
-        $.post(`https://${GetParentResourceName()}/AcceptMailButton`, JSON.stringify({
+        QB.Phone.NUI.postLegacy("AcceptMailButton", {
             buttonEvent: mailData.button.buttonEvent,
             buttonData: mailData.button.buttonData,
             isServer: mailData.button.isServer,
             mailId: mailData.mailid,
-        }));
+        });
         // Go back to the list after accepting
         $('#mail-back').click();
     }
@@ -131,9 +131,9 @@ $(document).on('click', '.mail-list-action-delete', function(e) {
     var mailId = $(this).data('mailid');
     var item = $(this).closest('.mail-item');
     
-    $.post(`https://${GetParentResourceName()}/RemoveMail`, JSON.stringify({
+    QB.Phone.NUI.postLegacy("RemoveMail", {
         mailId: mailId
-    }));
+    });
     
     item.slideUp(200, function() { $(this).remove(); });
 });
@@ -142,9 +142,9 @@ $(document).on('click', '.mail-delete-button', function(e) {
     e.preventDefault();
     e.stopPropagation();
     var mailId = $(this).data('mailid');
-    $.post(`https://${GetParentResourceName()}/RemoveMail`, JSON.stringify({
+    QB.Phone.NUI.postLegacy("RemoveMail", {
         mailId: mailId
-    }));
+    });
     // Go back to the list after deleting
     $('#mail-back').click();
 });

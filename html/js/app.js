@@ -55,6 +55,20 @@ QB.Phone.NUI.post = async (endpoint, payload = {}) => {
     return QB.Phone.Utils.parseNuiResponse(response);
 };
 
+QB.Phone.NUI.postLegacy = (endpoint, payload, callback) => {
+    const normalizedPayload = payload === undefined ? {} : payload;
+    const request = QB.Phone.NUI.post(endpoint, normalizedPayload);
+
+    if (typeof callback === "function") {
+        return request.then((data) => {
+            callback(data);
+            return data;
+        });
+    }
+
+    return request;
+};
+
 // Samsung One UI Easing Functions
 QB.Phone.Animations.SamsungEasing = {
     // Smooth entrance with slight overshoot
@@ -385,7 +399,7 @@ $(document).on('click', '.phone-application', function(e){
                     CurrentPulsesView = "feed";
                     CurrentPulsesTab = "recent";
                     if (QB.Phone.Data.IsOpen) {
-                        $.post(`https://${GetParentResourceName()}/GetPulses`, JSON.stringify({}), function(Pulses){
+                        QB.Phone.NUI.postLegacy("GetPulses", {}, function(Pulses) {
                             QB.Phone.Notifications.LoadPulses(Pulses.PulseData, Pulses.hasVPN);
                         });
                     }
@@ -410,39 +424,39 @@ $(document).on('click', '.phone-application', function(e){
                     QB.Phone.Functions.SwitchBankTab("accounts", { immediate: true });
                     QB.Phone.Functions.LoadBankData().catch(() => {});
                 } else if (PressedApplication == "whatsapp") {
-                    $.post(`https://${GetParentResourceName()}/GetWhatsappChats`, JSON.stringify({}), function(chats){
+                    QB.Phone.NUI.postLegacy("GetWhatsappChats", {}, function(chats) {
                         QB.Phone.Functions.LoadWhatsappChats(chats);
                     });
                 } else if (PressedApplication == "phone") {
-                    $.post(`https://${GetParentResourceName()}/GetMissedCalls`, JSON.stringify({}), function(recent){
+                    QB.Phone.NUI.postLegacy("GetMissedCalls", {}, function(recent) {
                         QB.Phone.Functions.SetupRecentCalls(recent);
                     });
-                    $.post(`https://${GetParentResourceName()}/GetSuggestedContacts`, JSON.stringify({}), function(suggested){
+                    QB.Phone.NUI.postLegacy("GetSuggestedContacts", {}, function(suggested) {
                         QB.Phone.Functions.SetupSuggestedContacts(suggested);
                     });//New line add//
-                    $.post(`https://${GetParentResourceName()}/ClearGeneralAlerts`, JSON.stringify({
+                    QB.Phone.NUI.postLegacy("ClearGeneralAlerts", {
                         app: "phone"
-                    }));
+                    });
                 } else if (PressedApplication == "mail") {
-                    $.post(`https://${GetParentResourceName()}/GetMails`, JSON.stringify({}), function(mails){
+                    QB.Phone.NUI.postLegacy("GetMails", {}, function(mails) {
                         QB.Phone.Functions.SetupMails(mails);
                     });
-                    $.post(`https://${GetParentResourceName()}/ClearGeneralAlerts`, JSON.stringify({
+                    QB.Phone.NUI.postLegacy("ClearGeneralAlerts", {
                         app: "mail"
-                    }));
+                    });
                 } else if (PressedApplication == "proxi") {
-                    $.post(`https://${GetParentResourceName()}/LoadProxis`, JSON.stringify({}), function(Proxis){
+                    QB.Phone.NUI.postLegacy("LoadProxis", {}, function(Proxis) {
                         QB.Phone.Functions.RefreshProxis(Proxis);
                     })
                 } else if (PressedApplication == "garage") {
-                    $.post(`https://${GetParentResourceName()}/SetupGarageVehicles`, JSON.stringify({}), function(Vehicles){
+                    QB.Phone.NUI.postLegacy("SetupGarageVehicles", {}, function(Vehicles) {
                         SetupGarageVehicles(Vehicles);
                     })
                 } else if (PressedApplication == "houses") {
-                    $.post(`https://${GetParentResourceName()}/GetPlayerHouses`, JSON.stringify({}), function(Houses){
+                    QB.Phone.NUI.postLegacy("GetPlayerHouses", {}, function(Houses) {
                         SetupPlayerHouses(Houses);
                     });
-                    $.post(`https://${GetParentResourceName()}/GetPlayerKey`, JSON.stringify({}), function(Keys){
+                    QB.Phone.NUI.postLegacy("GetPlayerKey", {}, function(Keys) {
                         $(".house-app-mykeys-container").html("");
                         if (Keys.length > 0) {
                             $.each(Keys, function(i, key){
@@ -453,22 +467,22 @@ $(document).on('click', '.phone-application', function(e){
                         }
                     });
                 } else if (PressedApplication == "taxi") {
-                    $.post(`https://${GetParentResourceName()}/GetAvailableTaxiDrivers`, JSON.stringify({}), function(data){
+                    QB.Phone.NUI.postLegacy("GetAvailableTaxiDrivers", {}, function(data) {
                         SetupTaxiDrivers(data);
                     });
                 } else if (PressedApplication == "store") {
-                    $.post(`https://${GetParentResourceName()}/SetupStoreApps`, JSON.stringify({}), function(data){
+                    QB.Phone.NUI.postLegacy("SetupStoreApps", {}, function(data) {
                         SetupAppstore(data);
                     });
                 }
 
                 else if (PressedApplication == "gallery") {
-                    $.post(`https://${GetParentResourceName()}/GetGalleryData`, JSON.stringify({}), function(data){
+                    QB.Phone.NUI.postLegacy("GetGalleryData", {}, function(data) {
                         setUpGalleryData(data);
                     });
                 }
                 else if (PressedApplication == "camera") {
-                    $.post(`https://${GetParentResourceName()}/TakePhoto`, JSON.stringify({}),function(url){
+                    QB.Phone.NUI.postLegacy("TakePhoto", {}, function(url) {
                         setUpCameraApp(url)
                     })
                     QB.Phone.Functions.Close();
@@ -485,11 +499,11 @@ $(document).on('click', '.phone-application', function(e){
                     LoadLSBNEvent();
                 } else if (PressedApplication == "contacts") {
                     $("#phone-contact-search").show();
-                    $.post(`https://${GetParentResourceName()}/ClearGeneralAlerts`, JSON.stringify({
+                    QB.Phone.NUI.postLegacy("ClearGeneralAlerts", {
                         app: "contacts"
-                    }));
+                    });
                 } else if(PressedApplication == "group-chats") {
-                    $.post(`https://${GetParentResourceName()}/GetChatRooms`, JSON.stringify({}), function(ChatRooms){
+                    QB.Phone.NUI.postLegacy("GetChatRooms", {}, function(ChatRooms) {
                         QB.Phone.Functions.LoadChatRooms(ChatRooms)
                     })
                 }
@@ -512,14 +526,14 @@ $(document).on('click', '.mykeys-key', function(e){
 
     var KeyData = $(this).data('KeyData');
 
-    $.post(`https://${GetParentResourceName()}/SetHouseLocation`, JSON.stringify({
+    QB.Phone.NUI.postLegacy("SetHouseLocation", {
         HouseData: KeyData
-    }))
+    })
 });
 
 $(document).on('click', '.phone-take-camera-button', function(event){
     event.preventDefault();
-    $.post(`https://${GetParentResourceName()}/TakePhoto`, JSON.stringify({}),function(url){
+    QB.Phone.NUI.postLegacy("TakePhoto", {}, function(url) {
         // setUpCameraApp(url)
     })
     QB.Phone.Functions.Close();
@@ -527,7 +541,7 @@ $(document).on('click', '.phone-take-camera-button', function(event){
 
 $(document).on('click', '.phone-silent-button', function(event){
     event.preventDefault();
-    $.post(`https://${GetParentResourceName()}/phone-silent-button`, JSON.stringify({}),function(Data){
+    QB.Phone.NUI.postLegacy("phone-silent-button", {}, function(Data) {
         if(Data){
             $(".silent-mode-two").css({"display":"block"});
             $(".silent-mode-one").css({"display":"none"});
@@ -584,7 +598,7 @@ QB.Phone.Functions.Close = function() {
     $('.publicphonebase').css('display', 'none')
     QB.Phone.Animations.BottomSlideDown('.container', 800, -100);
     QB.Phone.Animations.BottomSlideDown('.container', 500, -100);
-    $.post(`https://${GetParentResourceName()}/Close`);
+    QB.Phone.NUI.postLegacy("Close");
     QB.Phone.Data.IsOpen = false;
 }
 
@@ -846,7 +860,7 @@ QB.Phone.Animations.SamsungAppClose = function(Object, Timeout, callback) {
 }
 
 QB.Phone.Notifications.Custom.Add = function(icon, title, text, color, timeout, accept, deny) {
-    $.post(`https://${GetParentResourceName()}/HasPhone`, JSON.stringify({}), function(HasPhone){
+    QB.Phone.NUI.postLegacy("HasPhone", {}, function(HasPhone) {
         if (HasPhone) {
             if (timeout == null && timeout == undefined) {
                 timeout = 1500;
@@ -906,7 +920,7 @@ QB.Phone.Notifications.Custom.Add = function(icon, title, text, color, timeout, 
 }
 
 QB.Phone.Notifications.Add = function(icon, title, text, color, timeout) {
-    $.post(`https://${GetParentResourceName()}/HasPhone`, JSON.stringify({}), function(HasPhone){
+    QB.Phone.NUI.postLegacy("HasPhone", {}, function(HasPhone) {
         if (HasPhone) {
             if (timeout == null && timeout == undefined) {
                 timeout = 1500;
@@ -993,8 +1007,8 @@ $(document).on('click', ".phone-notification-container", function() {
 
 
 $(document).on('click', ".notification-accept", function() {
-    $.post(`https://${GetParentResourceName()}/AcceptNotification`, JSON.stringify({})),
-    $.post(`https://${GetParentResourceName()}/PlaySound`, JSON.stringify({sound: "Menu_Accept", table: "Phone_SoundSet_Default"}));
+    QB.Phone.NUI.postLegacy("AcceptNotification", {});
+    QB.Phone.NUI.postLegacy("PlaySound", {sound: "Menu_Accept", table: "Phone_SoundSet_Default"});
     QB.Phone.Animations.TopSlideUp(".phone-notification-container-new", 500, -10);
     QB.Phone.Notifications.Timeout = null
 
@@ -1004,8 +1018,8 @@ $(document).on('click', ".notification-accept", function() {
 })
 
 $(document).on('click', ".notification-deny", function() {
-    $.post(`https://${GetParentResourceName()}/DenyNotification`, JSON.stringify({})),
-    $.post(`https://${GetParentResourceName()}/PlaySound`, JSON.stringify({sound: "Menu_Back", table: "Phone_SoundSet_Default"}));
+    QB.Phone.NUI.postLegacy("DenyNotification", {}),
+    QB.Phone.NUI.postLegacy("PlaySound", {sound: "Menu_Back", table: "Phone_SoundSet_Default"});
     QB.Phone.Notifications.Timeout = null
 
     QB.Phone.Animations.TopSlideUp(".phone-notification-container-new", 500, -10);
@@ -1045,7 +1059,7 @@ QB.Phone.Functions.UpdateTime = function(data) {
 var NotificationTimeout = null;
 
 QB.Screen.Notification = function(title, content, icon, timeout, color) {
-    $.post(`https://${GetParentResourceName()}/HasPhone`, JSON.stringify({}), function(HasPhone){
+    QB.Phone.NUI.postLegacy("HasPhone", {}, function(HasPhone) {
         if (HasPhone) {
             if (color != null && color != undefined) {
                 $(".screen-notifications-container").css({"background-color":color});
@@ -1239,7 +1253,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 break;
             case "UpdateGarages":
-                $.post(`https://${GetParentResourceName()}/SetupGarageVehicles`, JSON.stringify({}), function(Vehicles){
+                QB.Phone.NUI.postLegacy("SetupGarageVehicles", {}, function(Vehicles) {
                     SetupGarageVehicles(Vehicles);
                 })
                 break;

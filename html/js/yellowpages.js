@@ -110,10 +110,10 @@ $(document).on('click', '#proxi-sendmessage-chat', function(e){
         setTimeout(function(){
             ConfirmationFrame()
         }, 150);
-        $.post(`https://${GetParentResourceName()}/PostProxi`, JSON.stringify({
+        QB.Phone.NUI.postLegacy("PostProxi", {
             message: Proxi,
             url: picture
-        }));
+        });
         ClearProxiInput();
         $('#proxi-box-textt').animate({opacity: 0}, 350, function(){ $(this).css("display", "none"); });
     } else {
@@ -137,10 +137,10 @@ $(document).on('click','.proxi-contact-info',function(e){
                 number: InputNum,
                 name: InputNum,
             }
-            $.post(`https://${GetParentResourceName()}/CallContact`, JSON.stringify({
+            QB.Phone.NUI.postLegacy("CallContact", {
                 ContactData: cData,
                 Anonymous: QB.Phone.Data.AnonymousCall,
-            }), function(status){
+            }, function(status) {
                 if (cData.number !== QB.Phone.Data.PlayerData.charinfo.phone) {
                     if (status.IsOnline) {
                         if (status.CanCall) {
@@ -202,7 +202,7 @@ $(document).on('click','.proxi-trash',function(e){
         ConfirmationFrame()
         QB.Phone.Notifications.Add("fas fa-ad", "Proxi", "The proxi was deleted", "#ff8f1a", 2000);
     }, 150);
-    $.post(`https://${GetParentResourceName()}/DeleteProxi`, JSON.stringify({
+    QB.Phone.NUI.postLegacy("DeleteProxi", {
         id: proxiId
-    }));
+    });
 })

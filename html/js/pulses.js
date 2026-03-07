@@ -307,9 +307,9 @@ function renderProfile(Pulses) {
             // Fetch comment counts
             var pulseIds = myPulses.map(function(Pulse){ return Pulse.pulseId; });
             var fetchData = new Promise((resolve, reject) => {
-                $.post(`https://${GetParentResourceName()}/GetPulseCommentCounts`, JSON.stringify({ pulseIds: pulseIds }))
-                    .done(resolve)
-                    .fail(reject);
+                QB.Phone.NUI.postLegacy("GetPulseCommentCounts", { pulseIds: pulseIds })
+                    .then(resolve)
+                    .catch(reject);
             });
             var minDelay = new Promise(resolve => setTimeout(resolve, 500));
 
@@ -341,9 +341,9 @@ QB.Phone.Notifications.LoadPulses = function(Pulses, hasVPN=false, isTabSwitch =
     if (CurrentPulsesView === 'feed') {
         if (Pulses && Pulses.length > 0) {
             var pulseIds = Pulses.map(function(Pulse){ return Pulse.pulseId; });
-            $.post(`https://${GetParentResourceName()}/GetPulseCommentCounts`, JSON.stringify({ pulseIds: pulseIds }), function(counts) {
+            QB.Phone.NUI.postLegacy("GetPulseCommentCounts", { pulseIds: pulseIds }, function(counts) {
                 renderPulses(Pulses, counts, isTabSwitch, isUpdate);
-            }).fail(function() {
+            }).catch(function() {
                 renderPulses(Pulses, {}, isTabSwitch, isUpdate);
             });
         } else {
@@ -369,7 +369,7 @@ $(document).on('click', '.footer-icon-pulses', function(e){
     e.preventDefault();
     CurrentPulsesView = "feed";
     CurrentPulsesTab = "recent"; // Reset to recent when going to feed
-    $.post(`https://${GetParentResourceName()}/GetPulses`, JSON.stringify({}), function(Pulses){
+    QB.Phone.NUI.postLegacy("GetPulses", {}, function(Pulses) {
         QB.Phone.Notifications.LoadPulses(Pulses.PulseData, Pulses.hasVPN);
     });
 });
@@ -378,7 +378,7 @@ $(document).on('click', '.footer-icon-profile', function(e){
     e.preventDefault();
     CurrentPulsesView = "profile";
     CurrentProfileViewData = null; // Reset to my profile
-    $.post(`https://${GetParentResourceName()}/GetPulses`, JSON.stringify({}), function(Pulses){
+    QB.Phone.NUI.postLegacy("GetPulses", {}, function(Pulses) {
         QB.Phone.Notifications.LoadPulses(Pulses.PulseData, Pulses.hasVPN);
     });
 });
@@ -401,7 +401,7 @@ $(document).on('click', '.pulses-tab', function(e){
     setTimeout(() => {
         list.html(''); // Clear current content
         for (let i = 0; i < 5; i++) { // Show 5 skeleton items
-            list.append(createSkeletonPulseElement());
+            list.append(createSkeletonPulseElement();
         }
         list.css('animation', 'fadeIn 0.3s ease-out forwards');
 
@@ -410,15 +410,15 @@ $(document).on('click', '.pulses-tab', function(e){
 
         if (newTab === 'notifications') {
             var fetchData = new Promise((resolve, reject) => {
-                $.post(`https://${GetParentResourceName()}/GetPulseNotifications`, JSON.stringify({}))
-                    .done(resolve)
-                    .fail(reject);
+                QB.Phone.NUI.postLegacy("GetPulseNotifications", {})
+                    .then(resolve)
+                    .catch(reject);
             });
             Promise.all([fetchData, minDelay]).then(function(results) {
                 renderNotifications(results[0]);
             });
         } else {
-            var fetchData = $.post(`https://${GetParentResourceName()}/GetPulses`, JSON.stringify({}));
+            var fetchData = QB.Phone.NUI.postLegacy("GetPulses", {});
             Promise.all([fetchData, minDelay]).then(function(results) {
                 QB.Phone.Notifications.LoadPulses(results[0].PulseData, results[0].hasVPN, true);
             });
@@ -463,11 +463,11 @@ $(document).on('click', '#save-profile-button', function(e) {
         QB.Phone.Data.PlayerData.metadata.bio = bio;
     }
 
-    $.post(`https://${GetParentResourceName()}/UpdateProfile`, JSON.stringify({
+    QB.Phone.NUI.postLegacy("UpdateProfile", {
         profilePicture: pfp,
         banner: banner,
         bio: bio
-    }));
+    });
 
     $('.edit-profile-modal').remove();
 
@@ -494,9 +494,9 @@ $(document).on('click', '.footer-icon-new-pulse', function(e){
 $(document).on('click', '.pulse-like', function(e){
     e.preventDefault();
     var pulseId = $(this).closest('.pulses-pulse').data('pulseid');
-    $.post(`https://${GetParentResourceName()}/ToggleLikePulse`, JSON.stringify({
+    QB.Phone.NUI.postLegacy("ToggleLikePulse", {
         pulseId: pulseId
-    }));
+    });
 });
 
 $(document).on('click', '#pulse-sendmessage-chat', function(e){ // Submit Button For Pulses Message
@@ -515,23 +515,23 @@ $(document).on('click', '#pulse-sendmessage-chat', function(e){ // Submit Button
         if (editingPulseId) {
             // This is an edit operation
             // You would typically call a new NUI callback and server event here
-            $.post(`https://${GetParentResourceName()}/EditPulse`, JSON.stringify({
+            QB.Phone.NUI.postLegacy("EditPulse", {
                 pulseId: editingPulseId,
                 message: PulseMessage,
                 url: imageURL,
-            }), function(){
+            }, function() {
                 ClearInputNew();
                 $('#pulse-box-text').animate({opacity: 0}, 350, function(){ $(this).css("display", "none"); });
                 QB.Phone.Notifications.Add("fa-solid fa-wave-pulse", "Pulses", "Pulse updated!", "#1DA1F2");
             });
         } else {
-            $.post(`https://${GetParentResourceName()}/PostNewPulse`, JSON.stringify({
+            QB.Phone.NUI.postLegacy("PostNewPulse", {
                 Message: PulseMessage,
                 Date: CurrentDate,
                 url: imageURL,
                 type: 'pulse',
                 anonymous: anonymousPulse,
-            }), function(){ ClearInputNew(); $('#pulse-box-text').animate({opacity: 0}, 350, function(){ $(this).css("display", "none"); }); });
+            }, function() { ClearInputNew(); $('#pulse-box-text').animate({opacity: 0}, 350, function(){ $(this).css("display", "none"); }); });
         }
     } else {
         QB.Phone.Notifications.Add("fa-solid fa-wave-pulse", "Pulses", "Fill a message!", "#1DA1F2");
@@ -569,12 +569,12 @@ $(document).on('click', '.pulse-retweet', function(e){
         setTimeout(function(){
             ConfirmationFrame()
         }, 150);
-        $.post(`https://${GetParentResourceName()}/PostNewPulse`, JSON.stringify({
+        QB.Phone.NUI.postLegacy("PostNewPulse", {
             Message: CompleteRepulse,
             Date: CurrentDate,
             url: imageURL,
             type: 'repulse'
-        }))
+        })
     } else {
         QB.Phone.Notifications.Add("fa-solid fa-wave-pulse", "Pulses", "Cannot re-pulse a re-pulse!", "#1DA1F2");
     }
@@ -626,7 +626,7 @@ $(document).on('click', '.edit-option', function(e) {
 $(document).on('click', '.delete-option', function(e) {
     e.preventDefault();
     var pulseId = $(this).data('pulseid');
-    $.post(`https://${GetParentResourceName()}/DeletePulse`, JSON.stringify({id: pulseId}));
+    QB.Phone.NUI.postLegacy("DeletePulse", {id: pulseId});
     $('.pulses-context-menu').remove();
 });
 
@@ -646,9 +646,9 @@ $(document).on('click', '.pulse-comment', function(e){
         commentsSection.slideUp(200);
     } else {
         // Load comments for this pulse
-        $.post(`https://${GetParentResourceName()}/GetPulseComments`, JSON.stringify({
+        QB.Phone.NUI.postLegacy("GetPulseComments", {
             pulseId: pulseId
-        }), function(comments) {
+        }, function(comments) {
             LoadPulseComments(pulseId, comments);
             commentsSection.slideDown(200);
         });
@@ -663,10 +663,10 @@ $(document).on('click', '.pulse-comment-submit', function(e){
     var commentText = commentInput.val().trim();
     
     if (commentText !== "") {
-        $.post(`https://${GetParentResourceName()}/PostPulseComment`, JSON.stringify({
+        QB.Phone.NUI.postLegacy("PostPulseComment", {
             pulseId: pulseId,
             comment: commentText
-        }), function(response) {
+        }, function(response) {
             if (response.success) {
                 commentInput.val('');
                 // The global UpdatePulses event will handle refreshing the feed.
@@ -686,7 +686,7 @@ $(document).on('click', '.pulse-comment-avatar', function(e) {
     CurrentPulsesView = "profile";
     CurrentProfileViewData = { citizenid: citizenid, firstName: firstName, lastName: lastName, profilePicture: profilePicture };
     
-    $.post(`https://${GetParentResourceName()}/GetPulses`, JSON.stringify({}), function(Pulses){
+    QB.Phone.NUI.postLegacy("GetPulses", {}, function(Pulses) {
         QB.Phone.Notifications.LoadPulses(Pulses.PulseData, Pulses.hasVPN);
     });
 });
@@ -702,7 +702,7 @@ $(document).on('click', '.pulse-avatar', function(e) {
     CurrentPulsesView = "profile";
     CurrentProfileViewData = { citizenid: citizenid, firstName: firstName, lastName: lastName, profilePicture: profilePicture };
     
-    $.post(`https://${GetParentResourceName()}/GetPulses`, JSON.stringify({}), function(Pulses){
+    QB.Phone.NUI.postLegacy("GetPulses", {}, function(Pulses) {
         QB.Phone.Notifications.LoadPulses(Pulses.PulseData, Pulses.hasVPN);
     });
 });

@@ -34,10 +34,10 @@ $(document).on('click', '#delete-button', function(e){
     let source = $('.image').attr('src')
 
     setTimeout(() => {
-        $.post(`https://${GetParentResourceName()}/DeleteImage`, JSON.stringify({image:source}), function(Hashtags){
+        QB.Phone.NUI.postLegacy("DeleteImage", {image:source}, function(Hashtags) {
             setTimeout(()=>{
                 $('#return-button').click()
-                $.post(`https://${GetParentResourceName()}/GetGalleryData`, JSON.stringify({}), function(data){
+                QB.Phone.NUI.postLegacy("GetGalleryData", {}, function(data) {
                     setTimeout(()=>{
                             setUpGalleryData(data);
 
@@ -120,16 +120,16 @@ $(document).on('click', '#tweet-button', function(e){
     var imageURL = postImageUrl
     if (TweetMessage != "") {
         var CurrentDate = new Date();
-        $.post(`https://${GetParentResourceName()}/PostNewTweet`, JSON.stringify({
+        QB.Phone.NUI.postLegacy("PostNewTweet", {
             Message: TweetMessage,
             Date: CurrentDate,
             Picture: QB.Phone.Data.MetaData.profilepicture,
             url: imageURL
-        }), function(Tweets){
+        }, function(Tweets) {
             QB.Phone.Notifications.LoadTweets(Tweets);
         });
         var TweetMessage = $("#new-textarea").val(' ');
-        $.post(`https://${GetParentResourceName()}/GetHashtags`, JSON.stringify({}), function(Hashtags){
+        QB.Phone.NUI.postLegacy("GetHashtags", {}, function(Hashtags) {
             QB.Phone.Notifications.LoadHashtags(Hashtags)
         })
         returnDetail()
@@ -154,16 +154,16 @@ $(document).on('click', '#advert-button', function(e){
             left: -30+"vw"
         });
         if (!picture){
-            $.post(`https://${GetParentResourceName()}/PostAdvert`, JSON.stringify({
+            QB.Phone.NUI.postLegacy("PostAdvert", {
                 message: Advert,
                 url: null
-            }));
+            });
             returnDetail()
         }else {
-            $.post(`https://${GetParentResourceName()}/PostAdvert`, JSON.stringify({
+            QB.Phone.NUI.postLegacy("PostAdvert", {
                 message: Advert,
                 url: picture
-            }));
+            });
             returnDetail()
         }
         $("#new-textarea").val(' ');

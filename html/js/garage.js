@@ -22,9 +22,9 @@ $(document).on('click', '.garage-vehicle', function(e){
 
 $(document).on('click', '.box-track', function(e){
     e.preventDefault()
-    $.post(`https://${GetParentResourceName()}/gps-vehicle-garage`, JSON.stringify({
+    QB.Phone.NUI.postLegacy("gps-vehicle-garage", {
         veh: veh,
-    }));
+    });
 });
 
 $(document).on('click', '.box-sellvehicle', function(e){
@@ -38,11 +38,11 @@ $(document).on('click', '#garage-sellvehicle', function(e){
     var stateid = $(".garage-sellvehicle-stateid").val();
     var price = $(".garage-sellvehicle-price").val();
     if(price != "" && stateid != ""){
-        $.post(`https://${GetParentResourceName()}/sellVehicle`, JSON.stringify({
+        QB.Phone.NUI.postLegacy("sellVehicle", {
             plate: plate,
             id: stateid,
             price: price
-        }));
+        });
     }
     ClearInputNew()
     $('#garage-sellvehicle-menu').fadeOut(350);

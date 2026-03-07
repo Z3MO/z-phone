@@ -4,16 +4,16 @@ var ExtraButtonsOpen = false;
 
 $( "input[type=text], textarea, input[type=number]" ).focusin(function(e) {
     e.preventDefault();
-    $.post(`https://${GetParentResourceName()}/DissalowMoving`);
+    QB.Phone.NUI.postLegacy("DissalowMoving");
 });
 $(".whatsapp-openedchat").focusin(function(e) {
     e.preventDefault();
-    $.post(`https://${GetParentResourceName()}/DissalowMoving`);
+    QB.Phone.NUI.postLegacy("DissalowMoving");
 });
 
 $( "input[type=text], textarea, input[type=number]" ).focusout(function(e) {
     e.preventDefault();
-    $.post(`https://${GetParentResourceName()}/AllowMoving`);
+    QB.Phone.NUI.postLegacy("AllowMoving");
 });
 
 
@@ -59,9 +59,9 @@ $(document).on('click', '.whatsapp-chat', function(e){
 
     QB.Phone.Functions.SetupChatMessages(ChatData);
 
-    $.post(`https://${GetParentResourceName()}/ClearAlerts`, JSON.stringify({
+    QB.Phone.NUI.postLegacy("ClearAlerts", {
         number: ChatData.number
-    }));
+    });
 
     $("#whatsapp-contact-search").fadeOut(150);
 
@@ -84,7 +84,7 @@ $(document).on('click', '.whatsapp-chat', function(e){
 
 $(document).on('click', '#whatsapp-openedchat-back', function(e){
     e.preventDefault();
-    $.post(`https://${GetParentResourceName()}/GetWhatsappChats`, JSON.stringify({}), function(chats){
+    QB.Phone.NUI.postLegacy("GetWhatsappChats", {}, function(chats) {
         QB.Phone.Functions.LoadWhatsappChats(chats);
     });
     OpenedChatData.number = null;
@@ -207,19 +207,19 @@ $(document).on('click', '#whatsapp-save-note-for-doc', function(e){
     var Message = $(".whatsapp-input-message").val();
     var Number = $(".whatsapp-input-number").val();
     var regExp = /[a-zA-Z]/g;
-    if ((Message &&Number ) != "" && !regExp.test(Number)){
-        $.post(`https://${GetParentResourceName()}/SendMessage`, JSON.stringify({
+    if ((Message &&Number ) != "" && !regExp.test(Number){
+        QB.Phone.NUI.postLegacy("SendMessage", {
             ChatNumber: Number,
             ChatDate: GetCurrentDateKey(),
             ChatMessage: Message,
             ChatTime: FormatMessageTime(),
             ChatType: "message",
-        }));
+        });
         ClearInputNew()
         $(".whatsapp-input-message").val("");
         $(".whatsapp-input-number").val("");
         $('#whatsapp-box-new-add-new').fadeOut(350);
-        $.post(`https://${GetParentResourceName()}/GetWhatsappChats`, JSON.stringify({}), function(chats){
+        QB.Phone.NUI.postLegacy("GetWhatsappChats", {}, function(chats) {
             QB.Phone.Functions.LoadWhatsappChats(chats);
         });
     } else {
@@ -242,7 +242,7 @@ function ConfirmationFrame() {
 }
 
 function detectURLs(message) {
-  var urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+  var urlRegex = /(((https?:\/\/)|(www\.)[^\s]+)/g;
   return message.match(urlRegex)
 }
 
@@ -265,25 +265,25 @@ $(document).on('click', '#whatsapp-openedchat-send', function(e){
     }
 
     if (NewMessage !== null && NewMessage !== undefined && NewMessage !== "") {
-        $.post(`https://${GetParentResourceName()}/SendMessage`, JSON.stringify({
+        QB.Phone.NUI.postLegacy("SendMessage", {
             ChatNumber: OpenedChatData.number,
             ChatDate: GetCurrentDateKey(),
             ChatMessage: NewMessage,
             ChatTime: FormatMessageTime(),
             ChatType: "message",
-        }));
+        });
     }
 
     if (urlDetect != null){
         if (/(jpg|jpeg|gif|png)$/i.test(urlDetect)) {
-            $.post(`https://${GetParentResourceName()}/SendMessage`, JSON.stringify({
+            QB.Phone.NUI.postLegacy("SendMessage", {
                 ChatNumber: OpenedChatData.number,
                 ChatDate: GetCurrentDateKey(),
                 ChatMessage: null,
                 ChatTime: FormatMessageTime(),
                 ChatType: "picture",
                 url : urlDetect
-            }));
+            });
         }
     }
     $(".emojionearea-editor").html("");
@@ -299,10 +299,10 @@ $(document).on('click', '#whatsapp-openedchat-call', function(e){
             number: InputNum,
             name: InputNum,
         }
-        $.post(`https://${GetParentResourceName()}/CallContact`, JSON.stringify({
+        QB.Phone.NUI.postLegacy("CallContact", {
             ContactData: cData,
             Anonymous: QB.Phone.Data.AnonymousCall,
-        }), function(status){
+        }, function(status) {
             if (cData.number !== QB.Phone.Data.PlayerData.charinfo.phone) {
                 if (status.IsOnline) {
                     if (status.CanCall) {

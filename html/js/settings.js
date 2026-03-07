@@ -142,9 +142,9 @@ $(document).on('click', '#accept-background', function(e){
         $(".phone-background").css({"background-image":"url('"+QB.Phone.Settings.Background+"')"});
     }
 
-    $.post(`https://${GetParentResourceName()}/SetBackground`, JSON.stringify({
+    QB.Phone.NUI.postLegacy("SetBackground", {
         background: QB.Phone.Settings.Background,
-    }))
+    })
 });
 
 QB.Phone.Functions.LoadMetaData = function(MetaData) {
@@ -280,9 +280,9 @@ $(document).on('click', '#accept-profilepicture', function(e){
         $(".settings-profile-avatar-placeholder").hide();
     }
 
-    $.post(`https://${GetParentResourceName()}/UpdateProfilePicture`, JSON.stringify({
+    QB.Phone.NUI.postLegacy("UpdateProfilePicture", {
         profilepicture: ProfilePicture,
-    }));
+    });
 });
 
 $(document).on('click', '#accept-custom-profilepicture', function(e){

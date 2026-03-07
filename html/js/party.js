@@ -10,13 +10,13 @@ function ClearPartyInputs() {
 }
 
 function LoadJobCenterApp(){
-    $.post(`https://${GetParentResourceName()}/GetGroupsApp`, JSON.stringify({}), function(data){
+    QB.Phone.NUI.postLegacy("GetGroupsApp", {}, function(data) {
         AddDIV(data)
     });
 }
 
 function LoadJobCenter(){
-    $.post(`https://${GetParentResourceName()}/GetJobCentersJobs`, JSON.stringify({}), function(Jobs){
+    QB.Phone.NUI.postLegacy("GetJobCentersJobs", {}, function(Jobs) {
         $(".job-list").html("");
         for (const [k, v] of Object.entries(Jobs)) {
             let bgStyle = "";
@@ -93,9 +93,9 @@ $(document).on('click', '#party-tab-groups', function(e){
 $(document).on('click', '#job-icon-class', function(e){
     e.preventDefault();
     var event = $(this).data('event')
-    $.post(`https://${GetParentResourceName()}/CasinoPhoneJobCenter`, JSON.stringify({
+    QB.Phone.NUI.postLegacy("CasinoPhoneJobCenter", {
         event: event,
-    }));
+    });
 });
 
 // Create Group Action
@@ -112,10 +112,10 @@ $(document).on('click', '#jobcenter-submit-create-group', function(e){
     var pass2 = $(".jobcenter-input-password2").val();
     if (Name != "" && pass != "" && pass2 != ""){
         if(pass == pass2){
-            $.post(`https://${GetParentResourceName()}/jobcenter_CreateJobGroup`, JSON.stringify({
+            QB.Phone.NUI.postLegacy("jobcenter_CreateJobGroup", {
                 name: Name,
                 pass: pass,
-            }));
+            });
             $('#jobcenter-box-new-dashboard').fadeOut(350);
         }else{
             QB.Phone.Notifications.Add("fas fa-exclamation-circle", "System", "The password entered is incorrect")
@@ -199,15 +199,15 @@ $(document).on('click', '#btn-join-group', function(e){
         } else {
             // No password, join directly
             var CSN = QB.Phone.Data.PlayerData.citizenid;
-            $.post(`https://${GetParentResourceName()}/jobcenter_JoinTheGroup`, JSON.stringify({
+            QB.Phone.NUI.postLegacy("jobcenter_JoinTheGroup", {
                 PCSN: CSN,
                 id: parseInt(JoinID),
-            }));
+            });
             $('#jobcenter-box-new-player-name').fadeOut(350);
             QB.Phone.Notifications.Add("fas fa-check-circle", "System", "Joined group successfully!", "#2ecc71", 2500);
         }
     } else {
-        $.post(`https://${GetParentResourceName()}/jobcenter_GroupBusy`, JSON.stringify({}));
+        QB.Phone.NUI.postLegacy("jobcenter_GroupBusy", {});
     }
 });
 
@@ -216,10 +216,10 @@ $(document).on('click', '#jobcenter-submit-join-group', function(e){
     var EnterPass = $(".jobcenter-input-join-password").val();
     if(String(EnterPass) === String(JoinPass)){
         var CSN = QB.Phone.Data.PlayerData.citizenid;
-        $.post(`https://${GetParentResourceName()}/jobcenter_JoinTheGroup`, JSON.stringify({
+        QB.Phone.NUI.postLegacy("jobcenter_JoinTheGroup", {
             PCSN: CSN,
             id: parseInt(JoinID),
-        }));
+        });
         ClearPartyInputs();
         $('#jobcenter-box-new-join').fadeOut(350);
     } else {
@@ -242,16 +242,16 @@ $(document).on('click', '.jobcenter-div-job-group', function(e){
     JoinPass = pass;
     Status = status;
 
-    $.post(`https://${GetParentResourceName()}/jobcenter_CheckPlayerNames`, JSON.stringify({
+    QB.Phone.NUI.postLegacy("jobcenter_CheckPlayerNames", {
         id: parseInt(id),
-        }), function(ResponseData){
+        }, function(ResponseData) {
            ClearPartyInputs();
            $('#jobcenter-box-new-player-name').fadeIn(350);
            $("#phone-new-box-main-playername").html("");
            
             // 1. Render Members Section
             var membersSection = $('<div class="jobcenter-members-section"></div>');
-            for (const [k, v] of Object.entries(ResponseData.members)) {
+            for (const [k, v] of Object.entries(ResponseData.members) {
                 var icon = v.isLeader ? "fa-crown" : "fa-user";
                 var roleClass = v.isLeader ? "leader" : "member";
                 var AddOption = `<div class="jobcenter-playerlist-name"><div class="jobcenter-div-job-group-image ${roleClass}"><i class="fas ${icon}"></i></div><div class="jobcenter-member-name">${v.name}</div></div>`
@@ -313,9 +313,9 @@ $(document).on('click', '.jobcenter-div-job-group', function(e){
 $(document).on('click', '#btn-delete-group', function(e){
     e.preventDefault();
     var Delete = $(this).data('id');
-    $.post(`https://${GetParentResourceName()}/jobcenter_DeleteGroup`, JSON.stringify({
+    QB.Phone.NUI.postLegacy("jobcenter_DeleteGroup", {
         delete: Delete,
-    }));
+    });
     $('#jobcenter-box-new-player-name').fadeOut(350);
 });
 
@@ -324,9 +324,9 @@ $(document).on('click', '#btn-leave-group', function(e){
     e.preventDefault();
     var CSN = QB.Phone.Data.PlayerData.citizenid;
     var id = $(this).data('id');
-    $.post(`https://${GetParentResourceName()}/jobcenter_leave_grouped`, JSON.stringify({
+    QB.Phone.NUI.postLegacy("jobcenter_leave_grouped", {
         id: id,
         csn: CSN,
-    }));
+    });
     $('#jobcenter-box-new-player-name').fadeOut(350);
 });
