@@ -408,7 +408,7 @@ $(document).on('click', '.phone-application', function(e){
                 } else if (PressedApplication == "bank") {
                     QB.Phone.Functions.DoBankOpen();
                     QB.Phone.Functions.SwitchBankTab("accounts", { immediate: true });
-                    void QB.Phone.Functions.LoadBankData();
+                    QB.Phone.Functions.LoadBankData().catch(() => {});
                 } else if (PressedApplication == "whatsapp") {
                     $.post(`https://${GetParentResourceName()}/GetWhatsappChats`, JSON.stringify({}), function(chats){
                         QB.Phone.Functions.LoadWhatsappChats(chats);
@@ -1074,8 +1074,8 @@ QB.Screen.Notification = function(title, content, icon, timeout, color) {
 }
 
 document.addEventListener('keydown', (event) => {
-    switch (event.keyCode) {
-        case 27: // ESCAPE
+    switch (event.key) {
+        case 'Escape':
             if (up) {
                 QB.Screen.popDown();
             } else {
@@ -1119,7 +1119,7 @@ QB.Screen.popDown = function(){
 
 document.addEventListener('DOMContentLoaded', () => {
     // FiveM sends phone state into the UI through window messages.
-    window.addEventListener('message', async function(event) {
+    const handlePhoneMessage = async (event) => {
         switch(event.data.action) {
             case "open":
                 QB.Phone.Functions.Open(event.data);
@@ -1256,7 +1256,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 QB.Phone.Functions.RefreshGroupChat(event.data.messageData)
                 break;
         }
-    })
+    }
+
+    window.addEventListener('message', handlePhoneMessage);
 
     // Local browser mock so the UI can be previewed without a FiveM client.
     if (!window.invokeNative) {
