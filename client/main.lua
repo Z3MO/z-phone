@@ -234,6 +234,11 @@ local function OpenPhone()
 
         local hasVPN = QBCore.Functions.HasItem(Config.VPNItem)
 
+        -- Generate a fresh session token and embed it in the open payload.
+        -- The NUI stores this token and must include it in every subsequent
+        -- NUI callback request; the Lua side validates it via ValidateNUIToken().
+        local nuiToken = RefreshNUIToken()
+
         SendNUIMessage({
             action = "open",
             Tweets = PhoneData.Tweets,
@@ -241,6 +246,7 @@ local function OpenPhone()
             CallData = PhoneData.CallData,
             PlayerData = PhoneData.PlayerData,
             hasVPN = hasVPN,
+            nui_token = nuiToken,
         })
         PhoneData.isOpen = true
         if Config.AllowWalking then
@@ -490,6 +496,8 @@ RegisterNUICallback('HasPhone', function(_, cb)
 end)
 
 RegisterNUICallback('Close', function()
+    -- Invalidate the session token so any lingering/injected callbacks are rejected
+    ClearNUIToken()
     if not PhoneData.CallData.InCall then
         DoPhoneAnimation('cellphone_text_out')
         SetTimeout(400, function()

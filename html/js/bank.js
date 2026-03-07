@@ -101,10 +101,10 @@ $(document).on('click', '#accept-transfer', function(e){
     var amountData = $(".bank-app-account-balance").data('balance');
 
     if (iban != "" && amount != "") {
-            $.post(`https://${GetParentResourceName()}/CanTransferMoney`, JSON.stringify({
+            QB.Phone.nuiFetch('CanTransferMoney', {
                 sendTo: iban,
                 amountOf: amount,
-            }), function(data){
+            }, function(data){
                 if (data.TransferedMoney) {
                     $("#bank-transfer-iban").val("");
                     $("#bank-transfer-amount").val("");
@@ -139,13 +139,13 @@ $(document).on('click', '.pay-invoice', function(event){
     var BankBalance = $(".bank-app-account-balance").data('balance');
 
     if (BankBalance >= InvoiceData.amount) {
-        $.post(`https://${GetParentResourceName()}/PayInvoice`, JSON.stringify({
+        QB.Phone.nuiFetch('PayInvoice', {
             sender: InvoiceData.sender,
             amount: InvoiceData.amount,
             society: InvoiceData.society,
             invoiceId: InvoiceData.id,
             senderCitizenId: InvoiceData.sendercitizenid
-        }), function(CanPay){
+        }, function(CanPay){
             if (CanPay) {
                 $("#"+InvoiceId).animate({
                     left: 30+"vh",
@@ -173,12 +173,12 @@ $(document).on('click', '.decline-invoice', function(event){
     var InvoiceId = $(this).parent().parent().attr('id');
     var InvoiceData = $("#"+InvoiceId).data('invoicedata');
 
-    $.post(`https://${GetParentResourceName()}/DeclineInvoice`, JSON.stringify({
+    QB.Phone.nuiFetch('DeclineInvoice', {
         sender: InvoiceData.sender,
         amount: InvoiceData.amount,
         society: InvoiceData.society,
         invoiceId: InvoiceData.id,
-    }));
+    });
     $("#"+InvoiceId).animate({
         left: 30+"vh",
     }, 300, function(){

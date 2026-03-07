@@ -25,6 +25,7 @@ server_scripts {
 files {
     'html/*.html',
     'html/js/*.js',
+    'html/js/core/*.js',
     'html/img/*.png',
     'html/img/*.svg',
     'html/css/*.css',

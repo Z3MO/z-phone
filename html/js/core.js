@@ -1,11 +1,14 @@
 /**
  * z-phone core.js
  *
- * Provides three foundational systems that every other script builds on:
+ * Provides foundational systems that every other script builds on:
  *
- *  1. QB.Phone.EventBus  – Pub/sub event bus for decoupled game event routing
+ *  1. QB.Phone.EventBus      – Pub/sub event bus for decoupled game event routing
  *  2. QB.Phone.ComponentManager – Lifecycle manager (mount / unmount) for app components
- *  3. QB.Phone.LazyLoader – Lazy-loads app-specific images/SVGs on first open
+ *  3. QB.Phone.LazyLoader    – Lazy-loads app-specific images/SVGs on first open
+ *  4. QB.Phone.DataSync      – Shallow comparison helper to skip DOM updates when unchanged
+ *  5. QB.Phone.Security      – NUI session token store + nuiFetch() wrapper that injects
+ *                               the token in every callback request to Lua
  *
  * This file MUST be loaded before app.js and all app-specific scripts.
  */
@@ -235,3 +238,73 @@ QB.Phone.DataSync = (function () {
         }
     };
 }());
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 5. Security – NUI Session Token & nuiFetch wrapper
+//
+//    The Lua side generates a random token each time the phone is opened and
+//    sends it in the `open` action payload as `nui_token`.  Every subsequent
+//    NUI → Lua fetch request includes that token.  The Lua validation layer
+//    rejects any request that carries a token that doesn't match.
+//
+//    Usage (replaces raw $.post everywhere):
+//      QB.Phone.nuiFetch('SomeCallback', { key: 'value' }, function(result) {
+//          // handle result
+//      });
+// ─────────────────────────────────────────────────────────────────────────────
+QB.Phone.Security = (function () {
+    var _token = null;
+
+    return {
+        /**
+         * Store the session token received from Lua on phone open.
+         * @param {string} token
+         */
+        setToken: function (token) {
+            _token = token;
+        },
+
+        /** Returns the current session token, or null if not yet set. */
+        getToken: function () {
+            return _token;
+        },
+
+        /**
+         * Clear the token when the phone session ends.
+         */
+        clearToken: function () {
+            _token = null;
+        }
+    };
+}());
+
+/**
+ * Replacement for $.post() for all NUI → Lua callback requests.
+ * Automatically injects the current session token into the payload so the
+ * Lua validation layer can authenticate the request.
+ *
+ * @param {string}   callbackName – Lua NUI callback name (e.g. 'CanTransferMoney')
+ * @param {Object}   [data]       – Payload object (will have nui_token injected)
+ * @param {Function} [callback]   – Called with the parsed response on success
+ */
+QB.Phone.nuiFetch = function (callbackName, data, callback) {
+    var token = QB.Phone.Security.getToken();
+
+    // Warn developers (not players) when nuiFetch is called before the phone is opened
+    // and a session token has not yet been established.
+    if (token === null) {
+        console.warn('[nuiFetch] No session token available for callback "' + callbackName + '". ' +
+            'Ensure the phone is open before calling nuiFetch. The request will be rejected by Lua.');
+    }
+
+    // Merge session token into the payload
+    var payload = Object.assign({}, data || {}, {
+        nui_token: token
+    });
+
+    $.post(
+        'https://' + GetParentResourceName() + '/' + callbackName,
+        JSON.stringify(payload),
+        callback
+    );
+};

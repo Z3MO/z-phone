@@ -15,6 +15,10 @@ RegisterNUICallback('GetBankContacts', function(_, cb)
 end)
 
 RegisterNUICallback('CanTransferMoney', function(data, cb)
+    -- Security: validate session token and check rate limit before processing
+    if not ValidateNUIToken(data)            then return cb({TransferedMoney = false}) end
+    if not CheckRateLimit('CanTransferMoney') then return cb({TransferedMoney = false}) end
+
     local amount = tonumber(data.amountOf)
     local iban = data.sendTo
     if (PlayerData.money['bank'] - amount) >= 0 then
@@ -36,6 +40,10 @@ RegisterNUICallback('GetInvoices', function(_, cb)
 end)
 
 RegisterNUICallback('PayInvoice', function(data, cb)
+    -- Security: validate session token and check rate limit
+    if not ValidateNUIToken(data)        then return cb("unauthorized") end
+    if not CheckRateLimit('PayInvoice') then return cb("rate_limited") end
+
     local senderCitizenId = data.senderCitizenId
     local society = data.society
     local amount = data.amount
@@ -46,6 +54,10 @@ RegisterNUICallback('PayInvoice', function(data, cb)
 end)
 
 RegisterNUICallback('DeclineInvoice', function(data, cb)
+    -- Security: validate session token and check rate limit
+    if not ValidateNUIToken(data)           then return cb("unauthorized") end
+    if not CheckRateLimit('DeclineInvoice') then return cb("rate_limited") end
+
     local amount = data.amount
     local invoiceId = data.invoiceId
     TriggerServerEvent('qb-phone:server:DeclineMyInvoice', amount, invoiceId)

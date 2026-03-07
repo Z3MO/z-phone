@@ -261,3 +261,26 @@ RegisterNetEvent('qb-phone:server:SaveMetaData', function(MData)
 
     Player.Functions.SetMetaData("phone", MData)
 end)
+-- ── Security violation logging ────────────────────────────────────────────────
+-- Receives alerts from client/security.lua when a token mismatch or rate limit
+-- is detected.  Logs to the server console and notifies in-game admins.
+RegisterNetEvent('qb-phone:server:LogSecurityViolation', function(reason)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    if not Player then return end
+
+    local name = Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname
+    local cid  = Player.PlayerData.citizenid
+
+    print(('[z-phone][SECURITY] Violation from %s (CID: %s, src: %d) – reason: %s'):format(name, cid, src, tostring(reason)))
+
+    -- Notify online staff
+    local Players = QBCore.Functions.GetPlayers()
+    for _, playerId in ipairs(Players) do
+        local p = QBCore.Functions.GetPlayer(playerId)
+        if p and p.PlayerData.job and (p.PlayerData.job.name == 'police' and p.PlayerData.job.grade.level >= 3) then
+            TriggerClientEvent('QBCore:Notify', playerId,
+                '[z-phone] Security alert: '..name..' ('..cid..') – '..tostring(reason), 'error', 6000)
+        end
+    end
+end)

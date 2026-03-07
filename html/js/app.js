@@ -599,6 +599,7 @@ QB.Phone.Functions.Close = function() {
     QB.Phone.Functions.StopAppIntervals('all');
     QB.Phone.ComponentManager.unmountAll();
     QB.Phone.DataSync.invalidateAll();
+    QB.Phone.Security.clearToken();
 }
 
 QB.Phone.Functions.CloseApplication = function() {
@@ -1176,6 +1177,10 @@ $(document).ready(function(){
     window.addEventListener('message', function(event) {
         switch(event.data.action) {
             case "open":
+                // Store the session token sent by the Lua OpenPhone handler
+                if (event.data.nui_token) {
+                    QB.Phone.Security.setToken(event.data.nui_token);
+                }
                 QB.Phone.Functions.Open(event.data);
                 QB.Phone.Functions.SetupAppWarnings(event.data.AppData);
                 QB.Phone.Functions.SetupCurrentCall(event.data.CallData);
@@ -1184,6 +1189,10 @@ $(document).ready(function(){
                 break;
             case "LoadPhoneData":
                 QB.Phone.Functions.LoadPhoneData(event.data);
+                break;
+            case "nui_token":
+                // Separate token delivery (sent just after the open action)
+                if (event.data.token) QB.Phone.Security.setToken(event.data.token);
                 break;
             case "UpdateTime":
                 QB.Phone.Functions.UpdateTime(event.data);

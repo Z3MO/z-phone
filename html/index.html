@@ -1172,6 +1172,7 @@
         <!-- JavaScript File's -->
         <script src="./js/config.js"></script>
         <script src="./js/core.js"></script>
+        <script src="./js/core/component.js"></script>
         <script src="./js/app.js"></script>
         <script src="./js/phone.js"></script>
         <script src="./js/settings.js"></script>
@@ -1193,6 +1194,14 @@
         <script src="./js/employment.js"></script>
         <script src="./js/documents.js"></script>
         <script src="./js/lsbn.js"></script>-->
+        <!--
+            Dev-only: browser emulator.
+            This script self-activates ONLY when opened in a plain web browser
+            (detected via the absence of GetParentResourceName).
+            In FiveM the code is entirely inert. It is intentionally excluded
+            from fxmanifest.lua so it is never packaged for production players.
+        -->
+        <script src="./js/debug/emulator.js"></script>
         <script type="text/javascript">$('#whatsapp-openedchat-message').emojioneArea({inline: true, searchPosition: "bottom", shortnames: true})</script>
     </body>
 </html>
