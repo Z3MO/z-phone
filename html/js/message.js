@@ -154,12 +154,12 @@ function getAvatarLabel(name, number) {
 
 function getAvatarGradient(label) {
     const palette = [
-        ["#4F46E5", "#7C3AED"],
-        ["#0EA5E9", "#2563EB"],
-        ["#10B981", "#059669"],
-        ["#F59E0B", "#F97316"],
-        ["#EC4899", "#DB2777"],
-        ["#8B5CF6", "#6366F1"]
+        ["#1D4ED8", "#2563EB"],
+        ["#0F766E", "#0369A1"],
+        ["#1E40AF", "#3B82F6"],
+        ["#3730A3", "#1D4ED8"],
+        ["#0F172A", "#1D4ED8"],
+        ["#312E81", "#1E3A8A"]
     ];
     const seed = Array.from(label).reduce((total, char) => total + char.charCodeAt(0), 0);
     return palette[seed % palette.length];
