@@ -16,7 +16,7 @@
     justify-content: space-between;
     padding: 0 1vw 1.1vh;
     box-sizing: border-box;
-    background: linear-gradient(180deg, rgba(8, 14, 24, 0.98), rgba(8, 14, 24, 0.82) 72%, rgba(8, 14, 24, 0));
+    background: linear-gradient(180deg, #08111d 0%, #0a1422 76%, #0a142200 100%);
     z-index: 2;
 }
 
@@ -241,7 +241,7 @@
     height: 7.2vh;
     padding: 2.2vh 0.9vw 1vh;
     box-sizing: border-box;
-    background: linear-gradient(180deg, rgba(8, 14, 24, 1), rgba(8, 14, 24, 0.98));
+    background: linear-gradient(180deg, #08111d, #091321);
     border-bottom: 0.1vh solid rgba(96, 165, 250, 0.08);
     display: grid;
     grid-template-columns: 2.6vh 3.5vh minmax(0, 1fr) 2.6vh;
@@ -322,7 +322,7 @@
     border-radius: 0.8vh;
     color: #dbeafe;
     font-size: 0.62vw;
-    background: rgba(37, 99, 235, 0.16);
+    background: #132235ff;
     transition: .1s;
     grid-column: 1;
     grid-row: 1 / span 2;
@@ -330,7 +330,7 @@
 }
 
 #whatsapp-openedchat-back:hover {
-    background: rgba(59, 130, 246, 0.24);
+    background: #1a3048ff;
     transform: translateY(-0.08vh);
 }
 
@@ -356,7 +356,7 @@
     height: 7.4vh;
     padding: 1.1vh 0.95vh 1.2vh;
     box-sizing: border-box;
-    background: linear-gradient(180deg, rgba(8, 14, 24, 0.02), rgba(8, 14, 24, 1) 28%);
+    background: #08111d;
     border-top: 0.1vh solid rgba(96, 165, 250, 0.08);
     display: flex;
     align-items: center;
@@ -366,13 +366,13 @@
 #whatsapp-openedchat-message {
     position: relative;
     border: none;
-    background: #101c2d;
+    background: #101827;
     margin: 0;
-    height: 4.1vh;
+    height: 4.3vh;
     border-radius: 3vh;
     border: 0.1vh solid rgba(96, 165, 250, 0.12);
     font-size: 1.4vh;
-    text-indent: 2.6vh;
+    padding: 0 1.3vh 0 3.85vh;
     z-index: 100;
     width: 100%;
     color: white;
@@ -380,12 +380,17 @@
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
     flex: 1 1 auto;
     height: var(--whatsapp-composer-input-height);
+    line-height: var(--whatsapp-composer-input-height);
 }
 
 #whatsapp-openedchat-message:focus {
     outline: none;
     border-color: rgba(96, 165, 250, 0.34);
     box-shadow: 0 0 0 0.2vh rgba(37, 99, 235, 0.12);
+}
+
+#whatsapp-openedchat-message::placeholder {
+    color: rgba(191, 219, 254, 0.46);
 }
 
 #whatsapp-openedchat-message-test {
@@ -579,17 +584,21 @@
     width: auto;
     border: none;
     border-radius: 3vh !important;
-    background: #101c2d;
+    background: #101827;
     border: 0.1vh solid rgba(96, 165, 250, 0.12);
     overflow: hidden;
     position: relative;
     margin: 0;
     height: var(--whatsapp-composer-input-height);
     flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    padding: 0 0.45vh 0 0.3vh;
+    box-sizing: border-box;
 }
 
 .emojionearea, .emojionearea.form-control {
-    background: #101c2d;
+    background: #101827;
     border: none;
     border-bottom: none !important;
     box-shadow: none !important;
@@ -600,17 +609,46 @@
 }
 
 .emojionearea.emojionearea-inline>.emojionearea-editor {
-    height: 32px;
-    min-height: 20px;
+    height: auto;
+    min-height: 0;
     overflow: hidden;
     white-space: nowrap;
-    position: absolute;
-    top: 50%;
-    left: 12px;
-    right: 24px;
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
     color: white;
-    padding: 0;
-    transform: translateY(-50%);
+    padding: 0 14px 0 8px;
+    line-height: 1.35;
+    flex: 1 1 auto;
+    margin: 0;
+}
+
+.emojionearea.emojionearea-inline > .emojionearea-editor:empty:before {
+    color: rgba(191, 219, 254, 0.46);
+}
+
+.emojionearea .emojionearea-button {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: 3.1vh;
+    height: 3.1vh;
+    min-width: 3.1vh;
+    border-radius: 50%;
+    margin: 0;
+    opacity: 1;
+    order: 0;
+}
+
+.emojionearea .emojionearea-button > div,
+.emojionearea .emojionearea-button > span {
+    transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.emojionearea .emojionearea-button:hover > div,
+.emojionearea .emojionearea-button:hover > span {
+    transform: scale(1.04);
 }
 
 .emojionearea .emojionearea-button.active + .emojionearea-picker-position-top {

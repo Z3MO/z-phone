@@ -28,6 +28,62 @@ $(document).ready(function(){
     }
 });
 
+function getWhatsappComposerInstance() {
+    const composerInput = $('#whatsapp-openedchat-message');
+
+    if (!composerInput.length) {
+        return null;
+    }
+
+    return composerInput.data('emojioneArea') || composerInput[0].emojioneArea || null;
+}
+
+function getWhatsappComposerValue() {
+    const composerInstance = getWhatsappComposerInstance();
+
+    if (composerInstance && typeof composerInstance.getText === "function") {
+        return String(composerInstance.getText() ?? "");
+    }
+
+    return String($("#whatsapp-openedchat-message").val() ?? "");
+}
+
+function clearWhatsappComposer() {
+    const composerInstance = getWhatsappComposerInstance();
+
+    if (composerInstance && typeof composerInstance.setText === "function") {
+        composerInstance.setText("");
+        if (composerInstance.editor) {
+            if (typeof composerInstance.editor.empty === "function") {
+                composerInstance.editor.empty();
+            } else if (composerInstance.editor[0]) {
+                composerInstance.editor[0].innerHTML = "";
+            } else if (typeof composerInstance.editor.innerHTML === "string") {
+                composerInstance.editor.innerHTML = "";
+            }
+        }
+    }
+
+    $("#whatsapp-openedchat-message").val("");
+}
+
+function handleWhatsappComposerEnter(event) {
+    if (event.key !== "Enter" || event.shiftKey) {
+        return;
+    }
+
+    const draftMessage = getWhatsappComposerValue();
+    const draftImageUrl = getDetectedImageUrl(draftMessage);
+    const normalizedDraft = sanitizeText(draftImageUrl ? draftMessage.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '') : draftMessage).slice(0, 200);
+
+    if (normalizedDraft === "" && draftImageUrl === null) {
+        return;
+    }
+
+    event.preventDefault();
+    $("#whatsapp-openedchat-send").trigger("click");
+}
+
 function formatPhoneNumber(phoneNumberString) {
     var cleaned = ('' + phoneNumberString).replace(/\D/g, '');
     var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
@@ -509,22 +565,15 @@ function detectURLs(message) {
 }
 
 $(document).on('keydown', '#whatsapp-openedchat-message', function(e){
-    if (e.key === "Enter" && !e.shiftKey) {
-        const draftMessage = String($(this).val() ?? "");
-        const draftImageUrl = getDetectedImageUrl(draftMessage);
-        const normalizedDraft = sanitizeText(draftImageUrl ? draftMessage.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '') : draftMessage).slice(0, 200);
+    handleWhatsappComposerEnter(e);
+});
 
-        if (normalizedDraft === "" && draftImageUrl === null) {
-            return;
-        }
-
-        e.preventDefault();
-        $("#whatsapp-openedchat-send").trigger("click");
-    }
+$(document).on('keydown', '.whatsapp-openedchat-input .emojionearea-editor', function(e){
+    handleWhatsappComposerEnter(e);
 });
 
 $(document).on('click', '#whatsapp-openedchat-send', function(e){
-    var Message = String($("#whatsapp-openedchat-message").val() ?? "");
+    var Message = getWhatsappComposerValue();
     var imageUrl = getDetectedImageUrl(Message);
     var NewMessage = sanitizeText(imageUrl ? Message.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '') : Message).slice(0, 200);
 
@@ -557,8 +606,7 @@ $(document).on('click', '#whatsapp-openedchat-send', function(e){
         }));
     }
 
-    $(".emojionearea-editor").html("");
-    $("#whatsapp-openedchat-message").val("");
+    clearWhatsappComposer();
 });
 
 $(document).on('click', '#whatsapp-openedchat-call', function(e){
