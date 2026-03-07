@@ -315,6 +315,7 @@ Config.ServiceJobs = {
     },
     {
         Job = "police",
+        Jobs = { "police", "policejob" },
         Label = "Police",
         Tag = "Emergency",
         Description = "Report incidents, request backup, or ask for assistance.",
@@ -324,6 +325,7 @@ Config.ServiceJobs = {
     },
     {
         Job = "ambulance",
+        Jobs = { "ambulance", "ems" },
         Label = "EMS",
         Tag = "Medical",
         Description = "Medical response, transport, and urgent welfare checks.",
