@@ -695,85 +695,144 @@
 
                     <!-- Start Calculator App -->
                     <div class="calculator-app">
-                        <div class="calculator-header">
-                            <p>Calculator</p>
-                        </div>
+                        <div class="calculator-shell">
+                            <div class="calculator-header">
+                                <span class="calculator-overline">Utilities</span>
+                                <p>Calculator</p>
+                                <span class="calculator-caption">Quick calculations without leaving the phone.</span>
+                            </div>
 
-                        <div class="calculator-list">
-                            <form name="calc" class="calc">
-                                <input id="monitorcalc" type="text" value="" disabled name="display">
-                                <input id="shakhescalc" type="button" value="AC" onclick="ac()">
-                                <input id="shakhescalc" type="button" value="C" onclick="c()">
-                                <input id="shakhescalc" type="button" value="%" onclick="data(this.value)">
-                                <input id="minishalhcalc" type="button" value="-" onclick="data(this.value)">
-                                <input id="" type="button" value="1" onclick="data(this.value)">
-                                <input id="" type="button" value="2" onclick="data(this.value)">
-                                <input id="" type="button" value="3" onclick="data(this.value)">
-                                <input id="minishalhcalc" type="button" value="*" onclick="data(this.value)">
-                                <input id="" type="button" value="4" onclick="data(this.value)">
-                                <input id="" type="button" value="5" onclick="data(this.value)">
-                                <input id="" type="button" value="6" onclick="data(this.value)">
-                                <input id="minishalhcalc" type="button" value="/" onclick="data(this.value)">
-                                <input id="" type="button" value="7" onclick="data(this.value)">
-                                <input id="" type="button" value="8" onclick="data(this.value)">
-                                <input id="" type="button" value="9" onclick="data(this.value)">
-                                <input id="minishalhcalc" type="button" value="+" onclick="data(this.value)">
-                                <input id="" type="button" value="." onclick="data(this.value)">
-                                <input id="" type="button" value="0" onclick="data(this.value)">
-                                <input id="" type="button" value="=" onclick="equal()">
-                                <div style="clear: both;"></div>
-                            </form>
+                            <div class="calculator-list">
+                                <form name="calc" class="calc">
+                                    <div class="calculator-display-shell">
+                                        <span class="calculator-display-label">Result</span>
+                                        <input id="monitorcalc" class="calculator-display" type="text" value="" disabled name="display">
+                                    </div>
+                                    <div class="calculator-keypad">
+                                        <input class="calculator-key calculator-key--utility" type="button" value="AC" onclick="ac()">
+                                        <input class="calculator-key calculator-key--utility" type="button" value="C" onclick="c()">
+                                        <input class="calculator-key calculator-key--utility" type="button" value="%" onclick="data(this.value)">
+                                        <input class="calculator-key calculator-key--operator" type="button" value="-" onclick="data(this.value)">
+                                        <input class="calculator-key" type="button" value="1" onclick="data(this.value)">
+                                        <input class="calculator-key" type="button" value="2" onclick="data(this.value)">
+                                        <input class="calculator-key" type="button" value="3" onclick="data(this.value)">
+                                        <input class="calculator-key calculator-key--operator" type="button" value="*" onclick="data(this.value)">
+                                        <input class="calculator-key" type="button" value="4" onclick="data(this.value)">
+                                        <input class="calculator-key" type="button" value="5" onclick="data(this.value)">
+                                        <input class="calculator-key" type="button" value="6" onclick="data(this.value)">
+                                        <input class="calculator-key calculator-key--operator" type="button" value="/" onclick="data(this.value)">
+                                        <input class="calculator-key" type="button" value="7" onclick="data(this.value)">
+                                        <input class="calculator-key" type="button" value="8" onclick="data(this.value)">
+                                        <input class="calculator-key" type="button" value="9" onclick="data(this.value)">
+                                        <input class="calculator-key calculator-key--operator" type="button" value="+" onclick="data(this.value)">
+                                        <input class="calculator-key" type="button" value="." onclick="data(this.value)">
+                                        <input class="calculator-key calculator-key--zero" type="button" value="0" onclick="data(this.value)">
+                                        <input class="calculator-key calculator-key--equal" type="button" value="=" onclick="equal()">
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                     <!-- End Calculator App -->
 
                     <!-- Start Gallery app-->
                     <div class="gallery-app">
-                        <div class="gallery-app-header">
-                            My Gallery
-                        </div>
+                        <!-- Home Screen -->
                         <div class="gallery-homescreen">
-                            <div class="gallery-images">
+                            <div class="gallery-topbar">
+                                <div class="gallery-title-row">
+                                    <span class="gallery-title">Gallery</span>
+                                    <span class="gallery-count-badge" id="gallery-count-badge">0</span>
+                                </div>
+                            </div>
+                            <div class="gallery-empty-state" id="gallery-empty-state">
+                                <i class="fa-regular fa-images"></i>
+                                <p>No photos yet</p>
+                                <span>Photos taken in-game will appear here</span>
+                            </div>
+                            <div class="gallery-grid" id="gallery-grid"></div>
+                        </div>
+
+                        <!-- Detail Screen -->
+                        <div class="gallery-detailscreen">
+                            <div class="gallery-detail-topbar">
+                                <div class="gallery-detail-back" id="return-button">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </div>
+                                <span class="gallery-detail-title">Photo</span>
+                                <div class="gallery-detail-delete" id="delete-button">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </div>
+                            </div>
+                            <div class="gallery-detail-image-wrap">
+                                <div class="gallery-detail-status" id="gallery-detail-status">Loading photo...</div>
+                                <img class="image" id="imagedata" src="" alt="">
+                            </div>
+                            <div class="gallery-detail-actions">
+                                <button type="button" class="gallery-action-btn" id="gallery-coppy-button" aria-label="Copy image link">
+                                    <i class="fa-solid fa-link"></i>
+                                    <span>Copy Link</span>
+                                </button>
+                                <button type="button" class="gallery-action-btn gallery-action-btn--primary" id="make-post-button" aria-label="Share image">
+                                    <i class="fa-solid fa-share-nodes"></i>
+                                    <span>Share</span>
+                                </button>
+                            </div>
+                            <div class="gallery-detail-hint">Tap the photo to expand it</div>
+                        </div>
+
+                        <!-- Post / Share Screen -->
+                        <div class="gallery-postscreen">
+                            <div class="gallery-detail-topbar">
+                                <div class="gallery-detail-back" id="returndetail-button">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </div>
+                                <span class="gallery-detail-title">Share Photo</span>
+                                <div style="width:3.8vh;flex-shrink:0;"></div>
+                            </div>
+                            <div class="gallery-post-preview">
+                                <img id="gallery-post-preview-img" src="" alt="">
+                            </div>
+                            <div class="gallery-post-body">
+                                <textarea id="new-textarea" spellcheck="false" placeholder="Write a caption…" maxlength="280" required></textarea>
+                                <div class="gallery-char-counter"><span id="gallery-char-count">0</span>/280</div>
+                            </div>
+                            <div class="gallery-post-actions">
+                                <button type="button" class="gallery-post-btn gallery-post-btn--pulse" id="pulse-button" aria-label="Share to Pulses">
+                                    <i class="fa-solid fa-wave-pulse"></i>
+                                    <span>Pulse</span>
+                                </button>
+                                <button type="button" class="gallery-post-btn gallery-post-btn--proxi" id="proxi-button" aria-label="Share to Proxi">
+                                    <i class="fa-solid fa-rectangle-ad"></i>
+                                    <span>Proxi</span>
+                                </button>
                             </div>
                         </div>
 
-                        <div class="gallery-detailscreen">
-                            <div class="gallery-details">
-                                <div class="imagedata"><img class="image" id="imagedata" style="width: 100%;" src="" alt=""></div>
-                                <div class="make-post-button">
-                                    <div id="return-button" data-toggle="tooltip" title="Return">
-                                        <i class="fa-solid fa-rotate-left"></i>
-                                    </div>
-                                    <div id="delete-button" data-toggle="tooltip" title="Delete">
-                                        <i class="fa-solid fa-trash-can"></i>
-                                    </div>
-                                    <div id="gallery-coppy-button" data-toggle="tooltip" title="Copy Link">
-                                        <i class="fa-solid fa-copy"></i>
-                                    </div>
-                                    <div id="make-post-button" data-toggle="tooltip" title="Share">
-                                        <i class="fa-solid fa-share-from-square"></i>
-                                    </div> 
+                        <!-- Delete confirmation modal -->
+                        <div class="gallery-modal-overlay" id="gallery-delete-modal">
+                            <div class="gallery-modal">
+                                <div class="gallery-modal-title">Delete Photo?</div>
+                                <div class="gallery-modal-body">This photo will be permanently removed from your gallery.</div>
+                                <div class="gallery-modal-actions">
+                                    <button type="button" class="gallery-modal-btn gallery-modal-btn--cancel" id="gallery-delete-cancel">Cancel</button>
+                                    <button type="button" class="gallery-modal-btn gallery-modal-btn--confirm" id="gallery-delete-confirm">Delete</button>
                                 </div>
                             </div>
                         </div>
-                        <div class="gallery-postscreen">
-                            <div class="gallery-details">
-                                <div class="imageTweetData"><textarea id="new-textarea" spellcheck="false" required></textarea></div>
-                                <div class="posts-button">
-                                    <div id="tweet-button">
-                                        <i class="fa-brands fa-twitter fa-lg"></i>
-                                    </div>
-                                    <div id="advert-button">
-                                        <i class="fa-solid fa-rectangle-ad fa-lg"></i>
-                                    </div>
-                                </div>
-                                <div class="return-button">
-                                    <div id="returndetail-button">
-                                        RETURN
-                                    </div>
-                                </div>
+
+                        <div class="gallery-image-viewer" id="gallery-image-viewer">
+                            <div class="gallery-image-viewer-card">
+                                <button type="button" class="gallery-image-viewer-close" id="gallery-image-viewer-close" aria-label="Close expanded image">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                                <img id="gallery-image-viewer-img" src="" alt="Expanded gallery photo">
                             </div>
                         </div>
+
+                        <!-- Toast notification -->
+                        <div class="gallery-toast" id="gallery-toast"></div>
+
                     </div>
                     <!-- END Gallery app-->
 

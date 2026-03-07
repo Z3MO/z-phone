@@ -448,9 +448,9 @@ input.jobcenter-input-password, input.jobcenter-input-password2, .jobcenter-inpu
 .jobcenter-playerlist-name {
     background: rgba(30, 30, 40, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 1.8vh;
-    margin-bottom: 1.5vh;
-    padding: 1.2vh 1.5vh;
+    border-radius: 1.5vh;
+    margin-bottom: 0.8vh;
+    padding: 0.8vh 1.2vh;
     display: flex;
     align-items: center;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -466,11 +466,11 @@ input.jobcenter-input-password, input.jobcenter-input-password2, .jobcenter-inpu
 }
 
 .jobcenter-playerlist-name .jobcenter-div-job-group-image {
-    width: 5vh;
-    height: 5vh;
+    width: 4vh;
+    height: 4vh;
     border-radius: 50%;
-    font-size: 2vh;
-    margin-right: 2vh;
+    font-size: 1.8vh;
+    margin-right: 1.5vh;
     border: 2px solid rgba(255,255,255,0.1);
 }
 
@@ -488,7 +488,7 @@ input.jobcenter-input-password, input.jobcenter-input-password2, .jobcenter-inpu
 
 .jobcenter-member-name {
     font-family: 'Teko', sans-serif;
-    font-size: 2.5vh;
+    font-size: 2.2vh;
     font-weight: 500;
     color: #ffffff;
     letter-spacing: 0.1vh;
@@ -544,12 +544,12 @@ input.jobcenter-input-password, input.jobcenter-input-password2, .jobcenter-inpu
 /* New Task Timeline Styles */
 .jobcenter-task-list-header {
     font-family: 'Teko', sans-serif;
-    font-size: 2.2vh;
+    font-size: 2vh;
     color: #ff66e6;
     text-transform: uppercase;
     text-align: center;
-    margin-top: 1vh;
-    margin-bottom: 2vh;
+    margin-top: 0.5vh;
+    margin-bottom: 1vh;
     letter-spacing: 0.1vh;
     text-shadow: 0 0 10px rgba(255, 102, 230, 0.4);
 }
@@ -563,7 +563,7 @@ input.jobcenter-input-password, input.jobcenter-input-password2, .jobcenter-inpu
 .task-timeline-item {
     position: relative;
     padding-left: 4vh;
-    padding-bottom: 2.5vh;
+    padding-bottom: 1vh;
 }
 
 .task-timeline-item .task-timeline-connector {
@@ -594,7 +594,7 @@ input.jobcenter-input-password, input.jobcenter-input-password2, .jobcenter-inpu
 
 .task-timeline-content {
     background: rgba(255, 255, 255, 0.03);
-    padding: 1.5vh;
+    padding: 1vh;
     border-radius: 1vh;
     display: flex;
     justify-content: space-between;
@@ -663,9 +663,9 @@ input.jobcenter-input-password, input.jobcenter-input-password2, .jobcenter-inpu
     margin-bottom: 1vh;
     background: rgba(0, 0, 0, 0.2);
     border-radius: 1.5vh;
-    padding: 1.5vh 0;
+    padding: 1vh 0;
     border: 1px solid rgba(255, 255, 255, 0.05);
-    max-height: 25vh;
+    max-height: 22vh;
     overflow-y: auto;
     flex-shrink: 0;
 }

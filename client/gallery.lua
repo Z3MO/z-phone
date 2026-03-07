@@ -1,19 +1,13 @@
--- NUI Callback
+local QBCore = exports['qb-core']:GetCoreObject()
 
 RegisterNUICallback('GetGalleryData', function(_, cb)
-    local data = PhoneData.Images
-    cb(data)
+    QBCore.Functions.TriggerCallback('qb-phone:server:fetchImages', function(images)
+        PhoneData.Images = images or {}
+        cb(images or {})
+    end)
 end)
 
-RegisterNUICallback('DeleteImage', function(image,cb)
-    TriggerServerEvent('qb-phone:server:RemoveImageFromGallery',image)
-    Wait(400)
-    TriggerServerEvent('qb-phone:server:getImageFromGallery')
+RegisterNUICallback('DeleteImage', function(data, cb)
+    TriggerServerEvent('qb-phone:server:RemoveImageFromGallery', data)
     cb(true)
-end)
-
--- Events
-
-RegisterNetEvent('qb-phone:refreshImages', function(images)
-    PhoneData.Images = images
 end)
