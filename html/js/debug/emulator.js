@@ -92,59 +92,69 @@ if (!isEnvBrowser()) {
         },
     };
 
-    // ── 4. Mock fetch() ────────────────────────────────────────────────────
-    var _originalFetch = window.fetch;
-    window.fetch = function (url, opts) {
-        // Only intercept z-phone NUI callbacks
-        if (typeof url !== 'string' || url.indexOf('z-phone/') === -1) {
-            return _originalFetch.apply(this, arguments);
+    // ── 4. Mock NUI callbacks ───────────────────────────────────────────────
+    //
+    // All game-side code uses jQuery's $.post (which internally uses
+    // XMLHttpRequest).  The correct way to intercept jQuery AJAX without
+    // touching the native XHR object is via $.ajaxTransport.  Patching
+    // XMLHttpRequest.prototype.open/send directly breaks because:
+    //   - Calling the real open() opens an actual TCP connection to the
+    //     non-existent https://z-phone/... host.
+    //   - After that, readyState/status/responseText are native read-only
+    //     internal slots — Object.defineProperty silently fails on them.
+    //
+    // $.ajaxTransport('+*', fn) runs BEFORE the default transport, letting
+    // us return a fake response before any network activity starts.
+
+    $.ajaxTransport('+*', function (options) {
+        if (typeof options.url !== 'string' || options.url.indexOf('z-phone/') === -1) {
+            return; // not a NUI callback — let jQuery handle it normally
         }
 
-        // Parse the callback name from the URL
-        var parts = url.split('/');
-        var callback = parts[parts.length - 1];
+        return {
+            send: function (headers, completeCallback) {
+                var parts = options.url.split('/');
+                var cbName = parts[parts.length - 1];
 
-        var body = {};
-        try { body = JSON.parse((opts && opts.body) || '{}'); } catch (e) { console.warn('[Emulator] fetch: JSON parse failed:', e); }
+                var bodyData = {};
+                try { bodyData = JSON.parse(options.data || '{}'); } catch (e) {
+                    console.warn('[Emulator] JSON parse failed for callback "' + cbName + '":', e);
+                }
 
-        console.log('[Emulator] NUI callback →', callback, body);
+                console.log('[Emulator] NUI callback →', cbName, bodyData);
+                var responseData = _handleCallback(cbName, bodyData);
 
-        var responseData = _handleCallback(callback, body);
-        return Promise.resolve(new Response(JSON.stringify(responseData), {
-            status: 200,
-            headers: { 'Content-Type': 'application/json' },
-        }));
-    };
+                // completeCallback(status, statusText, responses, headers)
+                // responses.text is what jQuery hands to the success callback
+                setTimeout(function () {
+                    completeCallback(200, 'success', { text: JSON.stringify(responseData) });
+                }, 0);
+            },
+            abort: function () {}
+        };
+    });
 
-    // jQuery $.post uses XMLHttpRequest not fetch, so patch that too
-    var _xhrOpen = XMLHttpRequest.prototype.open;
-    var _xhrSend = XMLHttpRequest.prototype.send;
-    XMLHttpRequest.prototype.open = function (method, url) {
-        this._emulatorUrl = url;
-        return _xhrOpen.apply(this, arguments);
-    };
-    XMLHttpRequest.prototype.send = function (body) {
-        if (typeof this._emulatorUrl === 'string' && this._emulatorUrl.indexOf('z-phone/') !== -1) {
-            var parts = this._emulatorUrl.split('/');
-            var callback = parts[parts.length - 1];
-            var data = {};
-            try { data = JSON.parse(body || '{}'); } catch (e) { console.warn('[Emulator] XHR: JSON parse failed:', e); }
-
-            console.log('[Emulator] XHR NUI callback →', callback, data);
-
-            var responseData = _handleCallback(callback, data);
-            var self = this;
-            setTimeout(function () {
-                Object.defineProperty(self, 'readyState', { get: function () { return 4; } });
-                Object.defineProperty(self, 'status',    { get: function () { return 200; } });
-                Object.defineProperty(self, 'responseText', { get: function () { return JSON.stringify(responseData); } });
-                if (typeof self.onreadystatechange === 'function') self.onreadystatechange();
-                if (typeof self.onload === 'function') self.onload();
-            }, 0);
-            return;
-        }
-        return _xhrSend.apply(this, arguments);
-    };
+    // Also intercept native fetch() for any code that bypasses jQuery
+    if (typeof window.fetch === 'function') {
+        var _originalFetch = window.fetch;
+        window.fetch = function (url, opts) {
+            if (typeof url !== 'string' || url.indexOf('z-phone/') === -1) {
+                return _originalFetch.apply(this, arguments);
+            }
+            var parts = url.split('/');
+            var cbName = parts[parts.length - 1];
+            var body = {};
+            try { body = JSON.parse((opts && opts.body) || '{}'); } catch (e) {
+                console.warn('[Emulator] fetch JSON parse failed for "' + cbName + '":', e);
+            }
+            console.log('[Emulator] fetch NUI callback →', cbName, body);
+            var responseData = _handleCallback(cbName, body);
+            return Promise.resolve(new Response(JSON.stringify(responseData), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+            }));
+        };
+    }
 
     /**
      * Route a NUI callback name → fake response data.
