@@ -167,9 +167,8 @@ function registerDefaultLegacyApps() {
     registerLegacyApp('gallery', {
         handler() {
             window.QB.Phone.NUI.postLegacy('GetGalleryData', {}, (data) => {
-                const setupGalleryData = window.setupGalleryData;
-                if (typeof setupGalleryData === 'function') {
-                    setupGalleryData(data);
+                if (typeof window.setupGalleryData === 'function') {
+                    window.setupGalleryData(data);
                 }
             });
         },
@@ -188,9 +187,8 @@ function registerDefaultLegacyApps() {
     registerLegacyApp('camera', {
         handler() {
             window.QB.Phone.NUI.postLegacy('TakePhoto', {}, (url) => {
-                const setupCameraApp = window.setupCameraApp;
-                if (typeof setupCameraApp === 'function') {
-                    setupCameraApp(url);
+                if (typeof window.setupCameraApp === 'function') {
+                    window.setupCameraApp(url);
                 }
             });
         },

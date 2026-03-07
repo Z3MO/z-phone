@@ -6,7 +6,7 @@ function setupGalleryData(Images){
 
     galleryImages.innerHTML = "";
     if (Images != null) {
-        $.each(Images, function(i, image){
+        $.each(Images, function(_, image){
             const wrapper = document.createElement('div');
             wrapper.className = 'gallery-image';
 
