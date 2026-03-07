@@ -61,6 +61,22 @@ if (!isEnvBrowser()) {
             metadata: { phone: { background: 'zphone-1', profilepicture: 'default' } },
             job:      { name: 'police', grade: { level: 3 } },
         },
+        // Application list — mirrors Config.PhoneApplications from config.lua.
+        // Slots 1-4 → dock bar.  Slots 5+ → swipeable app-grid pages.
+        Applications: [
+            { app: 'phone',      tooltipText: 'Phone',      icon: 'dialer.svg',      job: false, blockedjobs: [], slot: 1,  Alerts: 0 },
+            { app: 'whatsapp',   tooltipText: 'Messages',   icon: 'messages.svg',    job: false, blockedjobs: [], slot: 2,  Alerts: 0 },
+            { app: 'camera',     tooltipText: 'Camera',     icon: 'camera.svg',      job: false, blockedjobs: [], slot: 3,  Alerts: 0 },
+            { app: 'settings',   tooltipText: 'Settings',   icon: 'settings.svg',    job: false, blockedjobs: [], slot: 4,  Alerts: 0 },
+            { app: 'mail',       tooltipText: 'Mail',       icon: 'mail.svg',        job: false, blockedjobs: [], slot: 5,  Alerts: 0 },
+            { app: 'bank',       tooltipText: 'Bank',       icon: 'fleeca.svg',      job: false, blockedjobs: [], slot: 6,  Alerts: 0 },
+            { app: 'garage',     tooltipText: 'Garages',    icon: 'garages.svg',     job: false, blockedjobs: [], slot: 7,  Alerts: 0 },
+            { app: 'gallery',    tooltipText: 'Gallery',    icon: 'gallery.svg',     job: false, blockedjobs: [], slot: 8,  Alerts: 0 },
+            { app: 'calculator', tooltipText: 'Calculator', icon: 'calculator.svg',  job: false, blockedjobs: [], slot: 9,  Alerts: 0 },
+            { app: 'pulses',     tooltipText: 'Pulses',     icon: 'pulses.svg',      job: false, blockedjobs: [], slot: 10, Alerts: 0 },
+            { app: 'proxi',      tooltipText: 'Proxi',      icon: 'yellowpages.svg', job: false, blockedjobs: [], slot: 11, Alerts: 0 },
+            { app: 'party',      tooltipText: 'Party',      icon: 'party.svg',       job: false, blockedjobs: [], slot: 12, Alerts: 0 },
+        ],
         Contacts: [
             { name: 'Alice', number: '555-0101', iban: 'US00DEV01' },
             { name: 'Bob',   number: '555-0102', iban: 'US00DEV02' },
@@ -125,9 +141,15 @@ if (!isEnvBrowser()) {
                 var responseData = _handleCallback(cbName, bodyData);
 
                 // completeCallback(status, statusText, responses, headers)
-                // responses.text is what jQuery hands to the success callback
+                // Pass Content-Type: application/json so jQuery's built-in
+                // text→json converter automatically parses the body — without
+                // this header jQuery treats the body as raw text and the
+                // callback receives a plain string instead of a JS object.
                 setTimeout(function () {
-                    completeCallback(200, 'success', { text: JSON.stringify(responseData) });
+                    completeCallback(200, 'success',
+                        { text: JSON.stringify(responseData) },
+                        'Content-Type: application/json\r\n'
+                    );
                 }, 0);
             },
             abort: function () {}
@@ -240,21 +262,21 @@ if (!isEnvBrowser()) {
 
         // ── Trigger "Open Phone" ──────────────────────────────────────────
         addBtn('📱 Open Phone', function () {
-            var config = (typeof Config !== 'undefined') ? Config : { PhoneApplications: {} };
             window.postMessage({
                 action:     'open',
-                AppData:    config.PhoneApplications || {},
+                AppData:    _fakeData.Applications,
                 CallData:   {},
                 PlayerData: _fakeData.PlayerData,
                 hasVPN:     false,
                 nui_token:  'DEV_TOKEN',
             }, '*');
             window.postMessage({
-                action:    'LoadPhoneData',
-                PlayerData: _fakeData.PlayerData,
-                PlayerJob:  _fakeData.PlayerData.job,
-                PhoneData:  _fakeData.PhoneData,
-                PhoneJobs:  [],
+                action:       'LoadPhoneData',
+                PlayerData:   _fakeData.PlayerData,
+                PlayerJob:    _fakeData.PlayerData.job,
+                PhoneData:    _fakeData.PhoneData,
+                PhoneJobs:    [],
+                applications: _fakeData.Applications,
             }, '*');
         });
 
