@@ -68,6 +68,41 @@
         return `${now.getUTCDate()}-${now.getUTCMonth()}-${now.getUTCFullYear()}`;
     }
 
+    function formatDateKeyFor(date) {
+        return `${date.getUTCDate()}-${date.getUTCMonth()}-${date.getUTCFullYear()}`;
+    }
+
+    function getLatestChatTimestamp(chat) {
+        if (!chat || !Array.isArray(chat.messages) || chat.messages.length === 0) {
+            return 0;
+        }
+
+        const latestGroup = chat.messages[chat.messages.length - 1];
+        const latestMessage = latestGroup && Array.isArray(latestGroup.messages) && latestGroup.messages.length > 0
+            ? latestGroup.messages[latestGroup.messages.length - 1]
+            : null;
+
+        if (!latestMessage) {
+            return 0;
+        }
+
+        const groupDate = String(latestGroup.date || "").split("-");
+        const hoursMinutes = String(latestMessage.time || "00:00").split(":");
+        const timestamp = Date.UTC(
+            Number(groupDate[2]) || 0,
+            Number(groupDate[1]) || 0,
+            Number(groupDate[0]) || 1,
+            Number(hoursMinutes[0]) || 0,
+            Number(hoursMinutes[1]) || 0
+        );
+
+        return Number.isNaN(timestamp) ? 0 : timestamp;
+    }
+
+    function sortChatsByLatest(chats) {
+        return chats.sort((left, right) => getLatestChatTimestamp(right) - getLatestChatTimestamp(left));
+    }
+
     function createDefaultState() {
         const now = getNow();
         const earlier = new Date(now.getTime() - 36 * 60 * 1000);
@@ -112,7 +147,9 @@
                 Contacts: [
                     { name: "Alex Johnson", number: "555002", iban: "DEV-102938", status: false },
                     { name: "Jordan Lee", number: "555003", iban: "DEV-564738", status: true },
-                    { name: "Mechanic Bay", number: "555200", iban: "DEV-000777", status: false }
+                    { name: "Mechanic Bay", number: "555200", iban: "DEV-000777", status: false },
+                    { name: "Dispatch", number: "555800", iban: "DEV-005555", status: false },
+                    { name: "Mia Carter", number: "555114", iban: "DEV-444222", status: false }
                 ]
             },
             recentCalls: [
@@ -142,13 +179,27 @@
                 {
                     name: "Jordan Lee",
                     number: "555003",
-                    Unread: 0,
+                    Unread: 1,
                     messages: [
                         {
-                            date: `${yesterday.getUTCDate()}-${yesterday.getUTCMonth()}-${yesterday.getUTCFullYear()}`,
+                            date: formatDateKeyFor(yesterday),
                             messages: [
                                 { message: "Sent the mock data over email.", time: "17:20", sender: "CONTACT-JORDAN", type: "message", data: {} },
                                 { message: "Photo", time: "17:25", sender: "CONTACT-JORDAN", type: "picture", data: { url: PLACEHOLDER_IMAGE } }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: "Mia Carter",
+                    number: "555114",
+                    Unread: 0,
+                    messages: [
+                        {
+                            date: formatDateKeyFor(new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000)),
+                            messages: [
+                                { message: "Dropped a long message here so the preview card shows truncation nicely in dev mode when you're polishing the conversation list.", time: "21:08", sender: "CONTACT-MIA", type: "message", data: {} },
+                                { message: "Photo", time: "21:12", sender: playerData.citizenid, type: "picture", data: { url: "https://placehold.co/720x480/png?text=Message+Preview" } }
                             ]
                         }
                     ]
@@ -242,8 +293,21 @@
                 return createDefaultState();
             }
 
+            const defaultState = createDefaultState();
             const parsed = JSON.parse(stored);
-            return Object.assign(createDefaultState(), parsed);
+            return {
+                ...defaultState,
+                ...parsed,
+                playerData: { ...defaultState.playerData, ...(parsed.playerData || {}) },
+                playerJob: { ...defaultState.playerJob, ...(parsed.playerJob || {}) },
+                phoneData: {
+                    ...defaultState.phoneData,
+                    ...(parsed.phoneData || {}),
+                    MetaData: { ...defaultState.phoneData.MetaData, ...((parsed.phoneData && parsed.phoneData.MetaData) || {}) },
+                    Contacts: Array.isArray(parsed.phoneData && parsed.phoneData.Contacts) ? parsed.phoneData.Contacts : defaultState.phoneData.Contacts
+                },
+                whatsappChats: Array.isArray(parsed.whatsappChats) ? parsed.whatsappChats : defaultState.whatsappChats
+            };
         } catch {
             return createDefaultState();
         }
@@ -351,7 +415,15 @@
             case "DissalowMoving":
             case "AllowMoving":
             case "ClearGeneralAlerts":
-            case "ClearAlerts":
+                return true;
+            case "ClearAlerts": {
+                const chat = getChatByNumber(payload.number);
+                if (chat) {
+                    chat.Unread = 0;
+                    saveState();
+                }
+                return true;
+            }
             case "ClearRecentAlerts":
             case "AcceptNotification":
             case "DenyNotification":
@@ -365,7 +437,7 @@
             case "CancelOngoingCall":
                 return true;
             case "GetWhatsappChats":
-                return clone(mockState.whatsappChats);
+                return clone(sortChatsByLatest([...mockState.whatsappChats]));
             case "GetWhatsappChat":
                 return clone(getChatByNumber(payload.phone) || false);
             case "SendMessage": {
@@ -386,6 +458,9 @@
 
                 chat.name = getContactName(chatNumber);
                 chat.Unread = 0;
+                const remainingChats = mockState.whatsappChats.filter((entry) => String(entry.number) !== chatNumber);
+                remainingChats.push(chat);
+                mockState.whatsappChats = sortChatsByLatest(remainingChats);
                 saveState();
 
                 dispatchPhoneEvent("UpdateChat", {
