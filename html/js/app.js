@@ -5,6 +5,55 @@ QB.Phone.Functions = {}
 QB.Phone.Animations = {}
 QB.Phone.Notifications = {}
 QB.Phone.Notifications.Custom = {}
+QB.Phone.Utils = {}
+QB.Phone.NUI = {}
+
+// Shared fetch helper used by the refactored apps and the browser mock bridge.
+QB.Phone.Utils.parseNuiResponse = async (response) => {
+    const responseText = await response.text();
+
+    if (!responseText) {
+        return null;
+    }
+
+    try {
+        return JSON.parse(responseText);
+    } catch (error) {
+        return responseText;
+    }
+};
+
+QB.Phone.Utils.setText = (target, value) => {
+    const element = typeof target === "string" ? document.querySelector(target) : target;
+    if (element) {
+        element.textContent = value;
+    }
+    return element;
+};
+
+QB.Phone.NUI.getResourceName = () => {
+    if (typeof GetParentResourceName === "function") {
+        return GetParentResourceName();
+    }
+
+    return "z-phone";
+};
+
+QB.Phone.NUI.post = async (endpoint, payload = {}) => {
+    const response = await fetch(`https://${QB.Phone.NUI.getResourceName()}/${endpoint}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json; charset=UTF-8",
+        },
+        body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+        throw new Error(`NUI request failed for ${endpoint}: ${response.status}`);
+    }
+
+    return QB.Phone.Utils.parseNuiResponse(response);
+};
 
 // Samsung One UI Easing Functions
 QB.Phone.Animations.SamsungEasing = {
@@ -358,13 +407,8 @@ $(document).on('click', '.phone-application', function(e){
                     LoadPlayerMoneys();
                 } else if (PressedApplication == "bank") {
                     QB.Phone.Functions.DoBankOpen();
-                    $('.bank-app-header-button').click();
-                    $.post(`https://${GetParentResourceName()}/GetBankContacts`, JSON.stringify({}), function(contacts){
-                        QB.Phone.Functions.LoadContactsWithNumber(contacts);
-                    });
-                    $.post(`https://${GetParentResourceName()}/GetInvoices`, JSON.stringify({}), function(invoices){
-                        QB.Phone.Functions.LoadBankInvoices(invoices);
-                    });
+                    QB.Phone.Functions.SwitchBankTab("accounts", { immediate: true });
+                    void QB.Phone.Functions.LoadBankData();
                 } else if (PressedApplication == "whatsapp") {
                     $.post(`https://${GetParentResourceName()}/GetWhatsappChats`, JSON.stringify({}), function(chats){
                         QB.Phone.Functions.LoadWhatsappChats(chats);
@@ -578,20 +622,9 @@ QB.Phone.Functions.CloseApplication = function() {
             }, 450);
         }
     } else if (QB.Phone.Data.currentApplication == "bank") {
-        if (typeof CurrentTab !== 'undefined' && CurrentTab == "invoices") {
+        if (typeof QB.Phone.Functions.ResetBankView === "function") {
             setTimeout(function(){
-                $(".bank-app-invoices").animate({"left": "30vh"});
-                $(".bank-app-invoices").css({"display":"none"})
-                $(".bank-app-accounts").css({"display":"block"})
-                $(".bank-app-accounts").css({"left": "0vh"});
-
-                var InvoicesObjectBank = $(".bank-app-header").find('[data-headertype="invoices"]');
-                var HomeObjectBank = $(".bank-app-header").find('[data-headertype="accounts"]');
-
-                $(InvoicesObjectBank).removeClass('bank-app-header-button-selected');
-                $(HomeObjectBank).addClass('bank-app-header-button-selected');
-
-                CurrentTab = "accounts";
+                QB.Phone.Functions.ResetBankView();
             }, 400)
         }
     }
@@ -1040,41 +1073,53 @@ QB.Screen.Notification = function(title, content, icon, timeout, color) {
     });
 }
 
-$(document).on('keydown', function() {
-    switch(event.keyCode) {
+document.addEventListener('keydown', (event) => {
+    switch (event.keyCode) {
         case 27: // ESCAPE
-        if (up){
-            $('#popup').fadeOut('slow');
-            $('.popupclass').fadeOut('slow');
-            $('.popupclass').html("");
-            up = false
-        } else {
-            QB.Phone.Functions.Close();
+            if (up) {
+                QB.Screen.popDown();
+            } else {
+                QB.Phone.Functions.Close();
+            }
             break;
-        }
     }
 });
 
 QB.Screen.popUp = function(source){
-    if(!up){
-        $('#popup').fadeIn('slow');
-        $('.popupclass').fadeIn('slow');
-        $('<img class="popupclass2" src='+source+'>').appendTo('.popupclass')
+    if (!up) {
+        const popup = document.getElementById('popup');
+        const popupContainer = document.querySelector('.popupclass');
+        const image = document.createElement('img');
+
+        image.className = 'popupclass2';
+        image.src = source;
+
+        if (popup && popupContainer) {
+            popup.style.display = 'block';
+            popupContainer.replaceChildren(image);
+        }
+
         up = true
     }
 }
 
 QB.Screen.popDown = function(){
-    if(up){
-        $('#popup').fadeOut('slow');
-        $('.popupclass').fadeOut('slow');
-        $('.popupclass').html("");
+    if (up) {
+        const popup = document.getElementById('popup');
+        const popupContainer = document.querySelector('.popupclass');
+
+        if (popup) {
+            popup.style.display = 'none';
+        }
+
+        popupContainer?.replaceChildren();
         up = false
     }
 }
 
-$(document).ready(function(){
-    window.addEventListener('message', function(event) {
+document.addEventListener('DOMContentLoaded', () => {
+    // FiveM sends phone state into the UI through window messages.
+    window.addEventListener('message', async function(event) {
         switch(event.data.action) {
             case "open":
                 QB.Phone.Functions.Open(event.data);
@@ -1102,8 +1147,9 @@ $(document).ready(function(){
                 QB.Phone.Functions.SetupAppWarnings(event.data.AppData);
                 break;
             case "UpdateBank":
-                $(".bank-app-account-balance").html("&#36; "+event.data.NewBalance);
-                $(".bank-app-account-balance").data('balance', event.data.NewBalance);
+                if (typeof QB.Phone.Functions.SetBankBalance === "function") {
+                    QB.Phone.Functions.SetBankBalance(event.data.NewBalance);
+                }
                 break;
             case "UpdateChat":
                 if (QB.Phone.Data.currentApplication == "whatsapp") {
@@ -1118,18 +1164,20 @@ $(document).ready(function(){
                 QB.Phone.Functions.ReloadWhatsappAlerts(event.data.Chats);
                 break;
             case "CancelOutgoingCall":
-                $.post(`https://${GetParentResourceName()}/HasPhone`, JSON.stringify({}), function(HasPhone){
-                    if (HasPhone) {
+                try {
+                    const hasPhone = await QB.Phone.NUI.post("HasPhone");
+                    if (hasPhone) {
                         CancelOutgoingCall();
                     }
-                });
+                } catch (error) {}
                 break;
             case "IncomingCallAlert":
-                $.post(`https://${GetParentResourceName()}/HasPhone`, JSON.stringify({}), function(HasPhone){
-                    if (HasPhone) {
+                try {
+                    const hasPhone = await QB.Phone.NUI.post("HasPhone");
+                    if (hasPhone) {
                         IncomingCallAlert(event.data.CallData, event.data.Canceled, event.data.AnonymousCall);
                     }
-                });
+                } catch (error) {}
                 break;
             case "refreshInvoice":
                     QB.Phone.Functions.LoadBankInvoices(event.data.invoices);
@@ -1173,7 +1221,6 @@ $(document).ready(function(){
                 }
                 break;
             case "UpdatePulses":
-                console.log('UpdatePulses received:', JSON.stringify(event.data.Pulses));
                 if (QB.Phone.Data.currentApplication == "pulses") {
                     QB.Phone.Notifications.LoadPulses(event.data.Pulses, event.data.hasVPN, false, true);
                 }
@@ -1210,6 +1257,187 @@ $(document).ready(function(){
                 break;
         }
     })
+
+    // Local browser mock so the UI can be previewed without a FiveM client.
+    if (!window.invokeNative) {
+        const mockFetch = window.fetch.bind(window);
+        const mockApplications = [
+            { app: 'phone', slot: 1, icon: 'fa-solid fa-phone', tooltipText: 'Phone', blockedjobs: [] },
+            { app: 'whatsapp', slot: 2, icon: 'fa-brands fa-whatsapp', tooltipText: 'Messages', blockedjobs: [] },
+            { app: 'bank', slot: 3, icon: 'fa-solid fa-building-columns', tooltipText: 'Bank', blockedjobs: [] },
+            { app: 'settings', slot: 4, icon: 'fa-solid fa-gear', tooltipText: 'Settings', blockedjobs: [] },
+        ];
+        const mockChats = [
+            {
+                name: 'Alex Carter',
+                number: '5551234567',
+                Unread: 2,
+                messages: [
+                    {
+                        date: '7-2-2026',
+                        messages: [
+                            {
+                                message: 'Mock browser mode is active.',
+                                time: '09:12',
+                                sender: 'mock-other',
+                                type: 'message',
+                                data: {},
+                            },
+                            {
+                                message: 'Try opening Bank to test the vanilla JS flow.',
+                                time: '09:14',
+                                sender: 'MOCKCID1',
+                                type: 'message',
+                                data: {},
+                            },
+                        ],
+                    },
+                ],
+            },
+        ];
+        const mockBankContacts = [
+            { name: 'Alex Carter', iban: 'US00MOCKBANK0001' },
+            { name: 'Jamie Rivers', iban: 'US00MOCKBANK0002' },
+            { name: 'Taylor Brooks', iban: '' },
+        ];
+        const mockInvoices = [
+            { id: 101, amount: 450, society: 'Mechanic Shop', sender: 'Hayes', sendercitizenid: 'MOCKSEND1' },
+            { id: 102, amount: 1250, society: 'EMS', sender: 'Dr. Lane', sendercitizenid: 'MOCKSEND2' },
+        ];
+        const mockPlayerData = {
+            citizenid: 'MOCKCID1',
+            job: { name: 'unemployed', onduty: false },
+            charinfo: {
+                firstname: 'Morgan',
+                lastname: 'Lane',
+                phone: '5558675309',
+                account: 'US00MOCKPHONE0001',
+            },
+            money: { bank: 18450, cash: 320 },
+        };
+        const mockPhoneData = {
+            MetaData: { profilepicture: 'default' },
+            Contacts: [],
+        };
+        const mockHandlers = {
+            HasPhone: () => true,
+            GetBankContacts: () => mockBankContacts,
+            GetInvoices: () => mockInvoices,
+            GetWhatsappChats: () => mockChats,
+            CanTransferMoney: (payload) => {
+                const amount = Number(payload.amountOf || 0);
+                if (amount <= 0 || amount > mockPlayerData.money.bank) {
+                    return { TransferedMoney: false, NewBalance: mockPlayerData.money.bank };
+                }
+
+                mockPlayerData.money.bank -= amount;
+                return { TransferedMoney: true, NewBalance: mockPlayerData.money.bank };
+            },
+            PayInvoice: (payload) => {
+                const invoiceIndex = mockInvoices.findIndex((invoice) => invoice.id === payload.invoiceId);
+                if (invoiceIndex !== -1) {
+                    mockPlayerData.money.bank = Math.max(0, mockPlayerData.money.bank - Number(mockInvoices[invoiceIndex].amount || 0));
+                    mockInvoices.splice(invoiceIndex, 1);
+                }
+                return true;
+            },
+            DeclineInvoice: (payload) => {
+                const invoiceIndex = mockInvoices.findIndex((invoice) => invoice.id === payload.invoiceId);
+                if (invoiceIndex !== -1) {
+                    mockInvoices.splice(invoiceIndex, 1);
+                }
+                return true;
+            },
+            Close: () => true,
+        };
+
+        window.GetParentResourceName = window.GetParentResourceName || (() => 'z-phone');
+        window.GetCurrentResourceName = window.GetCurrentResourceName || (() => 'z-phone');
+
+        window.fetch = async (resource, options = {}) => {
+            if (typeof resource === 'string' && resource.startsWith(`https://${QB.Phone.NUI.getResourceName()}/`)) {
+                const endpoint = resource.split('/').pop();
+                const body = options.body ? JSON.parse(options.body) : {};
+                const handler = mockHandlers[endpoint];
+                const payload = handler ? handler(body) : { ok: true };
+
+                console.info('[z-phone mock] intercepted NUI fetch', endpoint, body);
+
+                return new Response(JSON.stringify(payload), {
+                    status: 200,
+                    headers: { 'Content-Type': 'application/json' },
+                });
+            }
+
+            return mockFetch(resource, options);
+        };
+
+        if (window.$) {
+            window.$.post = (url, data, callback) => {
+                return fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json; charset=UTF-8' },
+                    body: data || JSON.stringify({}),
+                })
+                    .then((response) => QB.Phone.Utils.parseNuiResponse(response))
+                    .then((payload) => {
+                        if (typeof callback === 'function') {
+                            callback(payload);
+                        }
+
+                        return payload;
+                    });
+            };
+
+            window.$.ajax = (options = {}) => window.$.post(options.url, options.data, options.success);
+        }
+
+        const mockPanel = document.createElement('div');
+        mockPanel.style.position = 'fixed';
+        mockPanel.style.right = '24px';
+        mockPanel.style.bottom = '24px';
+        mockPanel.style.zIndex = '9999';
+        mockPanel.style.display = 'flex';
+        mockPanel.style.gap = '8px';
+        mockPanel.style.padding = '10px';
+        mockPanel.style.borderRadius = '12px';
+        mockPanel.style.background = 'rgba(10, 10, 18, 0.9)';
+        mockPanel.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.35)';
+
+        const createMockButton = (label, onClick) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.textContent = label;
+            button.style.border = '0';
+            button.style.borderRadius = '8px';
+            button.style.padding = '8px 12px';
+            button.style.color = '#fff';
+            button.style.background = '#2d6cdf';
+            button.style.cursor = 'pointer';
+            button.addEventListener('click', onClick);
+            return button;
+        };
+
+        const postMockMessage = (message) => {
+            window.postMessage(message, '*');
+        };
+
+        mockPanel.append(
+            createMockButton('Open Phone', () => {
+                postMockMessage({ action: 'LoadPhoneData', PlayerData: mockPlayerData, PlayerJob: mockPlayerData.job, PhoneData: mockPhoneData, PhoneJobs: [], applications: mockApplications });
+                postMockMessage({ action: 'open', PlayerData: mockPlayerData, AppData: mockApplications.map((app) => ({ slot: app.slot, Alerts: app.app === 'whatsapp' ? 2 : 0 })), CallData: {} });
+            }),
+            createMockButton('Bank Update', () => {
+                mockPlayerData.money.bank += 250;
+                postMockMessage({ action: 'UpdateBank', NewBalance: mockPlayerData.money.bank });
+            }),
+            createMockButton('Refresh Messages', () => {
+                postMockMessage({ action: 'UpdateChat', chatNumber: mockChats[0].number, chatData: mockChats[0], Chats: mockChats });
+            })
+        );
+
+        document.body.appendChild(mockPanel);
+    }
 });
 
 // Page Navigation Functions
