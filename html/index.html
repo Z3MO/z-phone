@@ -313,13 +313,18 @@
                     <!-- Start Messages app-->
                     <div class="whatsapp-app">
                         <div class="whatsapp-header">
-                            <i class="fa-solid fa-plus" id="whatsapp-newconvo-icon"></i>
-                            <span id="whatsapp-search-text">Message</span>
+                            <div class="whatsapp-header-copy">
+                                <span id="whatsapp-search-text">Messages</span>
+                                <span class="whatsapp-header-subtitle">Recent conversations</span>
+                            </div>
+                            <button type="button" class="whatsapp-icon-button" id="whatsapp-newconvo-icon" aria-label="Start new message">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
                         </div>
 
                         <div class="phone-menu-body" id="whatsapp-box-new-add-new">
                             <div class="phone-menu-main">
-                                <input placeholder="Number" class="phone-menu-text whatsapp-input-number" type="number" maxlength="6" min="0">
+                                <input placeholder="Number" class="phone-menu-text whatsapp-input-number" type="tel" inputmode="numeric" maxlength="6" min="0" autocomplete="off" aria-label="Phone number">
                                 <textarea class="phone-menu-big-text whatsapp-input-message" placeholder="Message" type="text" maxlength="200"></textarea>
                                 <div class="phone-menu-footer">
                                     <div class="phone-menu-button phone-menu-cancel" id="box-new-cancel">Cancel</div>
@@ -328,20 +333,25 @@
                             </div>
                         </div>
 
-                        <div class="whatsapp-chats">
-                        </div>
+                        <div class="whatsapp-chats"></div>
                         <div class="whatsapp-openedchat">
                             <div class="whatsapp-header-footer-openedchat">
                                 <div class="whatsapp-openedchat-picture"></div>
                                 <div class="whatsapp-openedchat-name"><p></p></div>
                                 <div class="whatsapp-openedchat-number"><p></p></div>
-                                <i id="whatsapp-openedchat-back" class="fa-solid fa-chevron-left"></i>
-                                <i id="whatsapp-openedchat-call" class="fa-solid fa-phone"></i>
+                                <button type="button" class="whatsapp-icon-button whatsapp-openedchat-button" id="whatsapp-openedchat-back" aria-label="Back to messages">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </button>
+                                <button type="button" class="whatsapp-icon-button whatsapp-openedchat-button" id="whatsapp-openedchat-call" aria-label="Call contact">
+                                    <i class="fa-solid fa-phone"></i>
+                                </button>
                             </div>
                             <div class="whatsapp-openedchat-messages"></div>
                             <div class="whatsapp-openedchat-input">
                                 <input type="text" id="whatsapp-openedchat-message" placeholder="Send message" spellcheck="false">
-                                <i class="fa-solid fa-paper-plane" id="whatsapp-openedchat-send"></i>
+                                <button type="button" class="whatsapp-icon-button whatsapp-send-button" id="whatsapp-openedchat-send" aria-label="Send message">
+                                    <i class="fa-solid fa-paper-plane"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -1251,6 +1261,5 @@
         <script src="./js/employment.js"></script>
         <script src="./js/documents.js"></script>
         <script src="./js/lsbn.js"></script>-->
-        <script type="text/javascript">$('#whatsapp-openedchat-message').emojioneArea({inline: true, searchPosition: "bottom", shortnames: true})</script>
     </body>
 </html>
