@@ -1,0 +1,53 @@
+:root {
+    --zphone-surface: #14171A;
+    --zphone-surface-alt: #1b1f24;
+    --zphone-surface-soft: rgba(255, 255, 255, 0.06);
+    --zphone-border-soft: rgba(255, 255, 255, 0.08);
+    --zphone-text-primary: #f4f7fb;
+    --zphone-text-secondary: #aab4c2;
+    --zphone-accent: #4da3ff;
+    --zphone-widget-shadow: 0 1.2vh 2.4vh rgba(0, 0, 0, 0.24);
+}
+
+z-phone-app,
+z-phone-card {
+    display: block;
+}
+
+.z-phone-home-page,
+.z-phone-app-page {
+    contain: layout style paint;
+}
+
+.z-phone-app-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.2vh;
+}
+
+.z-phone-widget-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02));
+    border: 1px solid var(--zphone-border-soft);
+    box-shadow: var(--zphone-widget-shadow);
+    backdrop-filter: blur(1.2vh);
+}
+
+.z-phone-app {
+    will-change: transform;
+}
+
+.z-phone-app .application-description {
+    color: var(--zphone-text-primary);
+}
+
+.z-phone-widget-card .stats-label,
+.z-phone-widget-card .date-display,
+.z-phone-widget-card .weather-desc {
+    color: var(--zphone-text-secondary);
+}
+
+.z-phone-widget-card .stats-value,
+.z-phone-widget-card .time-display,
+.z-phone-widget-card .weather-temp {
+    color: var(--zphone-text-primary);
+}

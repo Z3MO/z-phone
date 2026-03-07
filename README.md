@@ -56,6 +56,51 @@ I am actively expanding Z-Phone's capabilities and developing companion scripts.
 * **Advanced Weed Script & Underground Marketplace:** Pushing criminal RP to the next level by introducing a fully functional digital marketplace for buying/selling product.
 * **Player-Owned Strain Stats:** Players will be able to cultivate, cross-breed, and name their own unique strains, complete with dynamic stats, varying potencies, and custom effects. 
 
+## 🧱 Frontend Architecture
+
+The phone frontend now includes a lightweight modular core so new work can be organized without continuing to grow the legacy global scripts.
+
+### Frontend structure
+
+```text
+html/
+├── css/
+│   ├── core/
+│   │   └── components.css
+│   └── *.css
+└── js/
+    ├── core/
+    │   ├── app-registry.js
+    │   ├── bootstrap.js
+    │   ├── components.js
+    │   ├── dom.js
+    │   └── home-page.js
+    └── *.js
+```
+
+### What the modular core adds
+
+* **ES module bootstrap** through `html/js/core/bootstrap.js`
+* **App registry** for future apps through `window.ZPhone.registerApp(...)`
+* **Reusable vanilla components** through `z-phone-app` and `z-phone-card`
+* **Document-fragment based home/app page rendering** for cleaner and faster DOM updates
+* **Shared design tokens** in `html/css/core/components.css`
+
+### Adding a new app
+
+Existing apps remain compatible, but new apps can now register themselves without extending the legacy app click chain:
+
+```js
+window.ZPhone.registerApp('notes', {
+  handler({ QB }) {
+    QB.Phone.Functions.ToggleApp('notes', 'block');
+    QB.Phone.Data.currentApplication = 'notes';
+  }
+});
+```
+
+This keeps the current UI working while giving developers a cleaner path for new frontend features.
+
 ## 🤝 Inspirations & Credits
 
 This project would not be possible without the incredible foundation built by the FiveM open-source community. 
