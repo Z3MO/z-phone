@@ -82,6 +82,7 @@ html/
 
 * **ES module bootstrap** through `html/js/core/bootstrap.js`
 * **App registry** for future apps through `window.ZPhone.registerApp(...)`
+* **Legacy app bridge** through `window.ZPhone.registerLegacyApp(...)` and `window.ZPhone.openLegacyApp(...)`
 * **Reusable vanilla components** through `z-phone-app` and `z-phone-card`
 * **Document-fragment based home/app page rendering** for cleaner and faster DOM updates
 * **Shared design tokens** in `html/css/core/components.css`
@@ -100,6 +101,22 @@ window.ZPhone.registerApp('notes', {
 ```
 
 This keeps the current UI working while giving developers a cleaner path for new frontend features.
+
+### Migrating an existing app
+
+If an app already has a legacy `.app-name-app` screen, you can move its opening behavior into the modular registry without rewriting the full screen:
+
+```js
+window.ZPhone.registerLegacyApp('bank', {
+  handler() {
+    QB.Phone.Functions.DoBankOpen();
+    QB.Phone.Functions.SwitchBankTab('accounts', { immediate: true });
+    QB.Phone.Functions.LoadBankData().catch(() => {});
+  }
+});
+```
+
+The bootstrap now uses this pattern for several built-in apps so future migrations can stay small and incremental.
 
 ## 🤝 Inspirations & Credits
 

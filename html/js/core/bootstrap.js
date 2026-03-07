@@ -11,6 +11,7 @@ import {
 const registry = createAppRegistry();
 let bridgeInstalled = false;
 let clickInterceptorBound = false;
+let legacyAppRegistryInitialized = false;
 
 function isModularCoreEnabled() {
     return window.Config?.Frontend?.modularCoreEnabled !== false;
@@ -33,6 +34,160 @@ function initializeEmojiArea() {
     });
     target.dataset.emojiInitialized = 'true';
     return true;
+}
+
+function getAppDisplayName(appName) {
+    return window.QB?.Phone?.Data?.Applications?.[appName]?.tooltipText || appName;
+}
+
+function getLegacyAppElement(appName) {
+    return document.querySelector(`.${appName}-app`);
+}
+
+function canOpenLegacyApp(appName) {
+    const appElement = getLegacyAppElement(appName);
+    if (!appElement) {
+        if (appName) {
+            window.QB?.Phone?.Notifications?.Add(
+                'fas fa-exclamation-circle',
+                'System',
+                `${getAppDisplayName(appName)} is not available!`,
+            );
+        }
+        return false;
+    }
+
+    if (!window.CanOpenApp || window.QB?.Phone?.Data?.currentApplication !== null) {
+        return false;
+    }
+
+    return true;
+}
+
+function openLegacyApp(appName, onOpen, { closeAfterOpen = false } = {}) {
+    if (!canOpenLegacyApp(appName)) {
+        return false;
+    }
+
+    window.QB.Phone.Functions.ToggleApp(appName, 'block');
+    window.QB.Phone.Animations.TopSlideDown('.phone-application-container', 300, 0);
+
+    if (window.QB.Phone.Functions.IsAppHeaderAllowed(appName)) {
+        window.QB.Phone.Functions.HeaderTextColor('transparent', 300);
+    }
+
+    window.QB.Phone.Data.currentApplication = appName;
+
+    if (typeof onOpen === 'function') {
+        onOpen();
+    }
+
+    if (closeAfterOpen) {
+        window.QB.Phone.Functions.Close();
+    }
+
+    return true;
+}
+
+function registerLegacyApp(appName, definition) {
+    return registry.register(appName, {
+        ...definition,
+        handler(context) {
+            return openLegacyApp(appName, () => {
+                if (typeof definition?.handler === 'function') {
+                    definition.handler(context);
+                }
+            }, definition?.options || {});
+        },
+    });
+}
+
+function registerDefaultLegacyApps() {
+    if (legacyAppRegistryInitialized || !window.QB?.Phone?.Functions) {
+        return;
+    }
+
+    registerLegacyApp('settings', {
+        handler() {
+            const charInfo = window.QB.Phone.Data.PlayerData.charinfo;
+            const metaData = window.QB.Phone.Data.MetaData || {};
+            document.querySelector('.settings-profile-name').textContent = `${charInfo.firstname} ${charInfo.lastname}`;
+            document.querySelector('.settings-profile-number').textContent = charInfo.phone;
+
+            const profileImage = document.querySelector('.settings-profile-img');
+            const avatarPlaceholder = document.querySelector('.settings-profile-avatar-placeholder');
+            if (metaData.profilepicture && metaData.profilepicture !== 'default') {
+                profileImage?.setAttribute('src', metaData.profilepicture);
+                if (profileImage) profileImage.style.display = 'block';
+                if (avatarPlaceholder) avatarPlaceholder.style.display = 'none';
+            } else {
+                if (profileImage) profileImage.style.display = 'none';
+                if (avatarPlaceholder) avatarPlaceholder.style.display = 'flex';
+            }
+
+            if (typeof window.LoadPlayerMoneys === 'function') {
+                window.LoadPlayerMoneys();
+            }
+        },
+    });
+
+    registerLegacyApp('bank', {
+        handler() {
+            window.QB.Phone.Functions.DoBankOpen();
+            window.QB.Phone.Functions.SwitchBankTab('accounts', { immediate: true });
+            window.QB.Phone.Functions.LoadBankData().catch(() => {});
+        },
+    });
+
+    registerLegacyApp('phone', {
+        handler() {
+            window.QB.Phone.NUI.postLegacy('GetMissedCalls', {}, (recent) => {
+                window.QB.Phone.Functions.SetupRecentCalls(recent);
+            });
+            window.QB.Phone.NUI.postLegacy('GetSuggestedContacts', {}, (suggested) => {
+                window.QB.Phone.Functions.SetupSuggestedContacts(suggested);
+            });
+            window.QB.Phone.NUI.postLegacy('ClearGeneralAlerts', { app: 'phone' });
+        },
+    });
+
+    registerLegacyApp('mail', {
+        handler() {
+            window.QB.Phone.NUI.postLegacy('GetMails', {}, (mails) => {
+                window.QB.Phone.Functions.SetupMails(mails);
+            });
+            window.QB.Phone.NUI.postLegacy('ClearGeneralAlerts', { app: 'mail' });
+        },
+    });
+
+    registerLegacyApp('gallery', {
+        handler() {
+            window.QB.Phone.NUI.postLegacy('GetGalleryData', {}, (data) => {
+                window.setUpGalleryData(data);
+            });
+        },
+    });
+
+    registerLegacyApp('taxi', {
+        handler() {
+            window.QB.Phone.NUI.postLegacy('GetAvailableTaxiDrivers', {}, (data) => {
+                window.SetupTaxiDrivers(data);
+            });
+        },
+    });
+
+    registerLegacyApp('camera', {
+        handler() {
+            window.QB.Phone.NUI.postLegacy('TakePhoto', {}, (url) => {
+                window.setUpCameraApp(url);
+            });
+        },
+        options: {
+            closeAfterOpen: true,
+        },
+    });
+
+    legacyAppRegistryInitialized = true;
 }
 
 function installLegacyBridge() {
@@ -129,9 +284,11 @@ const api = {
     registerApp(name, definition) {
         return registry.register(name, definition);
     },
+    registerLegacyApp,
     openApp(name, context) {
         return registry.open(name, context);
     },
+    openLegacyApp,
     installLegacyBridge,
     initializeEmojiArea,
     refreshWidgets() {
@@ -147,6 +304,7 @@ function boot() {
 
     defineZPhoneComponents();
     installLegacyBridge();
+    registerDefaultLegacyApps();
     if (window.QB?.Phone?.Data) {
         api.refreshWidgets();
     }
