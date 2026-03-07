@@ -1,16 +1,30 @@
-function setUpGalleryData(Images){
-    $(".gallery-images").html("");
+function setupGalleryData(Images){
+    const galleryImages = document.querySelector('.gallery-images');
+    if (!galleryImages) {
+        return;
+    }
+
+    galleryImages.innerHTML = "";
     if (Images != null) {
         $.each(Images, function(i, image){
-            var Element = '<div class="gallery-image"><img src="'+image.image+'" alt="'+image.citizenid+'" class="tumbnail"></div>';
+            const wrapper = document.createElement('div');
+            wrapper.className = 'gallery-image';
 
-            $(".gallery-images").append(Element);
-            $("#image-"+i).data('ImageData', image);
+            const imageElement = document.createElement('img');
+            imageElement.className = 'thumbnail';
+            imageElement.src = image.image;
+            imageElement.alt = image.citizenid;
+
+            wrapper.appendChild(imageElement);
+            galleryImages.appendChild(wrapper);
         });
     }
 }
 
-$(document).on('click', '.tumbnail', function(e){
+window.setupGalleryData = setupGalleryData;
+window.setUpGalleryData = setupGalleryData;
+
+$(document).on('click', '.thumbnail', function(e){
     e.preventDefault();
     let source = $(this).attr('src')
     $(".gallery-homescreen").animate({
@@ -39,7 +53,7 @@ $(document).on('click', '#delete-button', function(e){
                 $('#return-button').click()
                 QB.Phone.NUI.postLegacy("GetGalleryData", {}, function(data) {
                     setTimeout(()=>{
-                            setUpGalleryData(data);
+                            setupGalleryData(data);
 
                     },200)
                 });

@@ -57,11 +57,15 @@ function canOpenLegacyApp(appName) {
         return false;
     }
 
-    if (!window.CanOpenApp || window.QB?.Phone?.Data?.currentApplication !== null) {
+    if (!isLegacyAppOpenAllowed() || window.QB?.Phone?.Data?.currentApplication !== null) {
         return false;
     }
 
     return true;
+}
+
+function isLegacyAppOpenAllowed() {
+    return window.CanOpenApp !== false;
 }
 
 function openLegacyApp(appName, onOpen, { closeAfterOpen = false } = {}) {
@@ -163,7 +167,10 @@ function registerDefaultLegacyApps() {
     registerLegacyApp('gallery', {
         handler() {
             window.QB.Phone.NUI.postLegacy('GetGalleryData', {}, (data) => {
-                window.setUpGalleryData(data);
+                const setupGalleryData = window.setupGalleryData;
+                if (typeof setupGalleryData === 'function') {
+                    setupGalleryData(data);
+                }
             });
         },
     });
@@ -171,7 +178,9 @@ function registerDefaultLegacyApps() {
     registerLegacyApp('taxi', {
         handler() {
             window.QB.Phone.NUI.postLegacy('GetAvailableTaxiDrivers', {}, (data) => {
-                window.SetupTaxiDrivers(data);
+                if (typeof window.SetupTaxiDrivers === 'function') {
+                    window.SetupTaxiDrivers(data);
+                }
             });
         },
     });
@@ -179,7 +188,10 @@ function registerDefaultLegacyApps() {
     registerLegacyApp('camera', {
         handler() {
             window.QB.Phone.NUI.postLegacy('TakePhoto', {}, (url) => {
-                window.setUpCameraApp(url);
+                const setupCameraApp = window.setupCameraApp;
+                if (typeof setupCameraApp === 'function') {
+                    setupCameraApp(url);
+                }
             });
         },
         options: {
