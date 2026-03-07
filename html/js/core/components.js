@@ -1,18 +1,76 @@
-import { createElement, appendChildren } from './dom.js';
+import { createElement, appendChildren, clearChildren } from './dom.js';
 
-function buildIconMarkup(app = {}) {
-    const iconStyle = app.style ? ` style="${app.style}"` : '';
+function applySafeInlineStyle(element, styleText) {
+    if (!styleText || typeof styleText !== 'string') {
+        return;
+    }
 
+    const allowedProperties = new Set([
+        'color',
+        'background',
+        'background-color',
+        'font-size',
+        'filter',
+        'transform',
+        'opacity',
+    ]);
+
+    styleText.split(';').forEach((declaration) => {
+        const [property, rawValue] = declaration.split(':');
+        if (!property || !rawValue) {
+            return;
+        }
+
+        const normalizedProperty = property.trim().toLowerCase();
+        const normalizedValue = rawValue.trim();
+
+        if (!allowedProperties.has(normalizedProperty)) {
+            return;
+        }
+
+        if (/url\s*\(|expression\s*\(|javascript:|@import|-moz-binding|behavior\s*:/i.test(normalizedValue)) {
+            return;
+        }
+
+        element.style.setProperty(normalizedProperty, normalizedValue);
+    });
+}
+
+function sanitizeIconClasses(icon = '') {
+    return icon
+        .split(/\s+/)
+        .filter((token) => /^[a-z0-9_-]+$/i.test(token))
+        .join(' ');
+}
+
+function sanitizeAssetName(icon = '') {
+    const basename = icon.split(/[\\/]/).pop() || '';
+    return basename.replace(/[^a-z0-9._-]/gi, '');
+}
+
+function createIconElement(app = {}) {
     if (!app.icon) {
-        return '';
+        return null;
     }
 
     if (app.icon.startsWith('fa')) {
-        return `<i class="ApplicationIcon ${app.icon}"${iconStyle}></i>`;
+        const iconElement = createElement('i', {
+            className: `ApplicationIcon ${sanitizeIconClasses(app.icon)}`.trim(),
+        });
+        applySafeInlineStyle(iconElement, app.style);
+        return iconElement;
     }
 
-    const source = app.icon.includes('.') ? app.icon : `${app.icon}.png`;
-    return `<img class="ApplicationIcon" src="./img/apps/${source}"${iconStyle}>`;
+    const source = sanitizeAssetName(app.icon.includes('.') ? app.icon : `${app.icon}.png`);
+    const iconElement = createElement('img', {
+        className: 'ApplicationIcon',
+        attributes: {
+            src: `./img/apps/${source}`,
+            alt: app.tooltipText || app.app || 'App icon',
+        },
+    });
+    applySafeInlineStyle(iconElement, app.style);
+    return iconElement;
 }
 
 class ZPhoneApp extends HTMLElement {
@@ -39,7 +97,19 @@ class ZPhoneApp extends HTMLElement {
         this.dataset.appslot = app.slot;
         this.dataset.app = app.app;
         this.setAttribute('title', app.tooltipText || app.app || 'App');
-        this.innerHTML = `${buildIconMarkup(app)}<p class="application-description">${app.tooltipText || ''}</p><div class="app-unread-alerts">0</div>`;
+
+        clearChildren(this);
+        appendChildren(this, [
+            createIconElement(app),
+            createElement('p', {
+                className: 'application-description',
+                text: app.tooltipText || '',
+            }),
+            createElement('div', {
+                className: 'app-unread-alerts',
+                text: '0',
+            }),
+        ]);
     }
 }
 
@@ -81,7 +151,7 @@ export function renderDockSlot(slot, app) {
         return;
     }
 
-    slot.innerHTML = '';
+    clearChildren(slot);
     slot.style.backgroundColor = 'transparent';
     slot.removeAttribute('title');
     slot.removeAttribute('data-app');
@@ -92,5 +162,11 @@ export function renderDockSlot(slot, app) {
 
     slot.dataset.app = app.app;
     slot.setAttribute('title', app.tooltipText || app.app || 'App');
-    slot.insertAdjacentHTML('beforeend', `${buildIconMarkup(app)}<div class="app-unread-alerts">0</div>`);
+    appendChildren(slot, [
+        createIconElement(app),
+        createElement('div', {
+            className: 'app-unread-alerts',
+            text: '0',
+        }),
+    ]);
 }

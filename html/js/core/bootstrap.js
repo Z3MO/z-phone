@@ -10,6 +10,11 @@ import {
 
 const registry = createAppRegistry();
 let bridgeInstalled = false;
+let clickInterceptorBound = false;
+
+function isModularCoreEnabled() {
+    return window.Config?.Frontend?.modularCoreEnabled !== false;
+}
 
 function initializeEmojiArea() {
     const target = document.querySelector('#whatsapp-openedchat-message');
@@ -56,8 +61,8 @@ function installLegacyBridge() {
 
             const layout = buildApplicationsLayout({
                 applications: data.applications,
-                playerData: window.QB.Phone.Data.PlayerData || {},
-                playerJob: window.QB.Phone.Data.PlayerJob || {},
+                playerData: window.QB.Phone.Data.PlayerData ?? {},
+                playerJob: window.QB.Phone.Data.PlayerJob ?? {},
                 isAppJobBlocked: window.IsAppJobBlocked,
             });
 
@@ -70,14 +75,19 @@ function installLegacyBridge() {
             window.QB.Phone.Data.currentPage = 0;
             window.QB.Phone.Data.totalPages = layout.totalPages;
             window.QB.Phone.Functions.NavigateToPage(0);
-            refreshWidgetValues(document, window.QB.Phone.Data.PlayerData || {});
-            ensureWidgetTimer(() => window.QB.Phone.Data.PlayerData || {});
+            refreshWidgetValues(document, window.QB.Phone.Data.PlayerData ?? {});
+            ensureWidgetTimer(() => window.QB.Phone.Data.PlayerData ?? {});
 
             if (window.jQuery && window.jQuery.fn && typeof window.jQuery.fn.tooltip === 'function') {
                 window.jQuery('[data-toggle="tooltip"]').tooltip();
             }
         } catch (error) {
-            console.warn('[ZPhone] Falling back to legacy application setup.', error);
+            console.warn('[ZPhone] Falling back to legacy application setup because the modular layout could not be mounted.', {
+                message: error.message,
+                pageContainer: Boolean(document.querySelector('.phone-page-container')),
+                indicatorContainer: Boolean(document.querySelector('.page-indicators')),
+                dockContainer: Boolean(document.querySelector('.phone-footer-applications')),
+            }, error);
             return originalSetupApplications.call(this, data);
         }
 
@@ -85,8 +95,8 @@ function installLegacyBridge() {
     };
 
     window.QB.Phone.Functions.UpdateWidgets = function updateWidgetsWithModules() {
-        refreshWidgetValues(document, window.QB.Phone.Data.PlayerData || {});
-        ensureWidgetTimer(() => window.QB.Phone.Data.PlayerData || {});
+        refreshWidgetValues(document, window.QB.Phone.Data.PlayerData ?? {});
+        ensureWidgetTimer(() => window.QB.Phone.Data.PlayerData ?? {});
     };
 
     bridgeInstalled = true;
@@ -99,13 +109,18 @@ function interceptRegisteredApps(event) {
         return;
     }
 
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    registry.open(appElement.dataset.app, {
+    const handled = registry.open(appElement.dataset.app, {
         element: appElement,
         QB: window.QB,
         ZPhone: window.ZPhone,
     });
+
+    if (!handled) {
+        return;
+    }
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
 }
 
 const api = {
@@ -120,16 +135,27 @@ const api = {
     installLegacyBridge,
     initializeEmojiArea,
     refreshWidgets() {
-        refreshWidgetValues(document, window.QB && window.QB.Phone ? window.QB.Phone.Data.PlayerData || {} : {});
-        ensureWidgetTimer(() => window.QB && window.QB.Phone ? window.QB.Phone.Data.PlayerData || {} : {});
+        refreshWidgetValues(document, window.QB?.Phone?.Data?.PlayerData ?? {});
+        ensureWidgetTimer(() => window.QB?.Phone?.Data?.PlayerData ?? {});
     },
 };
 
 function boot() {
+    if (!isModularCoreEnabled()) {
+        return;
+    }
+
     defineZPhoneComponents();
     installLegacyBridge();
-    api.refreshWidgets();
+    if (window.QB?.Phone?.Data) {
+        api.refreshWidgets();
+    }
     initializeEmojiArea();
+
+    if (!clickInterceptorBound) {
+        document.addEventListener('click', interceptRegisteredApps, true);
+        clickInterceptorBound = true;
+    }
 }
 
 window.ZPhone = Object.assign(window.ZPhone || {}, api);
@@ -137,10 +163,4 @@ window.QB = window.QB || {};
 window.QB.Phone = window.QB.Phone || {};
 window.QB.Phone.Modules = window.ZPhone;
 
-document.addEventListener('click', interceptRegisteredApps, true);
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', boot, { once: true });
-} else {
-    boot();
-}
+boot();

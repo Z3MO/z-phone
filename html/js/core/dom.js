@@ -1,6 +1,14 @@
 export const query = (selector, root = document) => root.querySelector(selector);
 export const queryAll = (selector, root = document) => Array.from(root.querySelectorAll(selector));
 
+function sanitizeHtml(html) {
+    if (window.DOMPurify && typeof window.DOMPurify.sanitize === 'function') {
+        return window.DOMPurify.sanitize(html);
+    }
+
+    return html;
+}
+
 export function clearChildren(element) {
     if (!element) {
         return element;
@@ -46,7 +54,7 @@ export function createElement(tagName, options = {}) {
     }
 
     if (html !== undefined) {
-        element.innerHTML = html;
+        element.innerHTML = sanitizeHtml(html);
     }
 
     if (dataset) {

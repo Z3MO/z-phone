@@ -1,4 +1,4 @@
-Config = []
+window.Config = window.Config || {}
 
 Config.HeaderDisabledApps = [
     "bank", 
@@ -9,7 +9,8 @@ Config.HeaderDisabledApps = [
 Config.Frontend = {
     modularCoreEnabled: true,
     componentRendererEnabled: true,
-    developerPath: "./js/core/bootstrap.js",
+    bootstrapPath: "./js/core/bootstrap.js",
+    widgetRefreshMs: 60000,
 }
 
 Config.DefaultCryptoPage = "general";

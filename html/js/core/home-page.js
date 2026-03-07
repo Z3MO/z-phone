@@ -3,7 +3,12 @@ import { createAppComponent, createEmptyAppSlot, createWidgetCard, renderDockSlo
 
 const HOME_PAGE_APP_LIMIT = 4;
 const GRID_APPS_PER_PAGE = 12;
-const HOME_WIDGET_SELECTOR = '.z-phone-home-page';
+const DEFAULT_WIDGET_REFRESH_MILLISECONDS = 60000;
+const BALANCE_FORMATTER = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+});
 let widgetTimer = null;
 
 function formatClock(now = new Date()) {
@@ -14,8 +19,8 @@ function formatClock(now = new Date()) {
 }
 
 function formatBalance(playerData = {}) {
-    const bankBalance = playerData.money && playerData.money.bank ? playerData.money.bank : 0;
-    return `$${bankBalance}`;
+    const bankBalance = playerData?.money?.bank ?? 0;
+    return BALANCE_FORMATTER.format(bankBalance);
 }
 
 function isVisibleApp(app, playerJob, isAppJobBlocked) {
@@ -37,12 +42,12 @@ function createTimeWidget() {
         createElement('div', {
             className: 'time-display',
             text: time,
-            dataset: { widgetTime: 'true' },
+            attributes: { 'data-widget-time': 'true' },
         }),
         createElement('div', {
             className: 'date-display',
             text: date,
-            dataset: { widgetDate: 'true' },
+            attributes: { 'data-widget-date': 'true' },
         }),
     ]);
 }
@@ -55,7 +60,7 @@ function createWeatherWidget() {
         }),
         createElement('div', {
             className: 'weather-info',
-            html: '<div class="weather-temp">22°</div><div class="weather-desc">Sunny</div>',
+            html: '<div class="weather-temp">--</div><div class="weather-desc">Weather unavailable</div>',
         }),
     ]);
 }
@@ -73,7 +78,7 @@ function createBalanceWidget(playerData) {
                 createElement('div', {
                     className: 'stats-value',
                     text: formatBalance(playerData),
-                    dataset: { widgetBalance: 'true' },
+                    attributes: { 'data-widget-balance': 'true' },
                 }),
             ],
         }),
@@ -145,7 +150,7 @@ export function buildApplicationsLayout({ applications = [], playerData = {}, pl
     pageApps.sort((left, right) => left.slot - right.slot);
 
     const pages = [createHomePage(pageApps, playerData)];
-    const remainingApps = [...pageApps.slice(HOME_PAGE_APP_LIMIT), ...dockApps];
+    const remainingApps = pageApps.slice(HOME_PAGE_APP_LIMIT);
     const additionalPages = Math.ceil(remainingApps.length / GRID_APPS_PER_PAGE);
 
     for (let pageIndex = 0; pageIndex < additionalPages; pageIndex += 1) {
@@ -187,14 +192,16 @@ export function refreshWidgetValues(root = document, playerData = {}) {
     });
 }
 
-export function ensureWidgetTimer(getPlayerData = () => (window.QB && window.QB.Phone ? window.QB.Phone.Data.PlayerData : {})) {
+export function ensureWidgetTimer(getPlayerData = () => (window.QB?.Phone?.Data?.PlayerData ?? {})) {
     if (widgetTimer !== null) {
         return widgetTimer;
     }
 
+    const refreshInterval = window.Config?.Frontend?.widgetRefreshMs ?? DEFAULT_WIDGET_REFRESH_MILLISECONDS;
+
     widgetTimer = window.setInterval(() => {
         refreshWidgetValues(document, getPlayerData() || {});
-    }, 60000);
+    }, refreshInterval);
 
     return widgetTimer;
 }
@@ -203,8 +210,4 @@ export function initializeHomeContainers(pageContainer, indicatorContainer) {
     clearChildren(pageContainer);
     clearChildren(indicatorContainer);
     return { pageContainer, indicatorContainer };
-}
-
-export function isHomeLayoutMounted() {
-    return document.querySelector(HOME_PAGE_APP_LIMIT ? HOME_WIDGET_SELECTOR : '') !== null;
 }
