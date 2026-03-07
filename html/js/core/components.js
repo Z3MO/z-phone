@@ -44,6 +44,10 @@ function sanitizeIconClasses(icon = '') {
 }
 
 function sanitizeAssetName(icon = '') {
+    if (icon.includes('..') || icon.includes('/') || icon.includes('\\')) {
+        return '';
+    }
+
     const basename = icon.split(/[\\/]/).pop() || '';
     return basename.replace(/[^a-z0-9._-]/gi, '');
 }
