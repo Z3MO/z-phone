@@ -1,254 +1,443 @@
-
 .garage-app {
     display: none;
+    position: relative;
     height: 100%;
     width: 100%;
-    background: #283149;    
+    overflow: hidden;
+    background:
+        radial-gradient(circle at top, rgba(56, 189, 248, 0.18), transparent 36%),
+        linear-gradient(180deg, #0b1220 0%, #0d1627 48%, #09101c 100%);
+    color: #edf4ff;
+    font-family: 'Barlow Condensed', sans-serif;
+}
+
+.garage-header {
+    position: absolute;
+    inset: 0 0 auto;
+    padding: 5.1vh 1.25vh 1vh;
+    box-sizing: border-box;
+    background: linear-gradient(180deg, rgba(9, 15, 26, 0.96) 0%, rgba(9, 15, 26, 0.88) 82%, transparent 100%);
+    z-index: 5;
+}
+
+.garage-title-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1vh;
+    margin-bottom: 1vh;
 }
 
 #garage-search-text {
-    position: absolute;
-    z-index:1;
-    top: 8%;
-    left: 6%;
-    font-size: 2.3vw;
-    font-weight: 700;
-    color: #E94560;
+    font-size: 3.25vh;
+    line-height: 1;
+    font-weight: 800;
+    letter-spacing: -0.04vh;
+    color: #f8fbff;
+    text-shadow: 0 0.35vh 1.2vh rgba(56, 189, 248, 0.14);
 }
 
-#garage-search {
-    display: block;
-    position: absolute;
-    border: none;
-    background: #404B69;
-    top: 11vh;
-    width: 90%;
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    opacity: 1;
-    height: 3.4vh;
-    border-radius: 0.8vh;
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-    outline: none;
-    text-indent: 3.5vh;
-    z-index: 100;
-    color: whitesmoke;
+.garage-count-badge {
+    min-width: 4.3vh;
+    height: 2.45vh;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.9vh;
+    border-radius: 999px;
+    border: 0.1vh solid rgba(125, 211, 252, 0.18);
+    background: rgba(19, 30, 48, 0.94);
+    color: #e0f2fe;
+    font-size: 1.12vh;
+    font-weight: 700;
+    box-sizing: border-box;
+}
+
+.garage-search-box {
+    height: 4.4vh;
+    display: flex;
+    align-items: center;
+    gap: 0.8vh;
+    padding: 0 1.15vh;
+    box-sizing: border-box;
+    border-radius: 1.45vh;
+    border: 0.1vh solid rgba(148, 163, 184, 0.14);
+    background: rgba(15, 23, 42, 0.78);
+    box-shadow: inset 0 0 0 0.1vh rgba(255, 255, 255, 0.03);
 }
 
 #garage-search-icon {
+    font-size: 1.4vh;
+    color: rgba(191, 219, 254, 0.62);
+    flex-shrink: 0;
+}
+
+#garage-search {
+    flex: 1;
+    height: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #f8fafc;
+    font-family: inherit;
+    font-size: 1.55vh;
+}
+
+#garage-search::placeholder {
+    color: rgba(203, 213, 225, 0.42);
+}
+
+.garage-homescreen {
     position: absolute;
-    top: 12vh;
-    left: 2.5vh;
-    font-size: 1.5vh;
-    color: #FFFFFF;
-    z-index: 101;
+    inset: 0;
 }
 
 .garage-vehicles {
     position: absolute;
-    width: 90%;
-    height: 65%;
-    top: 27%;
-    margin: 0 auto;
-    left: 0;
-    right: 0;
-    overflow-y: scroll;
+    inset: 11.2vh 0.75vh 0.85vh;
+    overflow-y: auto;
+    padding-right: 0.15vh;
+    box-sizing: border-box;
 }
 
 .garage-vehicles::-webkit-scrollbar {
     display: none;
 }
 
+.garage-empty-state {
+    position: absolute;
+    inset: 12.1vh 0.75vh 0.85vh;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8vh;
+    padding: 2.5vh;
+    box-sizing: border-box;
+    text-align: center;
+    border-radius: 2.1vh;
+    border: 0.1vh dashed rgba(148, 163, 184, 0.16);
+    background: rgba(15, 23, 42, 0.34);
+}
+
+.garage-empty-state.visible {
+    display: flex;
+}
+
+.garage-empty-state i {
+    font-size: 5.8vh;
+    color: rgba(148, 163, 184, 0.3);
+}
+
+.garage-empty-state p {
+    margin: 0;
+    font-size: 2.05vh;
+    font-weight: 700;
+    color: #f8fafc;
+}
+
+.garage-empty-state span {
+    font-size: 1.3vh;
+    color: rgba(203, 213, 225, 0.5);
+}
+
 .garage-vehicle {
-    padding: 0.5vh;
     width: 100%;
-    background: #404B69;    
-    border-radius: 1vh;
-    box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
-    margin-bottom: 3.5%;
+    margin-bottom: 0.95vh;
+    border: 0.1vh solid rgba(148, 163, 184, 0.12);
+    border-radius: 1.8vh;
+    background: rgba(15, 23, 42, 0.78);
+    box-shadow: 0 1.4vh 3.2vh rgba(0, 0, 0, 0.26);
+    overflow: hidden;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.garage-vehicle:hover {
+    transform: translateY(-0.08vh);
+    border-color: rgba(56, 189, 248, 0.26);
+    box-shadow: 0 1.8vh 3.8vh rgba(0, 0, 0, 0.3);
+}
+
+.garage-vehicle-header {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 4.2vh minmax(0, 1fr) auto 1.4vh;
+    align-items: center;
+    gap: 1vh;
+    padding: 1.1vh 1.15vh;
+    box-sizing: border-box;
+    border: none;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
 }
 
 .garage-vehicle-icon {
-    position: relative;
-    text-shadow:   0px -6px 0 #212121,  
-                 0px -6px 0 #212121,
-                 0px  6px 0 #212121,
-                 0px  6px 0 #212121,
-                -6px  0px 0 #212121,  
-                 6px  0px 0 #212121,
-                -6px  0px 0 #212121,
-                 6px  0px 0 #212121,
-                -6px -3px 0 #212121,  
-                 6px -3px 0 #212121,
-                -6px  3px 0 #212121,
-                 6px  3px 0 #212121,
-                -6px  9px 0 #212121,
-                 0px  9px 0 #212121,
-                 6px  9px 0 #212121,
-                 0 13px 1px rgba(0,0,0,.1),
-                 0 0 3px rgba(0,0,0,.1),
-                 0 3px 3px rgba(0,0,0,.3),
-                 0 12px 6px rgba(0,0,0,.2),
-                 0 13px 18px rgba(0,0,0,.25),
-                 0 24px 24px rgba(0,0,0,.2),
-                 0 36px 36px rgba(0,0,0,.15);
-    padding-left: 1.0vh;
-    color: #DBEDF3;
-    font-size: 4vh;
-    transition: .05s linear;
+    width: 4.2vh;
+    height: 4.2vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1.2vh;
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.24), rgba(37, 99, 235, 0.22));
+    color: #7dd3fc;
+    font-size: 1.75vh;
+    flex-shrink: 0;
+}
+
+.garage-vehicle-main {
+    min-width: 0;
 }
 
 .garage-vehicle-name {
-    position: absolute;
-    left: 12vh;
-    color: white;
-    line-height: 8vh;
-    font-size: 1vw;
-    font-weight: 600;
-    text-overflow: ellipsis;
-    overflow: hidden;
+    display: block;
+    font-size: 1.78vh;
+    font-weight: 700;
+    color: #f8fafc;
     white-space: nowrap;
-    text-shadow: 0px 4px 3px rgba(0,0,0,0.4),
-             0px 8px 13px rgba(0,0,0,0.1),
-             0px 18px 23px rgba(0,0,0,0.1);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.garage-vehicle-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75vh;
+    margin-top: 0.3vh;
+    color: rgba(203, 213, 225, 0.72);
+    font-size: 1.2vh;
 }
 
 .garage-plate-name {
-    position: absolute;
-    left: 12vh;
-    color: lightyellow;
-    line-height: 4vh;
-    font-size: 1vw;
-    font-weight: 600;
-    text-shadow: 0px 4px 3px rgba(0,0,0,0.4),
-             0px 8px 13px rgba(0,0,0,0.1),
-             0px 18px 23px rgba(0,0,0,0.1);
-}
-
-.garage-state-name {
-    position: absolute;
-    left: 5vh;
-    color: white;
-    line-height: 10vh;
-    font-size: 1vw;
-    font-weight: 600;
-    text-shadow: 0px 4px 3px rgba(0,0,0,0.4),
-             0px 8px 13px rgba(0,0,0,0.1),
-             0px 18px 23px rgba(0,0,0,0.1);
-}
-
-/* Click Block CSS */
-.garage-block {
-    padding: 1vh 1vw;
-    line-height: 1.1vh;
-    display: none;
-}
-
-.garage-name {
-    padding: 0.5vh 0.5vw;
-    padding-left: 0vh;
-    color: white;
-    font-size: 0.8vw;
-    font-weight:300;
-}
-
-.garage-name > i {
-    padding-right: 1vh;
-    font-size: 0.8vw;
-    color: orangered;
-}
-
-.garage-plate {
-    padding: 0.5vh 0.5vw;
-    padding-left: 0vh;
-    color: white;
-    font-size: 0.8vw;
-    font-weight:300;
-}
-
-.garage-plate > i {
-    padding-right: 1vh;
-    font-size: 0.8vw;
-    color: yellowgreen;
-}
-
-.garage-fuel {
-    padding: 0.5vh 0.5vw;
-    padding-left: 0vh;
-    color: white;
-    font-size: 0.8vw;
-    font-weight:300;
-}
-
-.garage-fuel > i {
-    padding-right: 1vh;
-    font-size: 0.8vw;
-    color: indianred;
-}
-
-.garage-engine {
-    padding: 0.5vh 0.5vw;
-    padding-left: 0vh;
-    color: white;
-    font-size: 0.8vw;
-    font-weight:300;
-}
-
-.garage-engine > i {
-    padding-right: 1vh;
-    font-size: 0.8vw;
-    color: mediumseagreen;
-}
-
-.garage-body {
-    padding: 0.5vh 0.5vw;
-    padding-left: 0vh;
-    color: white;
-    font-size: 0.8vw;
-    font-weight:300;
-}
-
-.garage-body > i {
-    padding-right: 1vh;
-    font-size: 0.8vw;
-    color: yellow;
-}
-
-.garage-payments {
-    padding: 0.5vh 0.5vw;
-    padding-left: 0vh;
-    color: white;
-    font-size: 0.8vw;
-    margin-bottom: 3vh;
-    font-weight:300;
-}
-
-.garage-payments > i {
-    padding-right: 1vh;
-    font-size: 0.8vw;
-    color: dodgerblue;
-}
-
-.garage-box {
-    transition: 0.25s;
-    border-radius: 5px;
-    color: #F73859;;
-    font-size: 0.8vw;
+    color: #fde68a;
     font-weight: 700;
 }
 
-.box-track{
-    padding-left: 10.0%;
-    padding-right: 10.0%;
-    background: #50577A;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 30px;
+.garage-state-name {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 6.5vh;
+    padding: 0.42vh 0.9vh;
+    border-radius: 999px;
+    font-size: 1.08vh;
+    font-weight: 700;
+    letter-spacing: 0.02vh;
+    text-transform: uppercase;
+    background: rgba(51, 65, 85, 0.88);
+    color: #e2e8f0;
+    box-sizing: border-box;
 }
 
-.box-sellvehicle{
-    margin-left: 1vw;
-    padding-left: 10.0%;
-    padding-right: 10.0%;
-    background: #50577A;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 30px;
+.garage-state-name[data-state="In"] {
+    background: rgba(22, 101, 52, 0.24);
+    color: #bbf7d0;
+}
+
+.garage-state-name[data-state="Out"] {
+    background: rgba(30, 64, 175, 0.24);
+    color: #bfdbfe;
+}
+
+.garage-state-name[data-state="Impounded"] {
+    background: rgba(127, 29, 29, 0.28);
+    color: #fecaca;
+}
+
+.garage-expand-icon {
+    font-size: 1.3vh;
+    color: rgba(191, 219, 254, 0.56);
+    text-align: right;
+    transition: transform 0.18s ease;
+}
+
+.garage-vehicle.is-expanded .garage-expand-icon {
+    transform: rotate(180deg);
+}
+
+.garage-block {
+    display: none;
+    padding: 0 1.15vh 1.15vh;
+    box-sizing: border-box;
+}
+
+.garage-vehicle.is-expanded .garage-block {
+    display: block;
+}
+
+.garage-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.7vh;
+    margin-top: 0.2vh;
+}
+
+.garage-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.7vh;
+    min-height: 3.8vh;
+    padding: 0.75vh 0.9vh;
+    box-sizing: border-box;
+    border-radius: 1.2vh;
+    background: rgba(8, 15, 28, 0.52);
+    color: rgba(226, 232, 240, 0.82);
+    font-size: 1.18vh;
+}
+
+.garage-stat i {
+    width: 1.6vh;
+    text-align: center;
+    color: #7dd3fc;
+}
+
+.garage-stat-label {
+    color: rgba(148, 163, 184, 0.72);
+}
+
+.garage-stat-value {
+    margin-left: auto;
+    font-weight: 700;
+    color: #f8fafc;
+}
+
+.garage-actions {
+    display: flex;
+    gap: 0.7vh;
+    margin-top: 0.9vh;
+}
+
+.garage-box {
+    flex: 1;
+    min-height: 4.4vh;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55vh;
+    border: none;
+    border-radius: 1.25vh;
+    font-family: inherit;
+    font-size: 1.28vh;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.14s ease, filter 0.14s ease;
+}
+
+.garage-box:hover {
+    transform: translateY(-0.08vh);
+    filter: brightness(1.06);
+}
+
+.box-track {
+    background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+    color: #fff;
+}
+
+.box-sellvehicle {
+    background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+    color: #111827;
+}
+
+.garage-modal-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2vh;
+    box-sizing: border-box;
+    background: rgba(2, 6, 23, 0.74);
+    backdrop-filter: blur(0.45vh);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+    z-index: 20;
+}
+
+.garage-modal-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+    transition-delay: 0s;
+}
+
+.garage-modal {
+    width: 100%;
+    max-width: 22vh;
+    padding: 2.1vh 1.8vh 1.8vh;
+    box-sizing: border-box;
+    border-radius: 2vh;
+    border: 0.1vh solid rgba(148, 163, 184, 0.16);
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(9, 14, 23, 0.98));
+    box-shadow: 0 2vh 4.5vh rgba(0, 0, 0, 0.36);
+}
+
+.garage-modal-title {
+    margin-bottom: 0.4vh;
+    font-size: 2.1vh;
+    font-weight: 800;
+    color: #f8fafc;
+}
+
+.garage-modal-subtitle {
+    margin-bottom: 1.45vh;
+    font-size: 1.2vh;
+    color: rgba(203, 213, 225, 0.62);
+}
+
+.garage-modal-input {
+    width: 100%;
+    height: 4.3vh;
+    margin-bottom: 0.8vh;
+    padding: 0 1.1vh;
+    box-sizing: border-box;
+    border: 0.1vh solid rgba(148, 163, 184, 0.14);
+    border-radius: 1.25vh;
+    background: rgba(15, 23, 42, 0.76);
+    color: #f8fafc;
+    font-family: inherit;
+    font-size: 1.42vh;
+    outline: none;
+}
+
+.garage-modal-input:focus {
+    border-color: rgba(56, 189, 248, 0.34);
+    box-shadow: 0 0 0 0.18vh rgba(14, 165, 233, 0.08);
+}
+
+.garage-modal-input::placeholder {
+    color: rgba(203, 213, 225, 0.38);
+}
+
+.garage-modal-actions {
+    display: flex;
+    gap: 0.7vh;
+    margin-top: 0.4vh;
+}
+
+.garage-modal-btn {
+    flex: 1;
+    height: 4.35vh;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 1.2vh;
+    font-family: inherit;
+    font-size: 1.35vh;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.garage-modal-btn--cancel {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+}
+
+.garage-modal-btn--confirm {
+    background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+    color: #111827;
 }

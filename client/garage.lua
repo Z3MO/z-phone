@@ -25,6 +25,11 @@ RegisterNUICallback('SetupGarageVehicles', function(_, cb)
 end)
 
 RegisterNUICallback('gps-vehicle-garage', function(data, cb)
+    if type(data) ~= 'table' or type(data.veh) ~= 'table' then
+        cb("ok")
+        return
+    end
+
     local veh = data.veh
     if veh.state == 'In' then
         if veh.parkingspot then
@@ -40,18 +45,23 @@ RegisterNUICallback('gps-vehicle-garage', function(data, cb)
 end)
 
 RegisterNUICallback('sellVehicle', function(data, cb)
+    if type(data) ~= 'table' then
+        cb("ok")
+        return
+    end
+
     TriggerServerEvent('qb-phone:server:sendVehicleRequest', data)
     cb("ok")
 end)
 
 -- Events
 
-RegisterNetEvent('qb-phone:client:sendVehicleRequest', function(data, seller)
+RegisterNetEvent('qb-phone:client:sendVehicleRequest', function(data, sellerCitizenId)
     local success = exports['z-phone']:PhoneNotification("VEHICLE SALE", 'Purchase '..data.plate..' for $'..data.price, 'fas fa-map-pin', '#b3e0f2', "NONE", 'fas fa-check-circle', 'fas fa-times-circle')
     if success then
-        TriggerServerEvent("qb-phone:server:sellVehicle", data, seller, 'accepted')
+        TriggerServerEvent("qb-phone:server:sellVehicle", data, sellerCitizenId, 'accepted')
     else
-        TriggerServerEvent("qb-phone:server:sellVehicle", data, seller, 'denied')
+        TriggerServerEvent("qb-phone:server:sellVehicle", data, sellerCitizenId, 'denied')
     end
 end)
 

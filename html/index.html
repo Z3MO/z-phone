@@ -838,22 +838,34 @@
 
                     <!-- Start garages app-->
                     <div class="garage-app">
-                        <span id="garage-search-text">Garages</span>
-                        <div class="garage-app-header">
-                            <i class="fa-solid fa-magnifying-glass" id="garage-search-icon"></i>
-                            <input type="text" id="garage-search" placeholder="" spellcheck="false">
+                        <div class="garage-header">
+                            <div class="garage-title-row">
+                                <span id="garage-search-text">Garage</span>
+                                <span class="garage-count-badge" id="garage-count-badge">0</span>
+                            </div>
+                            <label class="garage-search-box" for="garage-search">
+                                <i class="fa-solid fa-magnifying-glass" id="garage-search-icon"></i>
+                                <input type="text" id="garage-search" placeholder="Search vehicle, plate or state" spellcheck="false" autocomplete="off">
+                            </label>
                         </div>
                         <div class="garage-homescreen">
-                            <div class="garage-vehicles"></div>
+                            <div class="garage-empty-state" id="garage-empty-state">
+                                <i class="fa-regular fa-car-side"></i>
+                                <p>No vehicles found</p>
+                                <span>Your owned vehicles will appear here.</span>
+                            </div>
+                            <div class="garage-vehicles" id="garage-vehicles"></div>
                         </div>
 
-                        <div class="phone-menu-body" id="garage-sellvehicle-menu">
-                            <div class="phone-menu-main">
-                                <input class="phone-menu-text garage-sellvehicle-stateid" type="number" placeholder="State ID" maxlength="3">
-                                <input class="phone-menu-text garage-sellvehicle-price" type="number" placeholder="Price" maxlength="8">
-                                <div class="phone-menu-footer">
-                                    <div class="phone-menu-button phone-menu-cancel" id="box-new-cancel">Cancel</div>
-                                    <div class="phone-menu-button phone-menu-accept" id="garage-sellvehicle">Sell</div>
+                        <div class="garage-modal-overlay" id="garage-sellvehicle-menu">
+                            <div class="garage-modal">
+                                <div class="garage-modal-title">Sell Vehicle</div>
+                                <div class="garage-modal-subtitle" id="garage-sellvehicle-plate-label">Choose a buyer and price.</div>
+                                <input class="garage-modal-input garage-sellvehicle-stateid" type="number" inputmode="numeric" min="1" placeholder="Buyer State ID">
+                                <input class="garage-modal-input garage-sellvehicle-price" type="number" inputmode="numeric" min="1" placeholder="Sale Price">
+                                <div class="garage-modal-actions">
+                                    <button type="button" class="garage-modal-btn garage-modal-btn--cancel" id="garage-sellvehicle-cancel">Cancel</button>
+                                    <button type="button" class="garage-modal-btn garage-modal-btn--confirm" id="garage-sellvehicle">Send Offer</button>
                                 </div>
                             </div>
                         </div>
