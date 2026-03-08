@@ -59,6 +59,29 @@
             .replace(/'/g, '&#39;');
     }
 
+    function normalizeVehicleState(value) {
+        const normalized = typeof value === 'string' ? value.trim().toLowerCase() : '';
+
+        if (normalized === 'in' || normalized === 'stored') {
+            return 'In';
+        }
+
+        if (normalized === 'out') {
+            return 'Out';
+        }
+
+        if (normalized === 'impounded') {
+            return 'Impounded';
+        }
+
+        return 'Unknown';
+    }
+
+    function clampPercent(value) {
+        const numericValue = typeof value === 'string' ? parseFloat(value) : Number(value);
+        return Math.max(0, Math.min(100, Number.isFinite(numericValue) ? numericValue : 0));
+    }
+
     function sanitizeVehicle(vehicle) {
         if (!vehicle || typeof vehicle !== 'object') {
             return null;
@@ -69,12 +92,12 @@
             return null;
         }
 
-        const stateLabel = ['In', 'Out', 'Impounded'].includes(vehicle.state) ? vehicle.state : 'Unknown';
+        const stateLabel = normalizeVehicleState(vehicle.state);
         const fullname = typeof vehicle.fullname === 'string' && vehicle.fullname.trim() ? vehicle.fullname.trim() : 'Unknown Vehicle';
         const garage = typeof vehicle.garage === 'string' && vehicle.garage.trim() ? vehicle.garage.trim() : 'Unknown Garage';
-        const fuel = Math.max(0, Math.min(100, Number(vehicle.fuel) || 0));
-        const engine = Math.max(0, Math.min(100, Number(vehicle.engine) || 0));
-        const body = Math.max(0, Math.min(100, Number(vehicle.body) || 0));
+        const fuel = clampPercent(vehicle.fuel);
+        const engine = clampPercent(vehicle.engine);
+        const body = clampPercent(vehicle.body);
         const paymentsleft = Math.max(0, Number(vehicle.paymentsleft) || 0);
 
         return {
@@ -125,13 +148,13 @@
         resetSellForm();
     }
 
-    function filterVehicles(query) {
+    function filterVehicles(vehicles, query) {
         const normalizedQuery = query.trim().toLowerCase();
         if (!normalizedQuery) {
-            return state.vehicles;
+            return vehicles;
         }
 
-        return state.vehicles.filter((vehicle) => {
+        return vehicles.filter((vehicle) => {
             return [vehicle.fullname, vehicle.plate, vehicle.state, vehicle.garage]
                 .some((value) => value.toLowerCase().includes(normalizedQuery));
         });
@@ -181,12 +204,12 @@
         `;
     }
 
-    function renderVehicles(vehicles) {
+    function renderVehicles(vehicles = state.vehicles) {
         if (!refs.list) {
             return;
         }
 
-        const filteredVehicles = filterVehicles(refs.search?.value || '');
+        const filteredVehicles = filterVehicles(vehicles, refs.search?.value || '');
         refs.list.innerHTML = filteredVehicles.map(createVehicleCard).join('');
         updateCount(filteredVehicles.length);
         setEmptyState(filteredVehicles.length === 0);
