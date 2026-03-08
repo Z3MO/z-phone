@@ -226,8 +226,8 @@
                 }
             ],
             invoices: [
-                { id: 1, sender: "LS Customs", sendercitizenid: "BIZ-1", amount: 1250, society: "Mechanic", type: "request" },
-                { id: 2, sender: "Pillbox", sendercitizenid: "BIZ-2", amount: 250, society: "Medical", type: "request" }
+                { id: 1, sender: "LS Customs", sendercitizenid: "BIZ-1", amount: 1250, society: "Mechanic", type: "request", reason: "Engine repair and parts replacement", status: "Pending" },
+                { id: 2, sender: "Pillbox", sendercitizenid: "BIZ-2", amount: 250, society: "Medical", type: "request", reason: "Medical treatment and discharge fee", status: "Pending" }
             ],
             pulses: [
                 {
@@ -600,28 +600,42 @@
                     saveState();
                     return {
                         TransferedMoney: true,
-                        NewBalance: mockState.playerData.money.bank
+                        NewBalance: mockState.playerData.money.bank,
+                        message: "Transfer completed."
                     };
                 }
                 return {
                     TransferedMoney: false,
-                    NewBalance: mockState.playerData.money.bank
+                    NewBalance: mockState.playerData.money.bank,
+                    message: "Insufficient balance."
                 };
             }
             case "PayInvoice": {
-                const amount = Number(payload.amount || 0);
+                const invoice = mockState.invoices.find((entry) => entry.id === payload.invoiceId);
+                const amount = Number(invoice && invoice.amount || 0);
                 if (amount > 0 && mockState.playerData.money.bank >= amount) {
                     mockState.playerData.money.bank -= amount;
                     mockState.invoices = mockState.invoices.filter((invoice) => invoice.id !== payload.invoiceId);
                     saveState();
-                    return true;
+                    return {
+                        success: true,
+                        newBalance: mockState.playerData.money.bank,
+                        message: "Invoice paid."
+                    };
                 }
-                return false;
+                return {
+                    success: false,
+                    newBalance: mockState.playerData.money.bank,
+                    message: "Insufficient balance."
+                };
             }
             case "DeclineInvoice":
                 mockState.invoices = mockState.invoices.filter((invoice) => invoice.id !== payload.invoiceId);
                 saveState();
-                return true;
+                return {
+                    success: true,
+                    message: "Invoice declined."
+                };
             case "GetPulses":
                 return {
                     PulseData: clone(mockState.pulses),

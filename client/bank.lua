@@ -1,5 +1,36 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
+local function normalizeTransferAmount(value)
+    local amount = math.floor(tonumber(value) or 0)
+    if amount < 1 then
+        return nil
+    end
+
+    return amount
+end
+
+local function normalizeBankAccount(value)
+    if type(value) ~= 'string' then
+        return nil
+    end
+
+    local account = value:upper():gsub('%s+', ''):gsub('[^%w%-]', '')
+    if account == '' or #account > 32 then
+        return nil
+    end
+
+    return account
+end
+
+local function normalizeReference(value)
+    if type(value) ~= 'string' then
+        return ''
+    end
+
+    local reference = value:gsub('[%c\r\n]', ' '):gsub('%s+', ' '):gsub('^%s+', ''):gsub('%s+$', '')
+    return reference:sub(1, 60)
+end
+
 local function GetInvoiceFromID(id)
     for k, v in pairs(PhoneData.Invoices) do
         if v.id == id then
@@ -15,20 +46,35 @@ RegisterNUICallback('GetBankContacts', function(_, cb)
 end)
 
 RegisterNUICallback('CanTransferMoney', function(data, cb)
-    local amount = tonumber(data.amountOf)
-    local iban = data.sendTo
-    if (PlayerData.money['bank'] - amount) >= 0 then
-        QBCore.Functions.TriggerCallback('qb-phone:server:CanTransferMoney', function(Transferd)
-            if Transferd then
-                cb({TransferedMoney = true, NewBalance = (PlayerData.money['bank'] - amount)})
-            else
-		        SendNUIMessage({ action = "PhoneNotification", PhoneNotify = { timeout=3000, title = "Bank", text = "Account does not exist!", icon = "fas fa-university", color = "#ff0000", }, })
-                cb({TransferedMoney = false})
-            end
-        end, amount, iban)
-    else
-        cb({TransferedMoney = false})
+    local amount = normalizeTransferAmount(data and data.amountOf)
+    local iban = normalizeBankAccount(data and data.sendTo)
+    local reference = normalizeReference(data and data.reference)
+
+    if not amount or not iban then
+        cb({
+            TransferedMoney = false,
+            NewBalance = PlayerData.money['bank'],
+            message = 'Invalid transfer details.'
+        })
+        return
     end
+
+    if PlayerData.money['bank'] < amount then
+        cb({
+            TransferedMoney = false,
+            NewBalance = PlayerData.money['bank'],
+            message = 'You do not have enough bank balance.'
+        })
+        return
+    end
+
+    QBCore.Functions.TriggerCallback('qb-phone:server:CanTransferMoney', function(success, newBalance, message)
+        cb({
+            TransferedMoney = success or false,
+            NewBalance = newBalance or PlayerData.money['bank'],
+            message = message
+        })
+    end, amount, iban, reference)
 end)
 
 RegisterNUICallback('GetInvoices', function(_, cb)
@@ -36,20 +82,27 @@ RegisterNUICallback('GetInvoices', function(_, cb)
 end)
 
 RegisterNUICallback('PayInvoice', function(data, cb)
-    local senderCitizenId = data.senderCitizenId
-    local society = data.society
-    local amount = data.amount
-    local invoiceId = data.invoiceId
+    local invoiceId = tonumber(data and data.invoiceId)
+    if not invoiceId then
+        cb({ success = false, message = 'Invalid invoice.' })
+        return
+    end
 
-    TriggerServerEvent('qb-phone:server:PayMyInvoice', society, amount, invoiceId, senderCitizenId)
-    cb("ok")
+    QBCore.Functions.TriggerCallback('qb-phone:server:PayMyInvoice', function(result)
+        cb(result or { success = false, message = 'Unable to pay invoice.' })
+    end, invoiceId)
 end)
 
 RegisterNUICallback('DeclineInvoice', function(data, cb)
-    local amount = data.amount
-    local invoiceId = data.invoiceId
-    TriggerServerEvent('qb-phone:server:DeclineMyInvoice', amount, invoiceId)
-    cb("ok")
+    local invoiceId = tonumber(data and data.invoiceId)
+    if not invoiceId then
+        cb({ success = false, message = 'Invalid invoice.' })
+        return
+    end
+
+    QBCore.Functions.TriggerCallback('qb-phone:server:DeclineMyInvoice', function(result)
+        cb(result or { success = false, message = 'Unable to decline invoice.' })
+    end, invoiceId)
 end)
 
 -- Events
@@ -110,12 +163,12 @@ RegisterNetEvent('qb-phone:client:AcceptorDenyInvoice', function(id, name, job, 
     if success then
         local table = GetInvoiceFromID(id)
         if table then
-            TriggerServerEvent('qb-phone:server:PayMyInvoice', job, amount, id, senderCID, resource)
+            TriggerServerEvent('qb-phone:server:PayMyInvoice', id)
         end
     else
         local table = GetInvoiceFromID(id)
         if table then
-            TriggerServerEvent('qb-phone:server:DeclineMyInvoice', amount, id, senderCID, resource)
+            TriggerServerEvent('qb-phone:server:DeclineMyInvoice', id)
         end
     end
 end)

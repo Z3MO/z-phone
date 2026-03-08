@@ -921,65 +921,163 @@
 
                     <div class="bank-app">
                         <div class="bank-app-loading">
-                            <img src="./img/apps/bank-logo.png" class="qbank-logo">
+                            <div class="bank-loading-card">
+                                <div class="bank-loading-icon">
+                                    <i class="fa-solid fa-building-columns"></i>
+                                </div>
+                                <div class="bank-loading-title">Fleeca Digital</div>
+                                <div class="bank-loading-subtitle">Syncing accounts and payment activity</div>
+                            </div>
                         </div>
                         <div class="bank-app-loaded">
-                            <div class="bank-app-header">
-                                <div data-headertype="accounts" class="bank-app-header-button bank-app-header-button-selected"> <i class="fa-solid fa-align-left"></i> <p>Accounts</p> </div>
-                                <div data-headertype="invoices" class="bank-app-header-button"> <i class="fa-solid fa-file-invoice"></i> <p>Invoices</p> </div>
-                            </div>
-
-                            <div class="bank-app-accounts">
-                                <div class="circles">
-                                    <div class="circle circle-1"></div>
-                                    <div class="circle circle-2"></div>
+                            <div class="bank-app-shell">
+                                <div class="bank-app-header">
+                                    <div class="bank-app-brand">
+                                        <span class="bank-app-brand-mark"><i class="fa-solid fa-building-columns"></i></span>
+                                        <div class="bank-app-brand-copy">
+                                            <span class="bank-app-brand-title">Fleeca Digital</span>
+                                            <span class="bank-app-brand-subtitle">Personal Banking</span>
+                                        </div>
+                                    </div>
+                                    <div class="bank-app-header-tabs">
+                                        <button type="button" data-headertype="accounts" class="bank-app-header-button bank-app-header-button-selected">
+                                            <i class="fa-solid fa-wallet"></i>
+                                            <span>Accounts</span>
+                                        </button>
+                                        <button type="button" data-headertype="invoices" class="bank-app-header-button">
+                                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                                            <span>Invoices</span>
+                                        </button>
+                                    </div>
                                 </div>
 
-                                <div class="bank-app-account">
-                                    <div class="logo"><img src="https://raw.githubusercontent.com/dasShounak/freeUseImages/main/Visa-Logo-PNG-Image.png" alt="Visa"></div>
-                                    <div class="chip"><img src="https://raw.githubusercontent.com/dasShounak/freeUseImages/main/chip.png" alt="chip"></div>
-                                    <input type="text" class="bank-app-account-number" id="iban-account" readonly spellcheck="false">
-                                    <div class="bank-app-account-balance">&#36; 5000,00</div>
-                                    <div class="ring"></div>
+                                <div class="bank-app-accounts bank-app-panel bank-app-panel-active">
+                                    <div class="bank-app-account" id="bank-account-card" tabindex="0" role="button" aria-label="Copy account number">
+                                        <div class="bank-app-account-topline">
+                                            <span class="bank-app-account-label">Primary account</span>
+                                            <span class="bank-app-account-brand">FLEECA</span>
+                                        </div>
+                                        <div class="bank-app-account-chip" aria-hidden="true"></div>
+                                        <input type="text" class="bank-app-account-number" id="iban-account" readonly spellcheck="false" aria-label="Bank account number">
+                                        <div class="bank-app-account-owner" id="bank-account-owner">Account Holder</div>
+                                        <div class="bank-app-account-balance" id="bank-account-balance">&#36; 5000</div>
+                                        <div class="bank-app-account-copyhint">
+                                            <i class="fa-regular fa-copy"></i>
+                                            <span>Tap card to copy account number</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="bank-app-metrics">
+                                        <div class="bank-app-metric">
+                                            <span class="bank-app-metric-label">Available balance</span>
+                                            <strong class="bank-app-metric-value" id="bank-balance-metric">&#36; 0</strong>
+                                        </div>
+                                        <div class="bank-app-metric">
+                                            <span class="bank-app-metric-label">Pending invoices</span>
+                                            <strong class="bank-app-metric-value" id="bank-invoice-count-metric">0</strong>
+                                        </div>
+                                        <div class="bank-app-metric">
+                                            <span class="bank-app-metric-label">Saved contacts</span>
+                                            <strong class="bank-app-metric-value" id="bank-contact-count-metric">0</strong>
+                                        </div>
+                                    </div>
+
+                                    <div class="bank-app-quick-actions">
+                                        <button type="button" class="bank-app-account-actions" id="transfer-money">
+                                            <i class="fa-solid fa-right-left"></i>
+                                            <span>New transfer</span>
+                                        </button>
+                                        <button type="button" class="bank-app-secondary-action" id="bank-open-contacts">
+                                            <i class="fa-solid fa-address-book"></i>
+                                            <span>Select contact</span>
+                                        </button>
+                                    </div>
+
+                                    <div class="bank-app-activity-card">
+                                        <div class="bank-app-section-title-row">
+                                            <div>
+                                                <div class="bank-app-section-overline">Roleplay ledger</div>
+                                                <div class="bank-app-section-title">Recent activity</div>
+                                            </div>
+                                            <span class="bank-app-section-badge" id="bank-pending-total-badge">&#36; 0 pending</span>
+                                        </div>
+                                        <div class="bank-app-activity-list" id="bank-app-activity-list"></div>
+                                    </div>
                                 </div>
 
-                                <div class="bank-app-account-actions">
-                                    <i id="transfer-money" class="fa-solid fa-right-left bank-app-account-action-transfer"></i>
-                                </div>
-                            </div>
-
-                            <div class="bank-app-transfer">
-                                <div class="bank-app-transfer-header">Transfer Money</div>
-
-                                <i class="bank-transfer-iban-icon fa-solid fa-credit-card"></i>
-                                <input type="text" id="bank-transfer-iban" class="bank-transfer-input" required spellcheck="false">
-                                <i class="bank-transfer-mycontacts-icon fa-solid fa-address-book"></i>
-
-                                <i class="bank-transfer-amount-icon fa-solid fa-dollar-sign"></i>
-                                <input type="number" min="0" oninput="this.value = Math.abs(this.value)" id="bank-transfer-amount" class="bank-transfer-input" required spellcheck="false">
-
-                                <div class="bank-app-transfer-buttons">
-                                    <div class="bank-app-transfer-button" id="accept-transfer">Transfer</div>
-                                    <div class="bank-app-transfer-button" id="cancel-transfer">Cancel</div>
-                                </div>
-                            </div>
-
-                            <div class="bank-app-invoices">
-                                <div class="bank-app-invoices-list">
-                                    <!-- <div class="bank-app-invoice"> <div class="bank-app-invoice-title">Betaalverzoek <span style="font-size: 1vh; color: gray;">(Afzender: 0612345678)</span></div> <div class="bank-app-invoice-amount">&#36; 5000,-</div> <div class="bank-app-invoice-buttons"> <i class="fa-solid fa-circle-check pay-invoice"></i> <i class="fa-solid fa-circle-xmark decline-invoice"></i> </div> </div> -->
+                                <div class="bank-app-invoices bank-app-panel">
+                                    <div class="bank-app-section-title-row bank-app-section-title-row--stacked">
+                                        <div>
+                                            <div class="bank-app-section-overline">Accounts payable</div>
+                                            <div class="bank-app-section-title">Outstanding invoices</div>
+                                        </div>
+                                        <span class="bank-app-section-badge" id="bank-invoices-summary">0 open</span>
+                                    </div>
+                                    <div class="bank-app-invoices-list" id="bank-app-invoices-list"></div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="bank-app-my-contacts">
-                            <div class="bank-app-my-contacts-header">My Contacts</div>
-                            <div class="bank-app-my-contacts-list-header">
-                                <input type="text" id="bank-app-my-contact-search" placeholder="Contact name" spellcheck="false">
+                        <div class="bank-app-transfer" id="bank-app-transfer">
+                            <form class="bank-app-transfer-sheet" id="bank-transfer-form">
+                                <div class="bank-app-transfer-header">
+                                    <div>
+                                        <div class="bank-app-section-overline">Bank transfer</div>
+                                        <div class="bank-app-section-title">Send funds</div>
+                                    </div>
+                                    <button type="button" class="bank-app-close-button" id="cancel-transfer" aria-label="Close transfer form">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                                <label class="bank-app-field">
+                                    <span>Recipient account</span>
+                                    <div class="bank-app-input-wrap">
+                                        <i class="fa-solid fa-credit-card"></i>
+                                        <input type="text" id="bank-transfer-iban" class="bank-transfer-input" placeholder="Enter account number" required spellcheck="false" autocomplete="off">
+                                    </div>
+                                </label>
+                                <label class="bank-app-field">
+                                    <span>Transfer amount</span>
+                                    <div class="bank-app-input-wrap">
+                                        <i class="fa-solid fa-dollar-sign"></i>
+                                        <input type="number" min="1" step="1" id="bank-transfer-amount" class="bank-transfer-input" placeholder="0" required spellcheck="false" inputmode="numeric">
+                                    </div>
+                                </label>
+                                <label class="bank-app-field">
+                                    <span>Reference / note</span>
+                                    <div class="bank-app-input-wrap">
+                                        <i class="fa-solid fa-pen"></i>
+                                        <input type="text" id="bank-transfer-reference" class="bank-transfer-input" maxlength="60" placeholder="Taxi fare, mechanic work, loan..." spellcheck="false" autocomplete="off">
+                                    </div>
+                                </label>
+                                <button type="button" class="bank-app-inline-action" id="bank-transfer-mycontacts">
+                                    <i class="fa-solid fa-address-book"></i>
+                                    <span>Choose from contacts</span>
+                                </button>
+                                <div class="bank-app-transfer-selected" id="bank-transfer-selected-contact" hidden></div>
+                                <div class="bank-app-transfer-buttons">
+                                    <button type="submit" class="bank-app-transfer-button bank-app-transfer-button--primary" id="accept-transfer">Transfer</button>
+                                    <button type="button" class="bank-app-transfer-button" id="bank-transfer-clear">Clear</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="bank-app-my-contacts" id="bank-app-my-contacts">
+                            <div class="bank-app-my-contacts-panel">
+                                <div class="bank-app-transfer-header">
+                                    <div>
+                                        <div class="bank-app-section-overline">Bank contacts</div>
+                                        <div class="bank-app-section-title">My contacts</div>
+                                    </div>
+                                    <button type="button" class="bank-app-close-button bank-app-my-contacts-list-back" aria-label="Close contacts">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                                <div class="bank-app-my-contacts-list-header">
+                                    <input type="text" id="bank-app-my-contact-search" placeholder="Search by name or account" spellcheck="false" autocomplete="off">
+                                </div>
+                                <div class="bank-app-my-contacts-list" id="bank-app-my-contacts-list"></div>
                             </div>
-                            <div class="bank-app-my-contacts-list">
-                                <!-- <div class="bank-app-my-contact"> <div class="bank-app-my-contact-firstletter">P</div> <div class="bank-app-my-contact-name">Pieter Post</div> </div> -->
-                            </div>
-                            <div class="bank-app-my-contacts-list-back">Return</div>
                         </div>
                     </div>
 

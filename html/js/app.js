@@ -358,13 +358,6 @@ $(document).on('click', '.phone-application', function(e){
                     LoadPlayerMoneys();
                 } else if (PressedApplication == "bank") {
                     QB.Phone.Functions.DoBankOpen();
-                    $('.bank-app-header-button').click();
-                    $.post(`https://${GetParentResourceName()}/GetBankContacts`, JSON.stringify({}), function(contacts){
-                        QB.Phone.Functions.LoadContactsWithNumber(contacts);
-                    });
-                    $.post(`https://${GetParentResourceName()}/GetInvoices`, JSON.stringify({}), function(invoices){
-                        QB.Phone.Functions.LoadBankInvoices(invoices);
-                    });
                 } else if (PressedApplication == "whatsapp") {
                     $.post(`https://${GetParentResourceName()}/GetWhatsappChats`, JSON.stringify({}), function(chats){
                         QB.Phone.Functions.LoadWhatsappChats(chats);
@@ -578,21 +571,8 @@ QB.Phone.Functions.CloseApplication = function() {
             }, 450);
         }
     } else if (QB.Phone.Data.currentApplication == "bank") {
-        if (typeof CurrentTab !== 'undefined' && CurrentTab == "invoices") {
-            setTimeout(function(){
-                $(".bank-app-invoices").animate({"left": "30vh"});
-                $(".bank-app-invoices").css({"display":"none"})
-                $(".bank-app-accounts").css({"display":"block"})
-                $(".bank-app-accounts").css({"left": "0vh"});
-
-                var InvoicesObjectBank = $(".bank-app-header").find('[data-headertype="invoices"]');
-                var HomeObjectBank = $(".bank-app-header").find('[data-headertype="accounts"]');
-
-                $(InvoicesObjectBank).removeClass('bank-app-header-button-selected');
-                $(HomeObjectBank).addClass('bank-app-header-button-selected');
-
-                CurrentTab = "accounts";
-            }, 400)
+        if (QB.Phone.Functions.ResetBankAppView) {
+            QB.Phone.Functions.ResetBankAppView();
         }
     }
 

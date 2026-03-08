@@ -1,5 +1,167 @@
 local QBCore = exports['qb-core']:GetCoreObject()
-local bannedCharacters = {'%','$',';'}
+
+local function normalizeAmount(value)
+    local amount = math.floor(tonumber(value) or 0)
+    if amount < 1 then
+        return nil
+    end
+
+    return amount
+end
+
+local function normalizeBankAccount(value)
+    if type(value) ~= 'string' then
+        return nil
+    end
+
+    local account = value:upper():gsub('%s+', ''):gsub('[^%w%-]', '')
+    if account == '' or #account > 32 then
+        return nil
+    end
+
+    return account
+end
+
+local function normalizeReference(value)
+    if type(value) ~= 'string' then
+        return ''
+    end
+
+    local reference = value:gsub('[%c\r\n]', ' '):gsub('%s+', ' '):gsub('^%s+', ''):gsub('%s+$', '')
+    return reference:sub(1, 60)
+end
+
+local function buildTransferReason(prefix, account, reference)
+    if reference ~= '' then
+        return ("%s #%s (%s)"):format(prefix, account, reference)
+    end
+
+    return ("%s #%s"):format(prefix, account)
+end
+
+local function findInvoiceForPlayer(source, invoiceId)
+    local invoices = exports.pefcl:getInvoices(source) or {}
+
+    for _, invoice in pairs(invoices) do
+        if tonumber(invoice.id) == tonumber(invoiceId) then
+            return invoice
+        end
+    end
+
+    return nil
+end
+
+local function removeInvoiceForPlayer(player, invoiceId)
+    exports.oxmysql:execute('DELETE FROM pefcl_invoices WHERE id = ? AND toIdentifier = ?', {
+        invoiceId,
+        player.PlayerData.citizenid
+    })
+end
+
+local function payInvoiceForPlayer(source, invoiceId)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then
+        return {
+            success = false,
+            message = 'Player not found.'
+        }
+    end
+
+    local invoice = findInvoiceForPlayer(source, invoiceId)
+    if not invoice then
+        return {
+            success = false,
+            message = 'Invoice no longer exists.'
+        }
+    end
+
+    local amount = normalizeAmount(invoice.amount)
+    if not amount then
+        return {
+            success = false,
+            message = 'Invalid invoice amount.'
+        }
+    end
+
+    if Player.PlayerData.money.bank < amount then
+        return {
+            success = false,
+            message = 'You do not have enough bank balance.'
+        }
+    end
+
+    local senderCitizenId = invoice.fromIdentifier
+    local senderPlayer = senderCitizenId and QBCore.Functions.GetPlayerByCitizenId(senderCitizenId)
+    local society = tostring(invoice.receiverAccountIdentifier or 'invoice')
+    local payerName = ("%s %s"):format(Player.PlayerData.charinfo.firstname, Player.PlayerData.charinfo.lastname)
+
+    Player.Functions.RemoveMoney('bank', amount, 'paid-invoice')
+
+    if senderPlayer and Config.BillingCommissions and Config.BillingCommissions[society] then
+        local commission = math.ceil(amount * Config.BillingCommissions[society])
+        senderPlayer.Functions.AddMoney('bank', commission)
+    end
+
+    if senderPlayer then
+        TriggerClientEvent('qb-phone:client:CustomNotification', senderPlayer.PlayerData.source,
+            "Invoice paid by " .. payerName .. ".",
+            "Recent invoice of $" .. amount .. " has been paid.",
+            "fas fa-file-invoice-dollar",
+            "#1DA1F2",
+            7500
+        )
+    end
+
+    removeInvoiceForPlayer(Player, invoiceId)
+    TriggerClientEvent('qb-phone:client:RemoveInvoiceFromTable', source, invoiceId)
+
+    return {
+        success = true,
+        newBalance = Player.PlayerData.money.bank,
+        message = ("Invoice paid for $%s."):format(amount)
+    }
+end
+
+local function declineInvoiceForPlayer(source, invoiceId)
+    local Player = QBCore.Functions.GetPlayer(source)
+    if not Player then
+        return {
+            success = false,
+            message = 'Player not found.'
+        }
+    end
+
+    local invoice = findInvoiceForPlayer(source, invoiceId)
+    if not invoice then
+        return {
+            success = false,
+            message = 'Invoice no longer exists.'
+        }
+    end
+
+    local senderCitizenId = invoice.fromIdentifier
+    local senderPlayer = senderCitizenId and QBCore.Functions.GetPlayerByCitizenId(senderCitizenId)
+    local declinerName = ("%s %s"):format(Player.PlayerData.charinfo.firstname, Player.PlayerData.charinfo.lastname)
+
+    removeInvoiceForPlayer(Player, invoiceId)
+
+    if senderPlayer then
+        TriggerClientEvent('qb-phone:client:CustomNotification', senderPlayer.PlayerData.source,
+            "Invoice declined by " .. declinerName .. ".",
+            "Recent invoice of $" .. tostring(invoice.amount) .. " has been declined.",
+            "fas fa-file-invoice-dollar",
+            "#1DA1F2",
+            7500
+        )
+    end
+
+    TriggerClientEvent('qb-phone:client:RemoveInvoiceFromTable', source, invoiceId)
+
+    return {
+        success = true,
+        message = 'Invoice declined.'
+    }
+end
 
 -- Events
 
@@ -22,96 +184,88 @@ RegisterNetEvent('qb-phone:server:InvoiceHandler')
     end
 end)]]
 
-QBCore.Functions.CreateCallback('qb-phone:server:CanTransferMoney', function(source, cb, amount, iban)
-    -- strip bad characters from bank transfers
-    local newAmount = tostring(amount)
-    local newiban = tostring(iban)
-    for _, v in pairs(bannedCharacters) do
-        newAmount = string.gsub(newAmount, '%' .. v, '')
-        newiban = string.gsub(newiban, '%' .. v, '')
-    end
-    iban = newiban
-    amount = tonumber(newAmount)
-
+QBCore.Functions.CreateCallback('qb-phone:server:CanTransferMoney', function(source, cb, amount, iban, reference)
     local Player = QBCore.Functions.GetPlayer(source)
-    if (Player.PlayerData.money.bank - amount) >= 0 then
-        local query = '%"account":"' .. iban .. '"%'
-        local result = MySQL.query.await('SELECT * FROM players WHERE charinfo LIKE ?', {query})
-        if result[1] ~= nil then
-            local Reciever = QBCore.Functions.GetPlayerByCitizenId(result[1].citizenid)
-            Player.Functions.RemoveMoney('bank', amount, "Money sent to account (#"..iban..")")
-            if Reciever ~= nil then
-                Reciever.Functions.AddMoney('bank', amount, "Money received from account (#"..Player.PlayerData.charinfo.account..")")
-            else
-                local RecieverMoney = json.decode(result[1].money)
-                RecieverMoney.bank = (RecieverMoney.bank + amount)
-                MySQL.update('UPDATE players SET money = ? WHERE citizenid = ?', {json.encode(RecieverMoney), result[1].citizenid})
-            end
-            cb(true)
-        else
-            cb(false)
-        end
+    amount = normalizeAmount(amount)
+    iban = normalizeBankAccount(iban)
+    reference = normalizeReference(reference)
+
+    if not Player or not amount or not iban then
+        cb(false, Player and Player.PlayerData.money.bank or 0, 'Invalid transfer details.')
+        return
     end
+
+    local senderAccount = normalizeBankAccount(Player.PlayerData.charinfo.account or '')
+    if senderAccount and senderAccount == iban then
+        cb(false, Player.PlayerData.money.bank, 'You cannot transfer to your own account.')
+        return
+    end
+
+    if Player.PlayerData.money.bank < amount then
+        cb(false, Player.PlayerData.money.bank, 'You do not have enough bank balance.')
+        return
+    end
+
+    local query = '%"account":"' .. iban .. '"%'
+    local result = MySQL.query.await('SELECT citizenid, money FROM players WHERE charinfo LIKE ? LIMIT 1', {query})
+    if result[1] == nil then
+        cb(false, Player.PlayerData.money.bank, 'Account does not exist.')
+        return
+    end
+
+    if result[1].citizenid == Player.PlayerData.citizenid then
+        cb(false, Player.PlayerData.money.bank, 'You cannot transfer to your own account.')
+        return
+    end
+
+    local receiver = QBCore.Functions.GetPlayerByCitizenId(result[1].citizenid)
+    Player.Functions.RemoveMoney('bank', amount, buildTransferReason('Money sent to account', iban, reference))
+
+    if receiver ~= nil then
+        receiver.Functions.AddMoney('bank', amount, buildTransferReason('Money received from account', senderAccount or 'unknown', reference))
+        local senderName = ("%s %s"):format(Player.PlayerData.charinfo.firstname, Player.PlayerData.charinfo.lastname)
+        local notifyText = reference ~= '' and ("Incoming transfer of $" .. amount .. " from " .. senderName .. " (" .. reference .. ")")
+            or ("Incoming transfer of $" .. amount .. " from " .. senderName)
+        TriggerClientEvent("qb-phone-new:client:BankNotify", receiver.PlayerData.source, notifyText)
+    else
+        local receiverMoney = json.decode(result[1].money)
+        receiverMoney.bank = (receiverMoney.bank + amount)
+        MySQL.update('UPDATE players SET money = ? WHERE citizenid = ?', {json.encode(receiverMoney), result[1].citizenid})
+    end
+
+    cb(true, Player.PlayerData.money.bank, 'Transfer completed.')
 end)
 
-RegisterNetEvent('qb-phone:server:PayMyInvoice', function(society, amount, invoiceId, sendercitizenid, resource)
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    local SenderPly = QBCore.Functions.GetPlayerByCitizenId(sendercitizenid)
-    if Player.PlayerData.money.bank >= amount then
-        Player.Functions.RemoveMoney('bank', amount, "paid-invoice")
-        if SenderPly and Config.BillingCommissions and Config.BillingCommissions[society] then
-            local commission = math.ceil(amount * Config.BillingCommissions[society])
-            SenderPly.Functions.AddMoney('bank', commission)
-        end
-
-        if SenderPly then
-            TriggerClientEvent('qb-phone:client:CustomNotification', SenderPly.PlayerData.source,
-                "Invoice Paid off by " .. SenderPly.PlayerData.charinfo.firstname .. ".",
-                "Recent Invoice of $" .. amount .. " has been paid.",
-                "fas fa-file-invoice-dollar",
-                "#1DA1F2",
-                7500
-            )
-        end
-
-        TriggerClientEvent('qb-phone:client:RemoveInvoiceFromTable', src, invoiceId)
-        -- TriggerEvent("qb-phone:server:InvoiceHandler", true, amount, src, resource)
-
-        exports.oxmysql:execute('DELETE FROM pefcl_invoices WHERE id = ?', {invoiceId})
-    end
+QBCore.Functions.CreateCallback('qb-phone:server:PayMyInvoice', function(source, cb, invoiceId)
+    cb(payInvoiceForPlayer(source, invoiceId))
 end)
 
-RegisterNetEvent('qb-phone:server:DeclineMyInvoice', function(amount, invoiceId, sendercitizenid, resource)
-    local Ply = QBCore.Functions.GetPlayer(source)
-    local SenderPly = QBCore.Functions.GetPlayerByCitizenId(sendercitizenid)
-    if not Ply then return end
+QBCore.Functions.CreateCallback('qb-phone:server:DeclineMyInvoice', function(source, cb, invoiceId)
+    cb(declineInvoiceForPlayer(source, invoiceId))
+end)
 
-    exports.oxmysql:execute('DELETE FROM pefcl_invoices WHERE id = ?', {invoiceId})
-    if SenderPly then
-        TriggerClientEvent('qb-phone:client:CustomNotification', SenderPly.PlayerData.source,
-            "Invoice Declined by " .. SenderPly.PlayerData.charinfo.firstname .. ".",
-            "Recent invoice of $" .. amount .. " has been declined.",
-            "fas fa-file-invoice-dollar",
-            "#1DA1F2",
-            7500
-        )
-    end
+RegisterNetEvent('qb-phone:server:PayMyInvoice', function(invoiceId)
+    payInvoiceForPlayer(source, invoiceId)
+end)
 
-    TriggerClientEvent('qb-phone:client:RemoveInvoiceFromTable', source, invoiceId)
-    -- TriggerEvent("qb-phone:server:InvoiceHandler", false, amount, source, resource)
+RegisterNetEvent('qb-phone:server:DeclineMyInvoice', function(invoiceId)
+    declineInvoiceForPlayer(source, invoiceId)
 end)
 
 
 RegisterNetEvent('qb-phone:server:CreateInvoice', function(billed, biller, amount)
     local billedID = tonumber(billed)
-    local cash = tonumber(amount)
+    local cash = normalizeAmount(amount)
     local billedCID = QBCore.Functions.GetPlayer(billedID)
     local billerInfo = QBCore.Functions.GetPlayer(biller)
 
     local resource = GetInvokingResource()
 
     if not billedID or not cash or not billedCID or not billerInfo then return end
+    if billerInfo.PlayerData.citizenid == billedCID.PlayerData.citizenid then
+        TriggerClientEvent('QBCore:Notify', source, 'You Cannot Bill Yourself', 'error')
+        return
+    end
     
     exports.pefcl:createInvoice(billedCID.PlayerData.source, { 
         to = billedCID.PlayerData.charinfo.firstname, 
@@ -145,9 +299,14 @@ QBCore.Commands.Add('bill', 'Bill A Player', {{name = 'id', help = 'Player ID'},
     local biller = QBCore.Functions.GetPlayer(source)
     local billed = QBCore.Functions.GetPlayer(tonumber(args[1]))
     local amount = tonumber(args[2])
+
+    if biller and billed and biller.PlayerData.citizenid == billed.PlayerData.citizenid then
+        TriggerClientEvent('QBCore:Notify', source, 'You Cannot Bill Yourself', 'error')
+        return
+    end
+
     if biller.PlayerData.job.name == "police" or biller.PlayerData.job.name == 'ambulance' or biller.PlayerData.job.name == 'mechanic' then
         if billed ~= nil then
-            -- if biller.PlayerData.citizenid ~= billed.PlayerData.citizenid then
                 if amount and amount > 0 then
                     exports.pefcl:createInvoice(billed.PlayerData.source, {
                         to = billed.PlayerData.charinfo.firstname,
@@ -164,9 +323,6 @@ QBCore.Commands.Add('bill', 'Bill A Player', {{name = 'id', help = 'Player ID'},
                 else
                     TriggerClientEvent('QBCore:Notify', source, 'Must Be A Valid Amount Above 0', 'error')
                 end
-            -- else
-            --     TriggerClientEvent('QBCore:Notify', source, 'You Cannot Bill Yourself', 'error')
-            -- end
         else
             TriggerClientEvent('QBCore:Notify', source, 'Player Not Online', 'error')
         end
