@@ -88,7 +88,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    padding: 4.4vh 1.2vh 1vh;
+    padding: 4.2vh 1.2vh 1.1vh;
     box-sizing: border-box;
 }
 
@@ -184,7 +184,27 @@
 }
 
 .bank-app-accounts {
-    gap: 1vh;
+    min-height: 0;
+}
+
+.bank-app-accounts-scroll {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85vh;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 0.15vh;
+}
+
+.bank-app-accounts-scroll::-webkit-scrollbar {
+    display: none;
+}
+
+.bank-app-hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.95fr);
+    gap: 0.8vh;
 }
 
 .bank-app-account {
@@ -192,7 +212,7 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    min-height: 16vh;
+    min-height: 17.2vh;
     padding: 1.7vh;
     box-sizing: border-box;
     border: 0.1vh solid rgba(255, 255, 255, 0.12);
@@ -316,6 +336,40 @@
     gap: 0.75vh;
 }
 
+.bank-app-focus-card,
+.bank-app-feature-card {
+    border: 0.1vh solid rgba(148, 163, 184, 0.14);
+    border-radius: 1.8vh;
+    box-shadow: 0 1.6vh 3.8vh rgba(0, 0, 0, 0.24);
+    box-sizing: border-box;
+}
+
+.bank-app-focus-card {
+    min-height: 17.2vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.3vh 1.15vh;
+    background:
+        radial-gradient(circle at top right, rgba(34, 197, 94, 0.16), transparent 34%),
+        linear-gradient(180deg, rgba(15, 23, 42, 0.95), rgba(9, 16, 29, 0.94));
+}
+
+.bank-app-section-title--compact {
+    font-size: 1.48vh;
+    line-height: 1.1;
+}
+
+.bank-app-focus-copy {
+    font-size: 1.1vh;
+    color: rgba(241, 245, 249, 0.9);
+    line-height: 1.3;
+}
+
+.bank-app-focus-copy--muted {
+    color: rgba(203, 213, 225, 0.78);
+}
+
 .bank-app-metric,
 .bank-app-activity-card,
 .bank-app-invoice,
@@ -350,7 +404,7 @@
 
 .bank-app-quick-actions {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.75vh;
 }
 
@@ -392,6 +446,43 @@
     color: #f8fafc;
 }
 
+.bank-app-inline-action--accent {
+    background: linear-gradient(135deg, rgba(21, 128, 61, 0.44), rgba(14, 165, 233, 0.28));
+}
+
+.bank-app-feature-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75vh;
+}
+
+.bank-app-feature-card {
+    padding: 1.15vh 1.05vh;
+    background: rgba(15, 23, 42, 0.84);
+}
+
+.bank-app-feature-card--accent {
+    background:
+        radial-gradient(circle at top right, rgba(14, 165, 233, 0.16), transparent 32%),
+        rgba(15, 23, 42, 0.84);
+}
+
+.bank-app-feature-value {
+    display: block;
+    margin-top: 0.45vh;
+    font-size: 1.45vh;
+    font-weight: 800;
+    color: #f8fafc;
+}
+
+.bank-app-feature-copy {
+    display: block;
+    margin-top: 0.35vh;
+    font-size: 1.02vh;
+    line-height: 1.35;
+    color: rgba(226, 232, 240, 0.78);
+}
+
 .bank-app-account-actions:hover,
 .bank-app-secondary-action:hover,
 .bank-app-inline-action:hover,
@@ -404,8 +495,8 @@
 .bank-app-activity-card {
     display: flex;
     flex-direction: column;
-    min-height: 0;
-    flex: 1;
+    min-height: 21vh;
+    flex: 0 0 auto;
     padding: 1.3vh;
     box-sizing: border-box;
 }

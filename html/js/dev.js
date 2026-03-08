@@ -103,6 +103,179 @@
         return chats.sort((left, right) => getLatestChatTimestamp(right) - getLatestChatTimestamp(left));
     }
 
+    function createGalleryMocks() {
+        const entries = [
+            "Downtown transfer receipt",
+            "Mirror Park brunch",
+            "Fleeca account card",
+            "Mechanic invoice",
+            "Casino valet arrival",
+            "Vinewood skyline",
+            "Night market meetup",
+            "Helipad pickup",
+            "Police checkpoint",
+            "Sandy trail stop",
+            "Paleto roadtrip",
+            "Garage trophy car",
+            "Impound counter",
+            "Beachfront sunset",
+            "Dispatch board",
+            "Racing paddock",
+            "Taxi stand queue",
+            "Medical lobby",
+            "Banking dashboard",
+            "Club flyer wall",
+            "Tow yard gate",
+            "Coffee run",
+            "House viewing",
+            "Workshop parts shelf",
+            "Lucky Wheel spin",
+            "Phone UI concept",
+            "Job board poster",
+            "Storm drain chase",
+            "Harbor shipment",
+            "After-hours meetup"
+        ];
+
+        return entries.map(function(label, index) {
+            return {
+                image: `https://placehold.co/720x480/png?text=${encodeURIComponent(`${index + 1}. ${label}`)}`
+            };
+        });
+    }
+
+    function createGarageVehicleMocks() {
+        const vehicles = [
+            ["Sultan RS", "Alta Garage"],
+            ["Baller ST", "Legion Garage"],
+            ["Comet S2", "Vespucci Garage"],
+            ["Elegy Retro", "Mission Row Garage"],
+            ["Buffalo STX", "La Mesa Garage"],
+            ["Dominator GTT", "Vinewood Garage"],
+            ["Kuruma", "Pillbox Garage"],
+            ["Jester RR", "Casino Garage"],
+            ["Rebla GTS", "Mirror Park Garage"],
+            ["Tailgater S", "Rockford Garage"],
+            ["Euros", "Airport Garage"],
+            ["T20", "Del Perro Garage"],
+            ["Yosemite Rancher", "Harmony Garage"],
+            ["V-Str", "Downtown Garage"],
+            ["ZR350", "Strawberry Garage"],
+            ["Granger 3600LX", "South Side Garage"],
+            ["Remus", "Textile City Garage"],
+            ["Drafter", "Hawick Garage"],
+            ["Sentinel XS", "Richman Garage"],
+            ["Futo GTX", "Burton Garage"]
+        ];
+
+        const states = ["Stored", "Out", "Impounded"];
+        return vehicles.map(function(entry, index) {
+            return {
+                fullname: entry[0],
+                plate: `DEV${String(index + 1).padStart(3, "0")}`,
+                state: states[index % states.length],
+                garage: entry[1],
+                fuel: `${55 + ((index * 7) % 42)}%`,
+                engine: 62 + ((index * 9) % 34),
+                body: 58 + ((index * 11) % 39),
+                paymentsleft: index % 4
+            };
+        });
+    }
+
+    function createPartyJobMocks() {
+        return [
+            { label: "Towing", event: "qb-phone:jobcenter:tow", image: "https://placehold.co/640x360/png?text=Towing+Dispatch" },
+            { label: "Taxi", event: "qb-phone:jobcenter:taxi", image: "https://placehold.co/640x360/png?text=Taxi+Bookings" },
+            { label: "PostOp Worker", event: "qb-phone:jobcenter:postop", image: "https://placehold.co/640x360/png?text=PostOp+Route" },
+            { label: "Sanitation Worker", event: "qb-phone:jobcenter:sanitation", image: "https://placehold.co/640x360/png?text=City+Sanitation" },
+            { label: "Engineer", event: "qb-phone:jobcenter:engineer", image: "https://placehold.co/640x360/png?text=Site+Engineer" }
+        ];
+    }
+
+    function createPartyGroupMocks(playerData) {
+        const playerName = `${playerData.charinfo.firstname} ${playerData.charinfo.lastname}`;
+        return [
+            {
+                id: 1,
+                status: "WAITING",
+                GName: "Harbor Haulers",
+                GPass: "dock247",
+                Users: 3,
+                leader: playerData.source,
+                members: [
+                    { name: playerName, CID: playerData.citizenid, Player: playerData.source },
+                    { name: "Jordan Lee", CID: "CONTACT-JORDAN", Player: 22 },
+                    { name: "Casey Wrench", CID: "CONTACT-CASEY", Player: 31 }
+                ],
+                stage: [
+                    { id: 1, name: "Collect route manifest", count: 1, max: 1, isDone: true },
+                    { id: 2, name: "Load company truck", count: 1, max: 2, isDone: false },
+                    { id: 3, name: "Deliver to terminal", count: 0, max: 1, isDone: false }
+                ]
+            },
+            {
+                id: 2,
+                status: "WAITING",
+                GName: "Night Shift Riders",
+                GPass: "",
+                Users: 2,
+                leader: 18,
+                members: [
+                    { name: "Alex Johnson", CID: "CONTACT-ALEX", Player: 18 },
+                    { name: "Mia Carter", CID: "CONTACT-MIA", Player: 27 }
+                ],
+                stage: [
+                    { id: 1, name: "Meet at taxi depot", count: 0, max: 1, isDone: false },
+                    { id: 2, name: "Complete 3 fares", count: 1, max: 3, isDone: false }
+                ]
+            },
+            {
+                id: 3,
+                status: "BUSY",
+                GName: "Scrapyard Sweepers",
+                GPass: "metal",
+                Users: 4,
+                leader: 44,
+                members: [
+                    { name: "Officer Rivera", CID: "CONTACT-RIVERA", Player: 44 },
+                    { name: "Morgan Keys", CID: "CONTACT-MORGAN", Player: 45 },
+                    { name: "Taylor Brooks", CID: "CONTACT-TAYLOR", Player: 46 },
+                    { name: "Jamie Fox", CID: "CONTACT-JAMIE", Player: 47 }
+                ],
+                stage: [
+                    { id: 1, name: "Secure entry point", count: 1, max: 1, isDone: true },
+                    { id: 2, name: "Process salvage", count: 2, max: 4, isDone: false }
+                ]
+            }
+        ];
+    }
+
+    function ensureDevCollections(state) {
+        const defaultGallery = createGalleryMocks();
+        const defaultGarageVehicles = createGarageVehicleMocks();
+        const defaultPartyJobs = createPartyJobMocks();
+        const defaultPartyGroups = createPartyGroupMocks(state.playerData);
+
+        state.gallery = Array.isArray(state.gallery) && state.gallery.length >= defaultGallery.length
+            ? state.gallery
+            : defaultGallery;
+        state.garageVehicles = Array.isArray(state.garageVehicles) && state.garageVehicles.length >= defaultGarageVehicles.length
+            ? state.garageVehicles
+            : defaultGarageVehicles;
+        state.partyJobs = Array.isArray(state.partyJobs) && state.partyJobs.length
+            ? state.partyJobs
+            : defaultPartyJobs;
+        state.partyGroups = Array.isArray(state.partyGroups) && state.partyGroups.length
+            ? state.partyGroups
+            : defaultPartyGroups;
+        state.partyCurrentGroupId = typeof state.partyCurrentGroupId === "number"
+            ? state.partyCurrentGroupId
+            : 1;
+
+        return state;
+    }
+
     function createDefaultState() {
         const now = getNow();
         const earlier = new Date(now.getTime() - 36 * 60 * 1000);
@@ -133,7 +306,7 @@
             }
         };
 
-        return {
+        return ensureDevCollections({
             playerData,
             playerJob: {
                 name: "unemployed",
@@ -267,14 +440,11 @@
                 { id: 1, number: "555001", message: "Frontend dev for hire. Need quick UI polish?", url: null },
                 { id: 2, number: "555003", message: "Selling spare rims, message me.", url: PLACEHOLDER_IMAGE }
             ],
-            gallery: [
-                { image: "https://placehold.co/720x480/png?text=Garage+Snapshot" },
-                { image: "https://placehold.co/720x480/png?text=UI+Reference" }
-            ],
-            garageVehicles: [
-                { fullname: "Sultan RS", plate: "DEV001", state: "Stored", garage: "Alta Garage", fuel: "84%", engine: 92, body: 88, paymentsleft: 0 },
-                { fullname: "Baller ST", plate: "DEV002", state: "Out", garage: "Legion Garage", fuel: "57%", engine: 76, body: 80, paymentsleft: 2 }
-            ],
+            gallery: createGalleryMocks(),
+            garageVehicles: createGarageVehicleMocks(),
+            partyJobs: createPartyJobMocks(),
+            partyGroups: createPartyGroupMocks(playerData),
+            partyCurrentGroupId: 1,
             servicesDirectory: [
                 {
                     Job: "police",
@@ -348,7 +518,7 @@
                     ]
                 }
             ]
-        };
+        });
     }
 
     function loadState() {
@@ -360,7 +530,7 @@
 
             const defaultState = createDefaultState();
             const parsed = JSON.parse(stored);
-            return {
+            return ensureDevCollections({
                 ...defaultState,
                 ...parsed,
                 playerData: { ...defaultState.playerData, ...(parsed.playerData || {}) },
@@ -375,7 +545,7 @@
                 servicesDirectory: Array.isArray(parsed.servicesDirectory)
                     ? parsed.servicesDirectory
                     : (parsed.taxiDrivers ? parsed.taxiDrivers : defaultState.servicesDirectory)
-            };
+            });
         } catch {
             return createDefaultState();
         }
@@ -474,6 +644,47 @@
         }
         saveState();
         return true;
+    }
+
+    function getMockPartyGroup(groupId) {
+        return (mockState.partyGroups || []).find(function(group) {
+            return Number(group.id) === Number(groupId);
+        });
+    }
+
+    function getMockPlayerName() {
+        return `${mockState.playerData.charinfo.firstname} ${mockState.playerData.charinfo.lastname}`;
+    }
+
+    function isPlayerInMockParty(group) {
+        return Array.isArray(group && group.members) && group.members.some(function(member) {
+            return Number(member.Player) === Number(mockState.playerData.source);
+        });
+    }
+
+    function syncMockPartyUsers(group) {
+        group.Users = Array.isArray(group.members) ? group.members.length : 0;
+        return group;
+    }
+
+    function refreshMockPartyApp() {
+        dispatchPhoneEvent("refreshApp", {
+            data: clone(mockState.partyGroups || [])
+        });
+    }
+
+    function buildMockPartyResponse(group) {
+        return {
+            members: Array.isArray(group && group.members)
+                ? group.members.map(function(member) {
+                    return {
+                        name: member.name,
+                        isLeader: Number(member.Player) === Number(group.leader)
+                    };
+                })
+                : [],
+            tasks: Array.isArray(group && group.stage) ? clone(group.stage) : []
+        };
     }
 
     function handleRequest(endpoint, payload) {
@@ -732,6 +943,89 @@
                 return true;
             case "SetupGarageVehicles":
                 return clone(mockState.garageVehicles);
+            case "GetGroupsApp":
+                return clone(mockState.partyGroups || []);
+            case "GetJobCentersJobs":
+                return clone(mockState.partyJobs || []);
+            case "jobcenter_CreateJobGroup": {
+                const nextId = (mockState.partyGroups || []).reduce(function(maxId, group) {
+                    return Math.max(maxId, Number(group.id) || 0);
+                }, 0) + 1;
+                const newGroup = syncMockPartyUsers({
+                    id: nextId,
+                    status: "WAITING",
+                    GName: (payload.name || "New Crew").trim().slice(0, 15),
+                    GPass: payload.pass || "",
+                    leader: mockState.playerData.source,
+                    members: [
+                        {
+                            name: getMockPlayerName(),
+                            CID: mockState.playerData.citizenid,
+                            Player: mockState.playerData.source
+                        }
+                    ],
+                    stage: [
+                        { id: 1, name: "Assemble the crew", count: 1, max: 1, isDone: true },
+                        { id: 2, name: "Head to the start point", count: 0, max: 1, isDone: false }
+                    ]
+                });
+                mockState.partyGroups = Array.isArray(mockState.partyGroups) ? mockState.partyGroups : [];
+                mockState.partyGroups.unshift(newGroup);
+                mockState.partyCurrentGroupId = newGroup.id;
+                saveState();
+                refreshMockPartyApp();
+                return true;
+            }
+            case "jobcenter_CheckPlayerNames":
+                return buildMockPartyResponse(getMockPartyGroup(payload.id));
+            case "jobcenter_JoinTheGroup": {
+                const group = getMockPartyGroup(payload.id);
+                if (!group || isPlayerInMockParty(group)) {
+                    return true;
+                }
+                group.members = Array.isArray(group.members) ? group.members : [];
+                group.members.push({
+                    name: getMockPlayerName(),
+                    CID: mockState.playerData.citizenid,
+                    Player: mockState.playerData.source
+                });
+                syncMockPartyUsers(group);
+                mockState.partyCurrentGroupId = group.id;
+                saveState();
+                refreshMockPartyApp();
+                return true;
+            }
+            case "jobcenter_leave_grouped": {
+                const group = getMockPartyGroup(payload.id);
+                if (!group) {
+                    return true;
+                }
+                group.members = (group.members || []).filter(function(member) {
+                    return Number(member.Player) !== Number(mockState.playerData.source);
+                });
+                syncMockPartyUsers(group);
+                if (Number(group.leader) === Number(mockState.playerData.source) || group.Users === 0) {
+                    mockState.partyGroups = (mockState.partyGroups || []).filter(function(entry) {
+                        return Number(entry.id) !== Number(group.id);
+                    });
+                }
+                mockState.partyCurrentGroupId = 0;
+                saveState();
+                refreshMockPartyApp();
+                return true;
+            }
+            case "jobcenter_DeleteGroup":
+                mockState.partyGroups = (mockState.partyGroups || []).filter(function(group) {
+                    return Number(group.id) !== Number(payload.delete);
+                });
+                mockState.partyCurrentGroupId = 0;
+                saveState();
+                refreshMockPartyApp();
+                return true;
+            case "jobcenter_GroupBusy":
+                return true;
+            case "CasinoPhoneJobCenter":
+                return true;
             case "GetAvailableTaxiDrivers":
                 return clone(mockState.servicesDirectory || mockState.taxiDrivers || []);
             case "GetGalleryData":

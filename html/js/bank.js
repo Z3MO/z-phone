@@ -21,6 +21,13 @@
         contactCountMetric: document.getElementById('bank-contact-count-metric'),
         pendingBadge: document.getElementById('bank-pending-total-badge'),
         invoicesSummary: document.getElementById('bank-invoices-summary'),
+        accountStatus: document.getElementById('bank-account-status'),
+        nextAction: document.getElementById('bank-account-next-action'),
+        contactSpotlight: document.getElementById('bank-contact-spotlight'),
+        weeklyOutflow: document.getElementById('bank-weekly-outflow'),
+        invoicePressure: document.getElementById('bank-invoice-pressure'),
+        frequentContact: document.getElementById('bank-frequent-contact'),
+        ledgerSummary: document.getElementById('bank-ledger-summary'),
         activityList: document.getElementById('bank-app-activity-list'),
         invoicesList: document.getElementById('bank-app-invoices-list'),
         tabButtons: Array.from(document.querySelectorAll('.bank-app-header-button')),
@@ -38,6 +45,8 @@
         transferCloseButton: document.getElementById('cancel-transfer'),
         transferClearButton: document.getElementById('bank-transfer-clear'),
         contactsOpenButton: document.getElementById('bank-open-contacts'),
+        copyAccountButton: document.getElementById('bank-copy-account'),
+        invoicesShortcutButton: document.getElementById('bank-view-invoices'),
         contactsInlineButton: document.getElementById('bank-transfer-mycontacts'),
         contactsOverlay: document.getElementById('bank-app-my-contacts'),
         contactsList: document.getElementById('bank-app-my-contacts-list'),
@@ -164,6 +173,21 @@
 
     function updateDashboardSummary() {
         const pendingTotal = state.invoices.reduce((total, invoice) => total + normalizeAmount(invoice.amount), 0);
+        const primaryContact = state.contacts.find((contact) => getContactIban(contact)) || state.contacts[0] || null;
+        const hasUrgentInvoices = state.invoices.length > 0 && pendingTotal >= Math.max(2500, Math.floor(state.balance * 0.35));
+        const relationshipTier = hasUrgentInvoices ? 'Action needed' : (state.balance >= pendingTotal ? 'Healthy account' : 'Low coverage');
+        const nextAction = state.invoices.length
+            ? `You have ${state.invoices.length} pending invoice${state.invoices.length === 1 ? '' : 's'} to review.`
+            : 'Ready for transfers, payouts, and roleplay banking.';
+        const pressureText = state.invoices.length
+            ? `${state.invoices.length} unpaid request${state.invoices.length === 1 ? '' : 's'} are waiting in your queue.`
+            : 'No pending bills detected.';
+        const ledgerText = state.activities.length
+            ? `${state.activities.length} recent ledger update${state.activities.length === 1 ? '' : 's'} available.`
+            : 'Transfers and invoices will build your story here.';
+        const spotlightText = primaryContact
+            ? `Contact spotlight: ${sanitizeText(primaryContact.name, 'Unknown contact', 42)}`
+            : 'Contact spotlight: none yet.';
 
         if (refs.invoiceCountMetric) {
             refs.invoiceCountMetric.textContent = String(state.invoices.length);
@@ -179,6 +203,36 @@
 
         if (refs.invoicesSummary) {
             refs.invoicesSummary.textContent = `${state.invoices.length} open`;
+        }
+
+        if (refs.accountStatus) {
+            refs.accountStatus.textContent = relationshipTier;
+        }
+
+        if (refs.nextAction) {
+            refs.nextAction.textContent = nextAction;
+        }
+
+        if (refs.contactSpotlight) {
+            refs.contactSpotlight.textContent = spotlightText;
+        }
+
+        if (refs.weeklyOutflow) {
+            refs.weeklyOutflow.textContent = formatCurrency(pendingTotal);
+        }
+
+        if (refs.invoicePressure) {
+            refs.invoicePressure.textContent = pressureText;
+        }
+
+        if (refs.frequentContact) {
+            refs.frequentContact.textContent = primaryContact
+                ? sanitizeText(primaryContact.name, 'Unknown contact', 42)
+                : 'No transfer history';
+        }
+
+        if (refs.ledgerSummary) {
+            refs.ledgerSummary.textContent = ledgerText;
         }
     }
 
@@ -260,6 +314,9 @@
 
         state.activities = state.activities.slice(0, 8);
         renderActivity();
+        if (state.currentTab === 'accounts') {
+            updateDashboardSummary();
+        }
     }
 
     function seedActivities() {
@@ -588,6 +645,8 @@
         });
 
         refs.contactsOpenButton?.addEventListener('click', () => openOverlay(refs.contactsOverlay));
+        refs.copyAccountButton?.addEventListener('click', copyAccountNumber);
+        refs.invoicesShortcutButton?.addEventListener('click', () => setTab('invoices'));
         refs.contactsInlineButton?.addEventListener('click', () => openOverlay(refs.contactsOverlay));
         refs.transferCloseButton?.addEventListener('click', () => closeOverlay(refs.transferOverlay));
         refs.transferClearButton?.addEventListener('click', resetTransferForm);

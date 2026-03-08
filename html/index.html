@@ -952,56 +952,90 @@
                                 </div>
 
                                 <div class="bank-app-accounts bank-app-panel bank-app-panel-active">
-                                    <div class="bank-app-account" id="bank-account-card" tabindex="0" role="button" aria-label="Copy account number">
-                                        <div class="bank-app-account-topline">
-                                            <span class="bank-app-account-label">Primary account</span>
-                                            <span class="bank-app-account-brand">FLEECA</span>
-                                        </div>
-                                        <div class="bank-app-account-chip" aria-hidden="true"></div>
-                                        <input type="text" class="bank-app-account-number" id="iban-account" readonly spellcheck="false" aria-label="Bank account number">
-                                        <div class="bank-app-account-owner" id="bank-account-owner">Account Holder</div>
-                                        <div class="bank-app-account-balance" id="bank-account-balance">&#36; 5000</div>
-                                        <div class="bank-app-account-copyhint">
-                                            <i class="fa-regular fa-copy"></i>
-                                            <span>Tap card to copy account number</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="bank-app-metrics">
-                                        <div class="bank-app-metric">
-                                            <span class="bank-app-metric-label">Available balance</span>
-                                            <strong class="bank-app-metric-value" id="bank-balance-metric">&#36; 0</strong>
-                                        </div>
-                                        <div class="bank-app-metric">
-                                            <span class="bank-app-metric-label">Pending invoices</span>
-                                            <strong class="bank-app-metric-value" id="bank-invoice-count-metric">0</strong>
-                                        </div>
-                                        <div class="bank-app-metric">
-                                            <span class="bank-app-metric-label">Saved contacts</span>
-                                            <strong class="bank-app-metric-value" id="bank-contact-count-metric">0</strong>
-                                        </div>
-                                    </div>
-
-                                    <div class="bank-app-quick-actions">
-                                        <button type="button" class="bank-app-account-actions" id="transfer-money">
-                                            <i class="fa-solid fa-right-left"></i>
-                                            <span>New transfer</span>
-                                        </button>
-                                        <button type="button" class="bank-app-secondary-action" id="bank-open-contacts">
-                                            <i class="fa-solid fa-address-book"></i>
-                                            <span>Select contact</span>
-                                        </button>
-                                    </div>
-
-                                    <div class="bank-app-activity-card">
-                                        <div class="bank-app-section-title-row">
-                                            <div>
-                                                <div class="bank-app-section-overline">Roleplay ledger</div>
-                                                <div class="bank-app-section-title">Recent activity</div>
+                                    <div class="bank-app-accounts-scroll">
+                                        <div class="bank-app-hero-grid">
+                                            <div class="bank-app-account" id="bank-account-card" tabindex="0" role="button" aria-label="Copy account number">
+                                                <div class="bank-app-account-topline">
+                                                    <span class="bank-app-account-label">Primary account</span>
+                                                    <span class="bank-app-account-brand">FLEECA</span>
+                                                </div>
+                                                <div class="bank-app-account-chip" aria-hidden="true"></div>
+                                                <input type="text" class="bank-app-account-number" id="iban-account" readonly spellcheck="false" aria-label="Bank account number">
+                                                <div class="bank-app-account-owner" id="bank-account-owner">Account Holder</div>
+                                                <div class="bank-app-account-balance" id="bank-account-balance">&#36; 5000</div>
+                                                <div class="bank-app-account-copyhint">
+                                                    <i class="fa-regular fa-copy"></i>
+                                                    <span>Tap card to copy account number</span>
+                                                </div>
                                             </div>
-                                            <span class="bank-app-section-badge" id="bank-pending-total-badge">&#36; 0 pending</span>
+
+                                            <div class="bank-app-focus-card">
+                                                <div>
+                                                    <div class="bank-app-section-overline">Relationship tier</div>
+                                                    <div class="bank-app-section-title bank-app-section-title--compact" id="bank-account-status">Healthy account</div>
+                                                </div>
+                                                <div class="bank-app-focus-copy" id="bank-account-next-action">Ready for your next transfer.</div>
+                                                <div class="bank-app-focus-copy bank-app-focus-copy--muted" id="bank-contact-spotlight">Contact spotlight: none yet.</div>
+                                                <button type="button" class="bank-app-inline-action bank-app-inline-action--accent" id="bank-view-invoices">
+                                                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                                                    <span>Review invoices</span>
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div class="bank-app-activity-list" id="bank-app-activity-list"></div>
+
+                                        <div class="bank-app-metrics">
+                                            <div class="bank-app-metric">
+                                                <span class="bank-app-metric-label">Available balance</span>
+                                                <strong class="bank-app-metric-value" id="bank-balance-metric">&#36; 0</strong>
+                                            </div>
+                                            <div class="bank-app-metric">
+                                                <span class="bank-app-metric-label">Pending invoices</span>
+                                                <strong class="bank-app-metric-value" id="bank-invoice-count-metric">0</strong>
+                                            </div>
+                                            <div class="bank-app-metric">
+                                                <span class="bank-app-metric-label">Saved contacts</span>
+                                                <strong class="bank-app-metric-value" id="bank-contact-count-metric">0</strong>
+                                            </div>
+                                        </div>
+
+                                        <div class="bank-app-feature-grid">
+                                            <div class="bank-app-feature-card">
+                                                <div class="bank-app-section-overline">Cashflow outlook</div>
+                                                <strong class="bank-app-feature-value" id="bank-weekly-outflow">&#36; 0</strong>
+                                                <span class="bank-app-feature-copy" id="bank-invoice-pressure">No pending bills detected.</span>
+                                            </div>
+                                            <div class="bank-app-feature-card bank-app-feature-card--accent">
+                                                <div class="bank-app-section-overline">Ledger notes</div>
+                                                <strong class="bank-app-feature-value" id="bank-frequent-contact">No transfer history</strong>
+                                                <span class="bank-app-feature-copy" id="bank-ledger-summary">Transfers and invoices will build your story here.</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="bank-app-quick-actions">
+                                            <button type="button" class="bank-app-account-actions" id="transfer-money">
+                                                <i class="fa-solid fa-right-left"></i>
+                                                <span>New transfer</span>
+                                            </button>
+                                            <button type="button" class="bank-app-secondary-action" id="bank-open-contacts">
+                                                <i class="fa-solid fa-address-book"></i>
+                                                <span>Select contact</span>
+                                            </button>
+                                            <button type="button" class="bank-app-secondary-action" id="bank-copy-account">
+                                                <i class="fa-regular fa-copy"></i>
+                                                <span>Copy IBAN</span>
+                                            </button>
+                                        </div>
+
+                                        <div class="bank-app-activity-card">
+                                            <div class="bank-app-section-title-row">
+                                                <div>
+                                                    <div class="bank-app-section-overline">Roleplay ledger</div>
+                                                    <div class="bank-app-section-title">Recent activity</div>
+                                                </div>
+                                                <span class="bank-app-section-badge" id="bank-pending-total-badge">&#36; 0 pending</span>
+                                            </div>
+                                            <div class="bank-app-activity-list" id="bank-app-activity-list"></div>
+                                        </div>
                                     </div>
                                 </div>
 

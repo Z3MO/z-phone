@@ -422,7 +422,7 @@ $(document).on('click', '.phone-application', function(e){
                     })
                     QB.Phone.Functions.Close();
                 }
-                else if (PressedApplication == "jobcenter") {
+                else if (PressedApplication == "jobcenter" || PressedApplication == "party") {
                     LoadJobCenterApp();
                 }
                 else if (PressedApplication == "crypto") {
