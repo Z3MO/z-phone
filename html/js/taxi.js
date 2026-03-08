@@ -3,7 +3,9 @@ const SERVICES_SELECTORS = {
     servicesList: ".taxis-list.services-list",
     onlineCount: "#services-online-count",
     categoryCount: "#services-category-count",
-    highlightTag: "#services-highlight-tag"
+    highlightTag: "#services-highlight-tag",
+    filterScrollButton: "[data-services-scroll]",
+    activeFilter: ".services-filter.is-active"
 };
 
 const PHONE_SELECTORS = {
@@ -25,6 +27,15 @@ const WHATSAPP_SELECTORS = {
 let CurrentServicesFilter = "all";
 let CurrentServicesData = [];
 const NEW_CALL_BOX_FADE_DURATION_MS = 350;
+// Move most of the visible filter rail each click while leaving enough overlap for orientation.
+const FILTER_SCROLL_STEP_RATIO = 0.75;
+const MIN_FILTER_SCROLL_STEP_PX = 96;
+// Allow a 1px tolerance so button states stay stable with sub-pixel scroll rounding.
+const FILTER_SCROLL_THRESHOLD_PX = 1;
+const FILTER_NAV_UPDATE_DELAY_MS = 50;
+let ServicesFilterNavUpdateTimer = null;
+let ServicesFilterPrevButton = null;
+let ServicesFilterNextButton = null;
 
 function getElement(selector) {
     return document.querySelector(selector);
@@ -206,6 +217,9 @@ function renderServicesFilters(services) {
         button.textContent = filter.label;
         filterContainer.appendChild(button);
     });
+
+    updateServicesFilterNavState();
+    scrollActiveServicesFilterIntoView();
 }
 
 function createServicesEmptyState() {
@@ -380,6 +394,86 @@ function isCurrentServicesFilterAvailable(services) {
     return CurrentServicesFilter === "all"
         || CurrentServicesFilter === "available"
         || services.some((service) => service.Job === CurrentServicesFilter);
+}
+
+function getServicesFilterContainer() {
+    return getElement(SERVICES_SELECTORS.filters);
+}
+
+function cacheServicesFilterNavButtons() {
+    if (!ServicesFilterPrevButton) {
+        ServicesFilterPrevButton = document.querySelector('[data-services-scroll="prev"]');
+    }
+
+    if (!ServicesFilterNextButton) {
+        ServicesFilterNextButton = document.querySelector('[data-services-scroll="next"]');
+    }
+}
+
+function getServicesFilterScrollAmount() {
+    const filterContainer = getServicesFilterContainer();
+    if (!filterContainer) {
+        return 0;
+    }
+
+    return Math.max(filterContainer.clientWidth * FILTER_SCROLL_STEP_RATIO, MIN_FILTER_SCROLL_STEP_PX);
+}
+
+function updateServicesFilterNavState() {
+    const filterContainer = getServicesFilterContainer();
+    if (!filterContainer) {
+        return;
+    }
+
+    const maxScrollLeft = Math.max(filterContainer.scrollWidth - filterContainer.clientWidth, 0);
+    const canScroll = maxScrollLeft > FILTER_SCROLL_THRESHOLD_PX;
+    cacheServicesFilterNavButtons();
+
+    if (ServicesFilterPrevButton) {
+        ServicesFilterPrevButton.disabled = !canScroll || filterContainer.scrollLeft <= FILTER_SCROLL_THRESHOLD_PX;
+    }
+
+    if (ServicesFilterNextButton) {
+        ServicesFilterNextButton.disabled = !canScroll || filterContainer.scrollLeft >= maxScrollLeft - FILTER_SCROLL_THRESHOLD_PX;
+    }
+}
+
+function scheduleServicesFilterNavStateUpdate() {
+    if (ServicesFilterNavUpdateTimer !== null) {
+        window.clearTimeout(ServicesFilterNavUpdateTimer);
+    }
+
+    ServicesFilterNavUpdateTimer = window.setTimeout(() => {
+        ServicesFilterNavUpdateTimer = null;
+        updateServicesFilterNavState();
+    }, FILTER_NAV_UPDATE_DELAY_MS);
+}
+
+function scrollServicesFilters(direction) {
+    const filterContainer = getServicesFilterContainer();
+    if (!filterContainer) {
+        return;
+    }
+
+    const isPreviousDirection = direction === "prev";
+    const amount = getServicesFilterScrollAmount() * (isPreviousDirection ? -1 : 1);
+    filterContainer.scrollBy({
+        left: amount,
+        behavior: "smooth"
+    });
+}
+
+function scrollActiveServicesFilterIntoView() {
+    const activeFilter = getElement(SERVICES_SELECTORS.activeFilter);
+    if (!activeFilter) {
+        return;
+    }
+
+    activeFilter.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "center"
+    });
 }
 
 function getWhatsappDraftValue() {
@@ -564,6 +658,13 @@ SetupTaxiDrivers = function(data) {
 };
 
 document.addEventListener("click", (event) => {
+    const scrollButton = event.target.closest(SERVICES_SELECTORS.filterScrollButton);
+    if (scrollButton) {
+        event.preventDefault();
+        scrollServicesFilters(scrollButton.dataset.servicesScroll);
+        return;
+    }
+
     const filterButton = event.target.closest(".services-filter");
     if (filterButton) {
         event.preventDefault();
@@ -602,3 +703,16 @@ document.addEventListener("click", (event) => {
         });
     }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const filterContainer = getServicesFilterContainer();
+    if (!filterContainer) {
+        return;
+    }
+
+    cacheServicesFilterNavButtons();
+    filterContainer.addEventListener("scroll", scheduleServicesFilterNavStateUpdate, { passive: true });
+    updateServicesFilterNavState();
+});
+
+window.addEventListener("resize", scheduleServicesFilterNavStateUpdate);
