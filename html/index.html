@@ -313,13 +313,19 @@
                     <!-- Start Messages app-->
                     <div class="whatsapp-app">
                         <div class="whatsapp-header">
-                            <i class="fa-solid fa-plus" id="whatsapp-newconvo-icon"></i>
-                            <span id="whatsapp-search-text">Message</span>
+                            <div class="whatsapp-header-copy">
+                                <span id="whatsapp-search-text">Messages</span>
+                                <span class="whatsapp-header-subtitle">Recent conversations</span>
+                            </div>
+                            <button type="button" class="whatsapp-icon-button" id="whatsapp-newconvo-icon" aria-label="Start new message">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
                         </div>
 
                         <div class="phone-menu-body" id="whatsapp-box-new-add-new">
                             <div class="phone-menu-main">
-                                <input placeholder="Number" class="phone-menu-text whatsapp-input-number" type="number" maxlength="6" min="0">
+                                <input placeholder="Number" class="phone-menu-text whatsapp-input-number" type="tel" inputmode="numeric" maxlength="6" autocomplete="off" aria-label="Phone number" aria-describedby="whatsapp-number-hint">
+                                <span id="whatsapp-number-hint" class="whatsapp-visually-hidden">Enter up to 6 digits for the phone number.</span>
                                 <textarea class="phone-menu-big-text whatsapp-input-message" placeholder="Message" type="text" maxlength="200"></textarea>
                                 <div class="phone-menu-footer">
                                     <div class="phone-menu-button phone-menu-cancel" id="box-new-cancel">Cancel</div>
@@ -328,20 +334,25 @@
                             </div>
                         </div>
 
-                        <div class="whatsapp-chats">
-                        </div>
+                        <div class="whatsapp-chats"></div>
                         <div class="whatsapp-openedchat">
                             <div class="whatsapp-header-footer-openedchat">
                                 <div class="whatsapp-openedchat-picture"></div>
                                 <div class="whatsapp-openedchat-name"><p></p></div>
                                 <div class="whatsapp-openedchat-number"><p></p></div>
-                                <i id="whatsapp-openedchat-back" class="fa-solid fa-chevron-left"></i>
-                                <i id="whatsapp-openedchat-call" class="fa-solid fa-phone"></i>
+                                <button type="button" class="whatsapp-icon-button whatsapp-openedchat-button" id="whatsapp-openedchat-back" aria-label="Back to messages">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </button>
+                                <button type="button" class="whatsapp-icon-button whatsapp-openedchat-button" id="whatsapp-openedchat-call" aria-label="Call contact">
+                                    <i class="fa-solid fa-phone"></i>
+                                </button>
                             </div>
                             <div class="whatsapp-openedchat-messages"></div>
                             <div class="whatsapp-openedchat-input">
                                 <input type="text" id="whatsapp-openedchat-message" placeholder="Send message" spellcheck="false">
-                                <i class="fa-solid fa-paper-plane" id="whatsapp-openedchat-send"></i>
+                                <button type="button" class="whatsapp-icon-button whatsapp-send-button" id="whatsapp-openedchat-send" aria-label="Send message">
+                                    <i class="fa-solid fa-paper-plane"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -874,7 +885,37 @@
 
                     <!-- Start Taxi app-->
                     <div class="taxi-app">
-                        <div class="taxis-list"></div>
+                        <div class="services-shell">
+                            <div class="services-header">
+                                <span class="services-overline">City directory</span>
+                                <span class="services-title">Services</span>
+                                <span class="services-subtitle">Reach on-duty staff fast by call or message.</span>
+                            </div>
+                            <div class="services-summary">
+                                <div class="services-summary-card">
+                                    <span class="services-summary-value" id="services-online-count">0</span>
+                                    <span class="services-summary-label">On duty now</span>
+                                </div>
+                                <div class="services-summary-card">
+                                    <span class="services-summary-value" id="services-category-count">0</span>
+                                    <span class="services-summary-label">Service desks</span>
+                                </div>
+                                <div class="services-summary-card services-summary-card-wide">
+                                    <span class="services-summary-value" id="services-highlight-tag">Ready</span>
+                                    <span class="services-summary-label">Direct call + Messages handoff</span>
+                                </div>
+                            </div>
+                            <div class="services-filter-bar">
+                                <button type="button" class="services-filter-nav services-filter-nav-prev" data-services-scroll="prev" aria-label="Scroll services filters left">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </button>
+                                <div class="services-filters"></div>
+                                <button type="button" class="services-filter-nav services-filter-nav-next" data-services-scroll="next" aria-label="Scroll services filters right">
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </button>
+                            </div>
+                            <div class="taxis-list services-list"></div>
+                        </div>
                     </div>
                     <!-- END Taxi app-->
 
@@ -1242,6 +1283,7 @@
 
         <!-- JavaScript File's -->
         <script src="./js/config.js"></script>
+        <script src="./js/dev.js"></script>
         <script src="./js/app.js"></script>
         <script src="./js/phone.js"></script>
         <script src="./js/settings.js"></script>
@@ -1263,6 +1305,5 @@
         <script src="./js/employment.js"></script>
         <script src="./js/documents.js"></script>
         <script src="./js/lsbn.js"></script>-->
-        <script type="text/javascript">$('#whatsapp-openedchat-message').emojioneArea({inline: true, searchPosition: "bottom", shortnames: true})</script>
     </body>
 </html>

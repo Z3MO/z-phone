@@ -303,9 +303,62 @@ Config.JobCenter = {
     },
 }
 
-Config.TaxiJob = {
+Config.ServiceJobs = {
     {
         Job = "taxi",
+        Label = "Taxi",
+        Tag = "Transport",
+        Description = "Rides, pickups, and general city travel.",
+        Accent = "#3b82f6",
+        Icon = "fa-solid fa-taxi",
+        MessageTemplate = "Hi, I need a pickup when you are available.",
+    },
+    {
+        Job = "police",
+        Jobs = { "police", "policejob" },
+        Label = "Police",
+        Tag = "Emergency",
+        Description = "Report incidents, request backup, or ask for assistance.",
+        Accent = "#2563eb",
+        Icon = "fa-solid fa-shield-halved",
+        MessageTemplate = "Hello officer, I need assistance.",
+    },
+    {
+        Job = "ambulance",
+        Jobs = { "ambulance", "ems" },
+        Label = "EMS",
+        Tag = "Medical",
+        Description = "Medical response, transport, and urgent welfare checks.",
+        Accent = "#ef4444",
+        Icon = "fa-solid fa-truck-medical",
+        MessageTemplate = "Hi EMS, I need medical assistance.",
+    },
+    {
+        Job = "mechanic",
+        Label = "Mechanic",
+        Tag = "Repair",
+        Description = "Roadside repairs, diagnostics, and vehicle recovery help.",
+        Accent = "#f59e0b",
+        Icon = "fa-solid fa-screwdriver-wrench",
+        MessageTemplate = "Hi, I need help with my vehicle.",
+    },
+    {
+        Job = "tow",
+        Label = "Tow",
+        Tag = "Roadside",
+        Description = "Impounds, recoveries, and towing support.",
+        Accent = "#14b8a6",
+        Icon = "fa-solid fa-truck-pickup",
+        MessageTemplate = "Hi, I need a tow when you are free.",
+    },
+    {
+        Job = "realestate",
+        Label = "Real Estate",
+        Tag = "Housing",
+        Description = "Property viewings, rentals, and housing questions.",
+        Accent = "#8b5cf6",
+        Icon = "fa-solid fa-house",
+        MessageTemplate = "Hi, I would like to ask about a property.",
     },
 }
 
