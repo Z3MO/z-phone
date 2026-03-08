@@ -1,12 +1,101 @@
+const SERVICES_SELECTORS = {
+    filters: ".services-filters",
+    servicesList: ".taxis-list.services-list",
+    onlineCount: "#services-online-count",
+    categoryCount: "#services-category-count",
+    highlightTag: "#services-highlight-tag"
+};
+
+const PHONE_SELECTORS = {
+    appContainer: ".phone-application-container",
+    newCallBox: ".phone-new-box-body",
+    outgoingCaller: ".phone-call-outgoing-caller",
+    phoneApp: ".phone-app",
+    currentCallContainer: ".phone-currentcall-container",
+    incomingAnswer: "#incoming-answer"
+};
+
+const WHATSAPP_SELECTORS = {
+    openedChat: ".whatsapp-openedchat",
+    chats: ".whatsapp-chats",
+    openedChatMessages: ".whatsapp-openedchat-messages",
+    composer: "#whatsapp-openedchat-message"
+};
+
 let CurrentServicesFilter = "all";
 let CurrentServicesData = [];
+const NEW_CALL_BOX_FADE_DURATION_MS = 350;
+
+function getElement(selector) {
+    return document.querySelector(selector);
+}
+
+function setElementText(selector, value) {
+    const element = getElement(selector);
+    if (element) {
+        element.textContent = String(value);
+    }
+}
+
+function setElementDisplay(selector, value) {
+    const element = getElement(selector);
+    if (element) {
+        element.style.display = value;
+    }
+}
+
+function hideElements(selectors) {
+    document.querySelectorAll(selectors).forEach((element) => {
+        element.style.display = "none";
+    });
+}
+
+function waitForDuration(duration) {
+    return new Promise((resolve) => {
+        window.setTimeout(resolve, duration);
+    });
+}
+
+async function postServiceRequest(endpoint, payload = {}) {
+    const hasParentResourceName = typeof GetParentResourceName === "function";
+    const resourceName = hasParentResourceName
+        ? GetParentResourceName()
+        : "z-phone";
+
+    if (!hasParentResourceName) {
+        console.warn("GetParentResourceName is unavailable; using fallback resource name for Services requests.");
+    }
+
+    const response = await fetch(`https://${resourceName}/${endpoint}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json; charset=UTF-8"
+        },
+        body: JSON.stringify(payload)
+    });
+
+    const contentType = response.headers.get("content-type") || "";
+    if (contentType.includes("application/json")) {
+        return response.json();
+    }
+
+    const text = await response.text();
+
+    try {
+        return JSON.parse(text);
+    } catch {
+        return text;
+    }
+}
 
 function formatPhoneNumber(phoneNumberString) {
-    var cleaned = ('' + phoneNumberString).replace(/\D/g, '');
-    var match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+    const cleaned = String(phoneNumberString).replace(/\D/g, "");
+    const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+
     if (match) {
-      return '(' + match[1] + ') ' + match[2] + '-' + match[3];
+        return `(${match[1]}) ${match[2]}-${match[3]}`;
     }
+
     return phoneNumberString;
 }
 
@@ -39,36 +128,36 @@ function normalizeServicesPayload(data) {
             Accent: sanitizeServiceColor(service.Accent, "#3b82f6"),
             Icon: sanitizeServiceClassName(service.Icon, "fa-solid fa-briefcase"),
             MessageTemplate: sanitizeServiceText(service.MessageTemplate, "Hello, I need assistance."),
-            Players: Array.isArray(service.Players) ? service.Players.map((player) => ({
-                Name: sanitizeServiceText(player.Name, "On-duty staff"),
-                Phone: sanitizeServicePhone(player.Phone),
-                Job: sanitizeServiceText(player.Job || service.Job, service.Job || "service"),
-                Tag: sanitizeServiceText(player.Tag || service.Tag, service.Tag || "Service"),
-                Label: sanitizeServiceText(player.Label || service.Label, service.Label || "Service")
-            })).filter((player) => player.Phone !== "") : []
+            Players: Array.isArray(service.Players)
+                ? service.Players.map((player) => ({
+                    Name: sanitizeServiceText(player.Name, "On-duty staff"),
+                    Phone: sanitizeServicePhone(player.Phone),
+                    Job: sanitizeServiceText(player.Job || service.Job, service.Job || "service"),
+                    Tag: sanitizeServiceText(player.Tag || service.Tag, service.Tag || "Service"),
+                    Label: sanitizeServiceText(player.Label || service.Label, service.Label || "Service")
+                })).filter((player) => player.Phone !== "")
+                : []
         }));
     }
 
-    const normalized = [];
-    $.each(data || {}, function(job, jobData) {
-        normalized.push({
-            Job: sanitizeServiceText(job, "service"),
-            Label: sanitizeServiceText(jobData && jobData.Label || job, "Service"),
-            Tag: sanitizeServiceText(jobData && jobData.Tag, "Service"),
-            Description: sanitizeServiceText(jobData && jobData.Description, "City support service."),
-            Accent: sanitizeServiceColor(jobData && jobData.Accent, "#3b82f6"),
-            Icon: sanitizeServiceClassName(jobData && jobData.Icon, "fa-solid fa-briefcase"),
-            MessageTemplate: sanitizeServiceText(jobData && jobData.MessageTemplate, "Hello, I need assistance."),
-            Players: Array.isArray(jobData && jobData.Players) ? jobData.Players.map((player) => ({
+    return Object.entries(data || {}).map(([job, jobData]) => ({
+        Job: sanitizeServiceText(job, "service"),
+        Label: sanitizeServiceText((jobData && jobData.Label) || job, "Service"),
+        Tag: sanitizeServiceText(jobData && jobData.Tag, "Service"),
+        Description: sanitizeServiceText(jobData && jobData.Description, "City support service."),
+        Accent: sanitizeServiceColor(jobData && jobData.Accent, "#3b82f6"),
+        Icon: sanitizeServiceClassName(jobData && jobData.Icon, "fa-solid fa-briefcase"),
+        MessageTemplate: sanitizeServiceText(jobData && jobData.MessageTemplate, "Hello, I need assistance."),
+        Players: Array.isArray(jobData && jobData.Players)
+            ? jobData.Players.map((player) => ({
                 Name: sanitizeServiceText(player.Name, "On-duty staff"),
                 Phone: sanitizeServicePhone(player.Phone),
                 Job: sanitizeServiceText(job, "service"),
                 Tag: sanitizeServiceText(jobData && jobData.Tag, "Service"),
-                Label: sanitizeServiceText(jobData && jobData.Label || job, "Service")
-            })).filter((player) => player.Phone !== "") : []
-        });
-    });
-    return normalized;
+                Label: sanitizeServiceText((jobData && jobData.Label) || job, "Service")
+            })).filter((player) => player.Phone !== "")
+            : []
+    }));
 }
 
 function getFilteredServices(services) {
@@ -85,13 +174,14 @@ function getFilteredServices(services) {
 
 function updateServicesSummary(services) {
     const onlineCount = services.reduce((total, service) => total + service.Players.length, 0);
-    $("#services-online-count").text(onlineCount);
-    $("#services-category-count").text(services.length);
-    $("#services-highlight-tag").text(onlineCount > 0 ? "Ready" : "Standby");
+
+    setElementText(SERVICES_SELECTORS.onlineCount, onlineCount);
+    setElementText(SERVICES_SELECTORS.categoryCount, services.length);
+    setElementText(SERVICES_SELECTORS.highlightTag, onlineCount > 0 ? "Ready" : "Standby");
 }
 
 function renderServicesFilters(services) {
-    const filterContainer = document.querySelector(".services-filters");
+    const filterContainer = getElement(SERVICES_SELECTORS.filters);
     if (!filterContainer) {
         return;
     }
@@ -139,6 +229,7 @@ function createServicesEmptyState() {
 
 function createServiceActionButton(type, accentColor, service, player) {
     const actionButton = document.createElement("button");
+
     actionButton.type = "button";
     actionButton.className = `service-action service-action-${type}`;
     actionButton.dataset.number = player.Phone;
@@ -263,7 +354,7 @@ function createServiceSection(service) {
 }
 
 function renderServicesDirectory() {
-    const listContainer = document.querySelector(".taxis-list");
+    const listContainer = getElement(SERVICES_SELECTORS.servicesList);
     if (!listContainer) {
         return;
     }
@@ -285,86 +376,152 @@ function renderServicesDirectory() {
     listContainer.appendChild(fragment);
 }
 
-function openServiceMessageThread(contactData) {
-    $.post(`https://${GetParentResourceName()}/GetWhatsappChats`, JSON.stringify({}), function(chats){
-        QB.Phone.Functions.LoadWhatsappChats(chats);
-    });
+function isCurrentServicesFilterAvailable(services) {
+    return CurrentServicesFilter === "all"
+        || CurrentServicesFilter === "available"
+        || services.some((service) => service.Job === CurrentServicesFilter);
+}
 
-    $('.phone-application-container').animate({
-        top: -160+"%"
-    });
-    QB.Phone.Functions.HeaderTextColor("white", 400);
+function getWhatsappDraftValue() {
+    // html/js/message.js loads before this file and may expose composer helpers globally.
+    // If those helpers are unavailable, this falls back to the raw textarea value instead.
+    if (typeof getWhatsappComposerValue === "function") {
+        return String(getWhatsappComposerValue() ?? "").trim();
+    }
 
-    setTimeout(function(){
-        $('.phone-application-container').animate({
-            top: 0+"%"
+    const composer = getElement(WHATSAPP_SELECTORS.composer);
+    return composer ? String(composer.value ?? "").trim() : "";
+}
+
+function setWhatsappDraftValue(value) {
+    // html/js/message.js loads before this file and may expose composer helpers globally.
+    // If those helpers are unavailable, this writes directly into the textarea.
+    if (typeof getWhatsappComposerInstance === "function") {
+        const composerInstance = getWhatsappComposerInstance();
+        if (composerInstance && typeof composerInstance.setText === "function") {
+            composerInstance.setText(value);
+            return;
+        }
+    }
+
+    const composer = getElement(WHATSAPP_SELECTORS.composer);
+    if (composer) {
+        composer.value = value;
+        composer.dispatchEvent(new Event("input", { bubbles: true }));
+        composer.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+}
+
+function revealWhatsappThread() {
+    const openedChat = getElement(WHATSAPP_SELECTORS.openedChat);
+    const chats = getElement(WHATSAPP_SELECTORS.chats);
+    const messages = getElement(WHATSAPP_SELECTORS.openedChatMessages);
+
+    if (messages) {
+        messages.scrollTo({
+            top: messages.scrollHeight,
+            behavior: "smooth"
+        });
+    }
+
+    if (openedChat) {
+        openedChat.style.display = "block";
+        openedChat.style.transition = "left 150ms cubic-bezier(0.165, 0.84, 0.44, 1)";
+        window.requestAnimationFrame(() => {
+            openedChat.style.left = "0vh";
+        });
+    }
+
+    if (chats) {
+        chats.style.display = "block";
+        chats.style.transition = "left 100ms cubic-bezier(0.165, 0.84, 0.44, 1)";
+
+        window.requestAnimationFrame(() => {
+            chats.style.left = "30vh";
         });
 
+        window.setTimeout(() => {
+            chats.style.display = "none";
+            chats.style.left = "0";
+        }, 100);
+    }
+}
+
+async function openServiceMessageThread(contactData) {
+    try {
+        const chats = await postServiceRequest("GetWhatsappChats", {});
+        QB.Phone.Functions.LoadWhatsappChats(chats);
+
+        QB.Phone.Animations.TopSlideUp(PHONE_SELECTORS.appContainer, 400, -160);
+        QB.Phone.Functions.HeaderTextColor("white", 400);
+
+        await waitForDuration(400);
+
+        QB.Phone.Animations.TopSlideDown(PHONE_SELECTORS.appContainer, 400, 0);
         QB.Phone.Functions.ToggleApp("taxi", "none");
         QB.Phone.Functions.ToggleApp("whatsapp", "block");
         QB.Phone.Data.currentApplication = "whatsapp";
 
-        $.post(`https://${GetParentResourceName()}/GetWhatsappChat`, JSON.stringify({phone: contactData.number}), function(chat){
-            QB.Phone.Functions.SetupChatMessages(chat, {
-                name: contactData.name,
-                number: contactData.number
-            });
-
-            const composerInstance = $('#whatsapp-openedchat-message').data('emojioneArea');
-            const currentDraft = composerInstance && typeof composerInstance.getText === "function"
-                ? String(composerInstance.getText() ?? "").trim()
-                : String($("#whatsapp-openedchat-message").val() ?? "").trim();
-
-            if (contactData.template && currentDraft === "") {
-                if (composerInstance && typeof composerInstance.setText === "function") {
-                    composerInstance.setText(contactData.template);
-                } else {
-                    $("#whatsapp-openedchat-message").val(contactData.template);
-                }
-            }
+        const chat = await postServiceRequest("GetWhatsappChat", { phone: contactData.number });
+        QB.Phone.Functions.SetupChatMessages(chat, {
+            name: contactData.name,
+            number: contactData.number
         });
 
-        $('.whatsapp-openedchat-messages').animate({scrollTop: 9999}, 150);
-        $(".whatsapp-openedchat").css({"display":"block"});
-        $(".whatsapp-openedchat").css({left: 0+"vh"});
-        $(".whatsapp-chats").css({"display":"block"}).animate({left: 30+"vh"},100, function(){
-            $(".whatsapp-chats").css({"display":"none"});
-        });
-    }, 400);
+        if (contactData.template && getWhatsappDraftValue() === "") {
+            setWhatsappDraftValue(contactData.template);
+        }
+
+        revealWhatsappThread();
+    } catch (error) {
+        console.error(`Failed to open the service message thread for ${contactData.name} (${contactData.number}).`, error);
+    }
 }
 
-function startServiceCall(number, name) {
+async function startServiceCall(number, name) {
     if (!number) {
         return;
     }
 
     const cData = {
-        number: number,
-        name: name || number,
+        number,
+        name: name || number
     };
 
-    $.post(`https://${GetParentResourceName()}/CallContact`, JSON.stringify({
-        ContactData: cData,
-        Anonymous: QB.Phone.Data.AnonymousCall,
-    }), function(status){
+    try {
+        const status = await postServiceRequest("CallContact", {
+            ContactData: cData,
+            Anonymous: QB.Phone.Data.AnonymousCall
+        });
+
         if (cData.number !== QB.Phone.Data.PlayerData.charinfo.phone) {
             if (status.IsOnline) {
                 if (status.CanCall) {
                     if (!status.InCall) {
-                        $('.phone-new-box-body').fadeOut(350);
+                        const newCallBox = getElement(PHONE_SELECTORS.newCallBox);
+                        if (newCallBox) {
+                            newCallBox.style.transition = `opacity ${NEW_CALL_BOX_FADE_DURATION_MS}ms ease`;
+                            newCallBox.style.opacity = "0";
+
+                            window.setTimeout(() => {
+                                newCallBox.style.display = "none";
+                                newCallBox.style.opacity = "";
+                                newCallBox.style.transition = "";
+                            }, NEW_CALL_BOX_FADE_DURATION_MS);
+                        }
+
                         ClearInputNew();
-                        $(".phone-call-outgoing").css({"display":"none"});
-                        $(".phone-call-incoming").css({"display":"none"});
-                        $(".phone-call-ongoing").css({"display":"none"});
-                        $(".phone-call-outgoing-caller").text(cData.name);
+                        hideElements(".phone-call-outgoing, .phone-call-incoming, .phone-call-ongoing");
+                        setElementText(PHONE_SELECTORS.outgoingCaller, cData.name);
                         QB.Phone.Functions.HeaderTextColor("white", 400);
-                        QB.Phone.Animations.TopSlideUp('.phone-application-container', 400, -160);
-                        setTimeout(function(){
-                            $(".phone-app").css({"display":"none"});
-                            QB.Phone.Animations.TopSlideDown('.phone-application-container', 400, -160);
+                        QB.Phone.Animations.TopSlideUp(PHONE_SELECTORS.appContainer, 400, -160);
+
+                        window.setTimeout(() => {
+                            setElementDisplay(PHONE_SELECTORS.phoneApp, "none");
+                            QB.Phone.Animations.TopSlideDown(PHONE_SELECTORS.appContainer, 400, -160);
                             QB.Phone.Functions.ToggleApp("phone-call", "block");
-                            $(".phone-currentcall-container").css({"display":"block"});
-                            $("#incoming-answer").css({"display":"none"});
+                            setElementDisplay(PHONE_SELECTORS.currentCallContainer, "block");
+                            setElementDisplay(PHONE_SELECTORS.incomingAnswer, "none");
                         }, 450);
 
                         CallData.name = cData.name;
@@ -382,7 +539,9 @@ function startServiceCall(number, name) {
         } else {
             QB.Phone.Notifications.Add("fas fa-phone", "Phone", "You can't call yourself!");
         }
-    });
+    } catch (error) {
+        console.error(`Failed to start the service call for ${cData.name} (${cData.number}).`, error);
+    }
 }
 
 SetupTaxiDrivers = function(data) {
@@ -390,48 +549,56 @@ SetupTaxiDrivers = function(data) {
         if (b.Players.length !== a.Players.length) {
             return b.Players.length - a.Players.length;
         }
+
         return a.Label.localeCompare(b.Label);
     });
 
     updateServicesSummary(CurrentServicesData);
 
-    const filterStillExists = CurrentServicesFilter === "all" || CurrentServicesFilter === "available" || CurrentServicesData.some((service) => service.Job === CurrentServicesFilter);
-    if (!filterStillExists) {
+    if (!isCurrentServicesFilterAvailable(CurrentServicesData)) {
         CurrentServicesFilter = "all";
     }
 
     renderServicesFilters(CurrentServicesData);
     renderServicesDirectory();
-}
+};
 
-$(document).on('click', '.services-filter', function(e){
-    e.preventDefault();
-    CurrentServicesFilter = $(this).data('filter') || "all";
-    renderServicesFilters(CurrentServicesData);
-    renderServicesDirectory();
-});
-
-$(document).on('click', '.service-action-call', function(e){
-    e.preventDefault();
-    const number = sanitizeServicePhone($(this).data('number'));
-    const name = sanitizeServiceText($(this).data('name'), number);
-    startServiceCall(number, name);
-});
-
-$(document).on('click', '.service-action-message', function(e){
-    e.preventDefault();
-    const number = sanitizeServicePhone($(this).data('number'));
-    const displayName = sanitizeServiceText($(this).data('name'), number);
-    const label = sanitizeServiceText($(this).data('label'), "Service");
-    const template = sanitizeServiceText($(this).data('template'), "");
-
-    if (!number) {
+document.addEventListener("click", (event) => {
+    const filterButton = event.target.closest(".services-filter");
+    if (filterButton) {
+        event.preventDefault();
+        CurrentServicesFilter = filterButton.dataset.filter || "all";
+        renderServicesFilters(CurrentServicesData);
+        renderServicesDirectory();
         return;
     }
 
-    openServiceMessageThread({
-        number: number,
-        name: `${label} • ${displayName}`,
-        template: template
-    });
+    const callButton = event.target.closest(".service-action-call");
+    if (callButton) {
+        event.preventDefault();
+        const number = sanitizeServicePhone(callButton.dataset.number);
+        const name = sanitizeServiceText(callButton.dataset.name, number);
+        startServiceCall(number, name);
+        return;
+    }
+
+    const messageButton = event.target.closest(".service-action-message");
+    if (messageButton) {
+        event.preventDefault();
+
+        const number = sanitizeServicePhone(messageButton.dataset.number);
+        const displayName = sanitizeServiceText(messageButton.dataset.name, number);
+        const label = sanitizeServiceText(messageButton.dataset.label, "Service");
+        const template = sanitizeServiceText(messageButton.dataset.template, "");
+
+        if (!number) {
+            return;
+        }
+
+        openServiceMessageThread({
+            number,
+            name: `${label} • ${displayName}`,
+            template
+        });
+    }
 });

@@ -1,4 +1,6 @@
 .taxi-app {
+    --services-surface-rgb: 7, 16, 26;
+    --filter-bar-gradient: linear-gradient(180deg, rgba(var(--services-surface-rgb), 0.98) 0%, rgba(var(--services-surface-rgb), 0.96) 72%, rgba(var(--services-surface-rgb), 0) 100%);
     display: none;
     height: 100%;
     width: 100%;
@@ -11,6 +13,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    min-height: 0;
     padding: 2.2vh 1.1vw 1.3vh;
     box-sizing: border-box;
     gap: 1vh;
@@ -75,6 +78,15 @@
     letter-spacing: 0.02em;
 }
 
+.services-filter-bar {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    margin: -0.2vh -0.1vw 0;
+    padding: 0.2vh 0.1vw 0.45vh;
+    background: var(--filter-bar-gradient);
+}
+
 .services-filters {
     display: flex;
     gap: 0.5vh;
@@ -84,7 +96,7 @@
 }
 
 .services-filters::-webkit-scrollbar,
-.taxis-list::-webkit-scrollbar {
+.services-list::-webkit-scrollbar {
     display: none;
 }
 
@@ -108,13 +120,14 @@
     transform: translateY(-0.04vh);
 }
 
-.taxis-list {
+.services-list {
     flex: 1 1 auto;
+    min-height: 0;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 0.85vh;
-    padding-right: 0.15vw;
+    padding: 0.1vh 0.15vw 0 0;
 }
 
 .service-section {
