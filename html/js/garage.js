@@ -19,6 +19,13 @@
         sellPlateLabel: document.getElementById('garage-sellvehicle-plate-label'),
     };
 
+    const stateAliases = {
+        in: 'In',
+        stored: 'In',
+        out: 'Out',
+        impounded: 'Impounded',
+    };
+
     function getResourceName() {
         return typeof GetParentResourceName === 'function' ? GetParentResourceName() : 'qb-phone';
     }
@@ -61,20 +68,7 @@
 
     function normalizeVehicleState(value) {
         const normalized = typeof value === 'string' ? value.trim().toLowerCase() : '';
-
-        if (normalized === 'in' || normalized === 'stored') {
-            return 'In';
-        }
-
-        if (normalized === 'out') {
-            return 'Out';
-        }
-
-        if (normalized === 'impounded') {
-            return 'Impounded';
-        }
-
-        return 'Unknown';
+        return stateAliases[normalized] || 'Unknown';
     }
 
     function clampPercent(value) {
