@@ -560,24 +560,58 @@
     display: block;
 }
 
-#popup {
+/* ─── Full-screen image viewer overlay ─── */
+#image-viewer {
     display: none;
     position: absolute;
-    background: #00000074;
-    width:100%;
+    top: 0;
+    left: 0;
+    width: 100%;
     height: 100%;
+    background: rgba(0, 0, 0, 0.80);
     z-index: 1001;
+    cursor: pointer;
 }
 
-.popupclass {
+/* Centred card that holds the image */
+.image-viewer-frame {
     position: absolute;
-    transform: translate(-50%, -50%);
     top: 50%;
     left: 50%;
+    transform: translate(-50%, -50%);
     width: auto;
     height: auto;
-    box-shadow: 1px 1px 15px rgba(5, 5, 5, 0.83);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.7);
     z-index: 1002;
+    cursor: default;
+}
+
+/* The image itself */
+.image-viewer-img {
+    display: block;
+    max-width: 26vh;
+    max-height: 48vh;
+    border-radius: 0.8vh;
+    object-fit: contain;
+}
+
+/* Close (×) button positioned top-right of the card */
+#image-viewer-close {
+    position: absolute;
+    top: -1.4vh;
+    right: -1.4vh;
+    width: 2.8vh;
+    height: 2.8vh;
+    background: rgba(30, 30, 30, 0.85);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 1.2vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1003;
 }
 
 .emojionearea.emojionearea-inline {
@@ -733,3 +767,246 @@
     white-space: nowrap;
     border: 0;
 }
+
+/* ========================================
+   MODERN EMOJI PICKER STYLES
+======================================== */
+
+.whatsapp-emoji-trigger {
+    position: absolute;
+    left: 0.9vh;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 101;
+    width: 2.8vh;
+    height: 2.8vh;
+    border-radius: 50%;
+    background: transparent;
+    color: rgba(147, 197, 253, 0.82);
+    font-size: 1.25vh;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.whatsapp-emoji-trigger:hover {
+    background: rgba(96, 165, 250, 0.08);
+    color: #60a5fa;
+    transform: translateY(-50%) scale(1.08);
+}
+
+.whatsapp-emoji-picker {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    margin-bottom: 0.8vh;
+    width: 20.5vh;
+    max-height: 28vh;
+    background: linear-gradient(180deg, #0f1825 0%, #0a1220 100%);
+    border: 0.15vh solid rgba(96, 165, 250, 0.18);
+    border-radius: 1.35vh;
+    box-shadow: 0 1.2vh 2.8vh rgba(2, 8, 23, 0.55);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 200;
+    animation: emojiSlideUp 0.2s ease-out;
+}
+
+.whatsapp-emoji-picker.active {
+    display: flex;
+}
+
+@keyframes emojiSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(0.8vh);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.emoji-picker-header {
+    padding: 0.9vh;
+    border-bottom: 0.1vh solid rgba(96, 165, 250, 0.08);
+    flex-shrink: 0;
+}
+
+.emoji-search {
+    width: 100%;
+    padding: 0.75vh 1vh;
+    background: #101827;
+    border: 0.1vh solid rgba(96, 165, 250, 0.12);
+    border-radius: 0.85vh;
+    color: white;
+    font-size: 1.1vh;
+    outline: none;
+    transition: all 0.15s ease;
+}
+
+.emoji-search:focus {
+    border-color: rgba(96, 165, 250, 0.34);
+    box-shadow: 0 0 0 0.2vh rgba(37, 99, 235, 0.12);
+}
+
+.emoji-search::placeholder {
+    color: rgba(191, 219, 254, 0.46);
+}
+
+.emoji-picker-categories {
+    display: flex;
+    gap: 0.25vh;
+    padding: 0.8vh 0.65vh;
+    border-bottom: 0.1vh solid rgba(96, 165, 250, 0.08);
+    overflow-x: auto;
+    scrollbar-width: none;
+    flex-shrink: 0;
+}
+
+.emoji-picker-categories::-webkit-scrollbar {
+    display: none;
+}
+
+.emoji-picker-categories button {
+    min-width: 2.6vh;
+    height: 2.6vh;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0.75vh;
+    font-size: 1.5vh;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.emoji-picker-categories button:hover {
+    background: rgba(96, 165, 250, 0.12);
+    transform: scale(1.08);
+}
+
+.emoji-picker-categories button.active {
+    background: rgba(37, 99, 235, 0.25);
+}
+
+.emoji-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.35vh;
+    padding: 0.8vh;
+    overflow-y: auto;
+    max-height: 19vh;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(96, 165, 250, 0.22) transparent;
+}
+
+.emoji-picker-grid::-webkit-scrollbar {
+    width: 0.45vh;
+}
+
+.emoji-picker-grid::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.emoji-picker-grid::-webkit-scrollbar-thumb {
+    background: rgba(96, 165, 250, 0.22);
+    border-radius: 999vh;
+}
+
+.emoji-picker-grid::-webkit-scrollbar-thumb:hover {
+    background: rgba(96, 165, 250, 0.35);
+}
+
+.emoji-item {
+    width: 100%;
+    aspect-ratio: 1;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0.65vh;
+    font-size: 2vh;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.emoji-item:hover {
+    background: rgba(96, 165, 250, 0.15);
+    transform: scale(1.2);
+}
+
+.emoji-item:active {
+    transform: scale(1.05);
+}
+
+/* Enhanced message bubble animations */
+.whatsapp-openedchat-message {
+    animation: messageFadeIn 0.25s ease-out;
+}
+
+@keyframes messageFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(0.5vh);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Improved touch feedback */
+.whatsapp-icon-button:active,
+.whatsapp-emoji-trigger:active,
+#whatsapp-openedchat-send:active {
+    transform: scale(0.95);
+}
+
+/* Modern focus styles for accessibility */
+.whatsapp-emoji-trigger:focus-visible,
+.emoji-picker-categories button:focus-visible,
+.emoji-item:focus-visible {
+    outline: 0.2vh solid rgba(96, 165, 250, 0.6);
+    outline-offset: 0.15vh;
+}
+
+/* Performance optimization */
+.whatsapp-openedchat-messages,
+.emoji-picker-grid {
+    will-change: scroll-position;
+    contain: layout style paint;
+}
+
+/* Modern scrollbar for message container */
+.whatsapp-openedchat-messages:hover {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(96, 165, 250, 0.18) transparent;
+}
+
+.whatsapp-openedchat-messages::-webkit-scrollbar {
+    width: 0.5vh;
+    display: block;
+}
+
+.whatsapp-openedchat-messages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.whatsapp-openedchat-messages::-webkit-scrollbar-thumb {
+    background: rgba(96, 165, 250, 0.18);
+    border-radius: 999vh;
+}
+
+.whatsapp-openedchat-messages::-webkit-scrollbar-thumb:hover {
+    background: rgba(96, 165, 250, 0.32);
+}
+

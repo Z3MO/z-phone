@@ -437,14 +437,22 @@ end) RegisterKeyMapping('+decline', 'Decline Phone Call', 'keyboard', 'J')
 
 -- NUI Callbacks
 
-RegisterNUICallback('DissalowMoving', function()
-    if not Config.AllowWalking then return end
+RegisterNUICallback('DissalowMoving', function(_, cb)
+    if not Config.AllowWalking then
+        cb('ok')
+        return
+    end
     SetNuiFocusKeepInput(false)
+    cb('ok')
 end)
 
-RegisterNUICallback('AllowMoving', function()
-    if not Config.AllowWalking then return end
+RegisterNUICallback('AllowMoving', function(_, cb)
+    if not Config.AllowWalking then
+        cb('ok')
+        return
+    end
     SetNuiFocusKeepInput(true)
+    cb('ok')
 end)
 
 

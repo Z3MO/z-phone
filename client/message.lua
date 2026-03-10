@@ -103,7 +103,7 @@ RegisterNetEvent('qb-phone:client:UpdateMessages', function(ChatMessages, Sender
 
     if SenderNumber == PhoneData.PlayerData.charinfo.phone then return end
 
-    if New then
+    if New or not PhoneData.Chats[NumberKey] then
         PhoneData.Chats[NumberKey] = {
             name = name,
             number = SenderNumber,
