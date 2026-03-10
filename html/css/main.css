@@ -25,38 +25,18 @@ body {
     transform: translateY(100%);
     opacity: 0;
     filter: none;
-}
-
-body.dev-preview {
-    --dev-preview-screen-right-offset: 0.35vw;
-    --dev-preview-screen-bottom-offset: 0.75vh;
-    --dev-preview-power-button-bottom-offset: 42.65vh;
-}
-
-body.dev-preview .phone-frame {
-    right: 50%;
-    bottom: 50%;
-    transform: translate(50%, 50%);
-}
-
-body.dev-preview .phone-background {
-    right: calc(50% + var(--dev-preview-screen-right-offset));
-    bottom: calc(50% + var(--dev-preview-screen-bottom-offset));
-    transform: translate(50%, 50%);
-}
-
-body.dev-preview #phone-side-button-power {
-    right: 50%;
-    bottom: calc(50% + var(--dev-preview-power-button-bottom-offset));
-    transform: translate(50%, 50%);
+    --phone-frame-width: 16.5vw;
+    --phone-frame-height: 59vh;
+    --phone-frame-right: 1.25vw;
+    --phone-frame-bottom: 3.25vh;
 }
 
 .phone-frame {
     position: absolute;
-    width: 16.5vw;
-    height: 59vh;
-    bottom: 3.25vh;
-    right: 1.25vw;
+    width: var(--phone-frame-width);
+    height: var(--phone-frame-height);
+    bottom: var(--phone-frame-bottom);
+    right: var(--phone-frame-right);
     z-index: 150;
     pointer-events: none;
 }
@@ -65,18 +45,18 @@ body.dev-preview #phone-side-button-power {
     position: absolute;
     width: 1.5vw;
     height: 4.6vh;
-    bottom: 45.9vh;
-    right: 1.25vw;
+    bottom: calc(var(--phone-frame-bottom) + (var(--phone-frame-height) * 470 / 650));
+    right: var(--phone-frame-right);
     z-index: 160;
     cursor: pointer;
 }
 
 .phone-background {
     position: absolute;
-    width: 15.8vw; /*265.00399999999996px*/
-    height: 57.5vh; /*479.61px*/
-    bottom: 4vh;
-    right: 1.6vw;
+    width: calc(var(--phone-frame-width) * 308 / 330);
+    height: calc(var(--phone-frame-height) * 636 / 650);
+    bottom: calc(var(--phone-frame-bottom) + (var(--phone-frame-height) * 7 / 650));
+    right: calc(var(--phone-frame-right) + (var(--phone-frame-width) * 11 / 330));
     overflow: hidden;
     background-size: cover;
     border-radius: 3vh;
