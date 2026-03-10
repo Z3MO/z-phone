@@ -27,6 +27,12 @@ body {
     filter: none;
 }
 
+body.dev-preview {
+    --dev-preview-screen-right-offset: 0.35vw;
+    --dev-preview-screen-bottom-offset: 0.75vh;
+    --dev-preview-power-button-bottom-offset: 42.65vh;
+}
+
 body.dev-preview .phone-frame {
     right: 50%;
     bottom: 50%;
@@ -34,14 +40,14 @@ body.dev-preview .phone-frame {
 }
 
 body.dev-preview .phone-background {
-    right: calc(50% + 0.35vw);
-    bottom: calc(50% + 0.75vh);
+    right: calc(50% + var(--dev-preview-screen-right-offset));
+    bottom: calc(50% + var(--dev-preview-screen-bottom-offset));
     transform: translate(50%, 50%);
 }
 
 body.dev-preview #phone-side-button-power {
     right: 50%;
-    bottom: calc(50% + 42.65vh);
+    bottom: calc(50% + var(--dev-preview-power-button-bottom-offset));
     transform: translate(50%, 50%);
 }
 
