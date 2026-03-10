@@ -27,6 +27,24 @@ body {
     filter: none;
 }
 
+body.dev-preview .phone-frame {
+    right: 50%;
+    bottom: 50%;
+    transform: translate(50%, 50%);
+}
+
+body.dev-preview .phone-background {
+    right: calc(50% + 0.35vw);
+    bottom: calc(50% + 0.75vh);
+    transform: translate(50%, 50%);
+}
+
+body.dev-preview #phone-side-button-power {
+    right: 50%;
+    bottom: calc(50% + 42.65vh);
+    transform: translate(50%, 50%);
+}
+
 .phone-frame {
     position: absolute;
     width: 16.5vw;

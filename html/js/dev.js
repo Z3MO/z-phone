@@ -1165,6 +1165,8 @@
             return;
         }
 
+        document.body.classList.add("dev-preview");
+
         const badge = document.createElement("div");
         const title = document.createElement("div");
         const actions = document.createElement("div");
