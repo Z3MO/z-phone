@@ -23,7 +23,7 @@ PhoneSanitizeText = function(value) {
 
 function formatPhoneFullName(charInfo) {
     var SafeCharInfo = charInfo || {};
-    return PhoneSanitizeText(((SafeCharInfo.firstname || "") + " " + (SafeCharInfo.lastname || "")).trim()) || "My contact";
+    return PhoneSanitizeText(((SafeCharInfo.firstname || "") + " " + (SafeCharInfo.lastname || "")).trim()) || "My Contact";
 }
 
 QB.Phone.Functions.SwitchPhoneTab = function(tabName) {

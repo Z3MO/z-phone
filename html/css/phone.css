@@ -286,6 +286,7 @@
 }
 
 .phone-contacts {
+    --phone-contacts-tools-height: 12.3vh;
     display: block;
     position: absolute;
     height: 62%;
@@ -391,7 +392,7 @@
 
 .phone-contacts-header {
     position: absolute;
-    top: 12.3vh;
+    top: var(--phone-contacts-tools-height);
     height: 4vh;
     width: 100%;
     z-index: 2;
@@ -444,7 +445,7 @@
 .phone-contact-list {
     position: absolute;
     height: 85%;
-    top: 16.8vh;
+    top: calc(var(--phone-contacts-tools-height) + 4.5vh);
     width: 100%;
     margin: 0 auto;
     left: 0;
