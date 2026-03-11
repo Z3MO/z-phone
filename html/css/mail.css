@@ -335,11 +335,14 @@
 .mail-action-button {
     width: 100%;
     padding: 1vh;
+    appearance: none;
+    border: none;
     border-radius: 1.2vh;
     text-align: center;
     font-weight: 600;
     font-size: 1.3vh;
     cursor: pointer;
+    font-family: inherit;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;

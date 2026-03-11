@@ -1,4 +1,6 @@
 window.ZPhoneUI = (function () {
+    const imageFileExtensionRegex = /\.(?:jpg|jpeg|gif|png|webp)(?:\?.*)?$/i;
+
     function getResourceName() {
         if (typeof window.GetParentResourceName === "function") {
             return window.GetParentResourceName();
@@ -31,6 +33,52 @@ window.ZPhoneUI = (function () {
         }).then(parseResponse);
     }
 
+    function sanitizeText(value) {
+        if (typeof window.DOMPurify !== "undefined") {
+            return window.DOMPurify.sanitize(String(value ?? ""), {
+                ALLOWED_TAGS: [],
+                ALLOWED_ATTR: []
+            }).trim();
+        }
+
+        const container = document.createElement("div");
+        container.innerHTML = String(value ?? "");
+        return (container.textContent || "").trim();
+    }
+
+    function sanitizeImageUrl(urlValue) {
+        const rawUrl = Array.isArray(urlValue) ? urlValue[0] : urlValue;
+        if (typeof rawUrl !== "string") {
+            return null;
+        }
+
+        const trimmedUrl = rawUrl.trim();
+        if (trimmedUrl === "" || !imageFileExtensionRegex.test(trimmedUrl)) {
+            return null;
+        }
+
+        try {
+            const normalizedUrl = trimmedUrl.startsWith("www.") ? `https://${trimmedUrl}` : trimmedUrl;
+            const parsedUrl = new URL(normalizedUrl, window.location.href);
+            const urlString = parsedUrl.href.toLowerCase();
+
+            if ((parsedUrl.protocol !== "http:" && parsedUrl.protocol !== "https:")
+                || urlString.includes("javascript:")
+                || urlString.includes("data:")
+                || urlString.includes("vbscript:")
+                || urlString.includes("file:")
+                || urlString.includes("<script")
+                || urlString.includes("onerror=")
+                || urlString.includes("onload=")) {
+                return null;
+            }
+
+            return parsedUrl.href;
+        } catch (error) {
+            return null;
+        }
+    }
+
     function initTooltips() {
         if (!window.bootstrap || !window.bootstrap.Tooltip) {
             return;
@@ -44,6 +92,8 @@ window.ZPhoneUI = (function () {
     return {
         getResourceName: getResourceName,
         postNui: postNui,
+        sanitizeImageUrl: sanitizeImageUrl,
+        sanitizeText: sanitizeText,
         initTooltips: initTooltips
     };
 }());

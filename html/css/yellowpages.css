@@ -77,6 +77,28 @@
     display: none;
 }
 
+.proxi-empty-state {
+    width: 90%;
+    margin: 4vh auto 0;
+    padding: 2.5vh 2vh;
+    border-radius: 1.4vh;
+    background: rgba(37, 42, 48, 0.9);
+    color: #fff;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.proxi-empty-state-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.6vh;
+}
+
+.proxi-empty-state-text {
+    font-size: 0.86rem;
+    color: rgba(255, 255, 255, 0.72);
+}
+
 /*Proxi Postings */
 .proxi {
     position: relative;
@@ -121,6 +143,17 @@
     overflow-wrap: break-word;
     word-wrap: break-word;
     cursor: pointer;
+}
+
+.proxi-preview-image {
+    display: none;
+    position: relative;
+    width: 13vw;
+    height: 12vh;
+    bottom: 4vh;
+    margin: 0 auto;
+    border-radius: 1vh;
+    object-fit: cover;
 }
 
 .proxi-trash {
