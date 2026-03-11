@@ -549,9 +549,12 @@
                     <div class="ping-app">
                         <img class="imagepingapp" src="img/map.png">
                         <div class="ping-header">
-                            <div class="ping-input-label">Send a location ping to a nearby player ID</div>
-                            <input class="ping-menu-text ierplol" id="ping-target-id" type="number" min="1" max="9999" inputmode="numeric" placeholder="Player ID" aria-label="Player ID"><i class="fa-solid fa-id-card-clip" id="ping-menu-icon"></i>
-                            <button type="button" id="ping-send" class="ping-sender-piinger"><i class="fa-solid fa-map-pin"></i>Send Ping</button>
+                            <label class="ping-input-label" id="ping-input-label" for="ping-target-id">Send a location ping to a nearby player ID</label>
+                            <div class="ping-input-field">
+                                <i class="fa-solid fa-id-card-clip" id="ping-menu-icon"></i>
+                                <input class="ping-menu-text ping-target-input" id="ping-target-id" type="number" min="1" max="9999" inputmode="numeric" placeholder="Player ID">
+                            </div>
+                            <button type="button" id="ping-send" class="ping-send-button"><i class="fa-solid fa-map-pin"></i>Send Ping</button>
                         </div>
                     </div>
                     <!-- End Ping App -->

@@ -1,6 +1,7 @@
 (function () {
     const pingButton = document.getElementById("ping-send");
     const pingInput = document.getElementById("ping-target-id");
+    const maxPlayerId = Number.parseInt(pingInput?.max, 10) || 9999;
 
     if (!pingButton || !pingInput) {
         return;
@@ -13,7 +14,7 @@
 
         const targetId = Number.parseInt(pingInput.value, 10);
 
-        if (!Number.isInteger(targetId) || targetId < 1) {
+        if (!Number.isInteger(targetId) || targetId < 1 || targetId > maxPlayerId) {
             pingInput.focus();
             return;
         }
