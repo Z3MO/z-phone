@@ -21,6 +21,11 @@ PhoneSanitizeText = function(value) {
     return String(value ?? "").trim();
 }
 
+function formatPhoneFullName(charInfo) {
+    var SafeCharInfo = charInfo || {};
+    return PhoneSanitizeText(((SafeCharInfo.firstname || "") + " " + (SafeCharInfo.lastname || "")).trim()) || "My contact";
+}
+
 QB.Phone.Functions.SwitchPhoneTab = function(tabName) {
     if (!tabName || tabName === CurrentFooterTab) {
         return;
@@ -42,7 +47,7 @@ QB.Phone.Functions.SwitchPhoneTab = function(tabName) {
 QB.Phone.Functions.UpdateOwnContactCard = function() {
     var PlayerData = QB.Phone.Data.PlayerData || {};
     var CharInfo = PlayerData.charinfo || {};
-    var FullName = PhoneSanitizeText(((CharInfo.firstname || "") + " " + (CharInfo.lastname || "")).trim()) || "My contact";
+    var FullName = formatPhoneFullName(CharInfo);
     var PhoneNumber = PhoneSanitizeText(CharInfo.phone || "Unavailable") || "Unavailable";
 
     $(".phone-own-contact-name").text(FullName);
