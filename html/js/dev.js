@@ -710,6 +710,7 @@
             case "gps-vehicle-garage":
             case "sellVehicle":
             case "SetHouseLocation":
+            case "GiveContactDetails":
             case "AnswerCall":
             case "CancelOutgoingCall":
             case "DenyIncomingCall":

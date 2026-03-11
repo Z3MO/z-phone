@@ -622,6 +622,11 @@ RegisterNUICallback('DeleteContact', function(data, cb)
     TriggerServerEvent('qb-phone:server:RemoveContact', Name, Number)
 end)
 
+RegisterNUICallback('GiveContactDetails', function(_, cb)
+    TriggerEvent('qb-phone:client:GiveContactDetails')
+    cb("ok")
+end)
+
 RegisterNUICallback('ClearGeneralAlerts', function(data, cb)
     SetTimeout(400, function()
         Config.PhoneApplications[data.app].Alerts = 0

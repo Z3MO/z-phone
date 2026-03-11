@@ -293,11 +293,108 @@
     top: 23%;
 }
 
-.phone-contacts-header {
+.phone-contacts-tools {
     position: absolute;
     top: 0;
+    left: 0;
+    width: 100%;
+    padding: 0 1.2vh;
+    z-index: 4;
+}
+
+.phone-own-contact-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1vh;
+    min-height: 8vh;
+    padding: 1.2vh 1.4vh;
+    border-radius: 1.6vh;
+    background: linear-gradient(135deg, rgba(45, 105, 255, 0.28), rgba(40, 48, 72, 0.82));
+    border: 0.1vh solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 1.2vh 3vh rgba(0, 0, 0, 0.18);
+}
+
+.phone-own-contact-copy {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.phone-own-contact-label {
+    font-size: 0.65vw;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.68);
+}
+
+.phone-own-contact-name {
+    margin-top: 0.25vh;
+    font-size: 0.95vw;
+    font-weight: 700;
+    color: white;
+}
+
+.phone-own-contact-number {
+    margin-top: 0.25vh;
+    font-size: 0.8vw;
+    color: rgba(255, 255, 255, 0.86);
+}
+
+.phone-own-contact-share {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6vh;
+    border: none;
+    border-radius: 999vh;
+    padding: 0.9vh 1.25vh;
+    background: rgba(255, 255, 255, 0.14);
+    color: white;
+    font-size: 0.72vw;
+    font-weight: 700;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.phone-own-contact-share:hover {
+    background: rgba(255, 255, 255, 0.22);
+    transform: translateY(-0.1vh);
+}
+
+.phone-call-shortcuts {
+    display: flex;
+    gap: 0.8vh;
+    margin-top: 1vh;
+}
+
+.phone-call-shortcut {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6vh;
+    flex: 1;
+    min-height: 3.8vh;
+    border: none;
+    border-radius: 1.2vh;
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 0.72vw;
+    font-weight: 600;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.phone-call-shortcut:hover {
+    background: rgba(30, 144, 255, 0.18);
+    color: white;
+}
+
+.phone-contacts-header {
+    position: absolute;
+    top: 12.3vh;
     height: 4vh;
     width: 100%;
+    z-index: 2;
 }
 
 #contact-search {
@@ -347,13 +444,14 @@
 .phone-contact-list {
     position: absolute;
     height: 85%;
-    top: 4.5vh;
+    top: 16.8vh;
     width: 100%;
     margin: 0 auto;
     left: 0;
     right: 0;
     overflow-y: scroll;
     overflow-x: hidden;
+    z-index: 1;
 }
 
 .phone-contact {
@@ -437,11 +535,93 @@
 }
 
 .phone-recent-header {
-    padding-top: 5vh;
-    font-size:1.6vw;
-    font-weight: 600;
+    padding: 5vh 1.4vh 0;
+    text-align: left;
     color: white;
-    text-align: center;
+}
+
+.phone-recent-header p {
+    margin: 0;
+    font-size: 1.45vw;
+    font-weight: 600;
+}
+
+.phone-recent-header span {
+    display: block;
+    margin-top: 0.4vh;
+    font-size: 0.72vw;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.phone-recent-quickcalls {
+    position: absolute;
+    top: 14%;
+    left: 0;
+    width: 100%;
+    padding: 0 1.2vh;
+}
+
+.phone-recent-section-title {
+    margin-bottom: 0.8vh;
+    font-size: 0.72vw;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.58);
+}
+
+.phone-recent-favorites {
+    display: flex;
+    gap: 0.8vh;
+    overflow-x: auto;
+    padding-bottom: 0.2vh;
+}
+
+.phone-recent-favorites::-webkit-scrollbar {
+    display: none;
+}
+
+.phone-recent-favorite {
+    min-width: 8.5vh;
+    padding: 1.1vh 1vh;
+    border-radius: 1.4vh;
+    background: rgba(255, 255, 255, 0.06);
+    border: 0.1vh solid rgba(255, 255, 255, 0.05);
+    color: white;
+    box-shadow: rgba(0, 0, 0, 0.14) 0 0.8vh 2vh 0;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.phone-recent-favorite:hover {
+    background: rgba(46, 204, 113, 0.16);
+    transform: translateY(-0.1vh);
+}
+
+.phone-recent-favorite-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.2vh;
+    height: 3.2vh;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    font-size: 0.9vw;
+    font-weight: 700;
+}
+
+.phone-recent-favorite-name {
+    margin-top: 0.8vh;
+    font-size: 0.74vw;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.phone-recent-favorite-number {
+    margin-top: 0.2vh;
+    font-size: 0.62vw;
+    color: rgba(255, 255, 255, 0.68);
 }
 
 .phone-recent-calls::-webkit-scrollbar {
@@ -451,11 +631,11 @@
 .phone-recent-calls {
     position: absolute;
     width: 100%;
-    height: 65%;
+    height: 47%;
     margin: 0 auto;
     left: 0;
     right: 0;
-    top: 20%;
+    top: 34%;
     overflow-x: hidden;
     overflow-y: scroll;
 }
@@ -492,28 +672,61 @@
 
 .phone-recent-call-name {
     position: absolute;
-    top: 1.1vh;
+    top: 1vh;
     left: 6vh;
     color: white;
     font-size: 0.8vw;
     font-weight: 600;
 }
 
+.phone-recent-call-number {
+    position: absolute;
+    top: 2.95vh;
+    left: 6vh;
+    font-size: 0.62vw;
+    color: rgba(255, 255, 255, 0.64);
+}
+
 .phone-recent-call-type {
     position: absolute;
-    bottom: 1.1vh;
+    bottom: 1.15vh;
     left: 6vh;
     font-size: 0.6vw;
     color: rgba(54, 54, 54, 0.808);
 }
 
+.phone-recent-call-label {
+    margin-left: 0.45vh;
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.58vw;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
 .phone-recent-call-time {
     position: absolute;
-    bottom: 1.1vh;
+    top: 1.15vh;
     right: 1.75vh;
-    font-size: 0.8vw;
+    font-size: 0.72vw;
     font-weight: 600;
     color: white;
+}
+
+.phone-recent-empty,
+.phone-suggested-empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 10vh;
+    margin: 0 1.2vh;
+    padding: 1.6vh;
+    border-radius: 1.4vh;
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(255, 255, 255, 0.65);
+    text-align: center;
+    font-size: 0.75vw;
+    line-height: 1.5;
 }
 
 /* Suggested Contact */

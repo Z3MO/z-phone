@@ -203,6 +203,33 @@
                         </div>
 
                         <div class="phone-contacts">
+                            <div class="phone-contacts-tools">
+                                <div class="phone-own-contact-card">
+                                    <div class="phone-own-contact-copy">
+                                        <span class="phone-own-contact-label">My contact card</span>
+                                        <strong class="phone-own-contact-name">Loading...</strong>
+                                        <span class="phone-own-contact-number">000000</span>
+                                    </div>
+                                    <button type="button" class="phone-own-contact-share" id="phone-share-nearby-contact">
+                                        <i class="fa-solid fa-share-nodes"></i>
+                                        <span>Share nearby</span>
+                                    </button>
+                                </div>
+                                <div class="phone-call-shortcuts">
+                                    <button type="button" class="phone-call-shortcut" data-phonequicktab="recent">
+                                        <i class="fa-solid fa-clock-rotate-left"></i>
+                                        <span>Recent</span>
+                                    </button>
+                                    <button type="button" class="phone-call-shortcut" data-phonequicktab="suggestedcontacts">
+                                        <i class="fa-solid fa-user-plus"></i>
+                                        <span>Suggested</span>
+                                    </button>
+                                    <button type="button" class="phone-call-shortcut" data-phonequicktab="keypad">
+                                        <i class="fa-solid fa-keyboard"></i>
+                                        <span>Keypad</span>
+                                    </button>
+                                </div>
+                            </div>
                             <div class="phone-contacts-header">
                                 <input type="text" id="contact-search" placeholder="Contact name" spellcheck="false">
                                 <i id="phone-search-icon" class="fa-solid fa-magnifying-glass"></i>
@@ -214,7 +241,15 @@
                         </div>
 
                         <div class="phone-recent">
-                            <div class="phone-recent-header"><p>Call History</p></div>
+                            <div class="phone-recent-header">
+                                <p>Call History</p>
+                                <span>Tap a card to call someone back fast.</span>
+                            </div>
+
+                            <div class="phone-recent-quickcalls">
+                                <div class="phone-recent-section-title">Quick redial</div>
+                                <div class="phone-recent-favorites"></div>
+                            </div>
 
                             <div class="phone-recent-calls">
                                 <div class="phone-recent-call"> <div class="phone-recent-call-image">P</div> <div class="phone-recent-call-name">Pieter Post</div> <div class="phone-recent-call-type"><i class="fa-solid fa-phone-slash"></i></div> <div class="phone-recent-call-time">12:05</div> </div>

@@ -6,28 +6,123 @@ var SelectedSuggestion = null;
 var AmountOfSuggestions = 0;
 var keyPadHTML;
 
+PhoneSanitizeText = function(value) {
+    if (window.ZPhoneUI && typeof window.ZPhoneUI.sanitizeText === "function") {
+        return window.ZPhoneUI.sanitizeText(value);
+    }
+
+    if (typeof DOMPurify !== "undefined") {
+        return DOMPurify.sanitize(String(value ?? ""), {
+            ALLOWED_TAGS: [],
+            ALLOWED_ATTR: []
+        }).trim();
+    }
+
+    return String(value ?? "").trim();
+}
+
+QB.Phone.Functions.SwitchPhoneTab = function(tabName) {
+    if (!tabName || tabName === CurrentFooterTab) {
+        return;
+    }
+
+    $('.phone-app-footer').find('[data-phonefootertab="'+CurrentFooterTab+'"]').removeClass('phone-selected-footer-tab');
+    $('.phone-app-footer').find('[data-phonefootertab="'+tabName+'"]').addClass('phone-selected-footer-tab');
+
+    $(".phone-"+CurrentFooterTab).hide();
+    $(".phone-"+tabName).show();
+
+    if (tabName == "recent" || tabName == "suggestedcontacts") {
+        $.post(`https://${GetParentResourceName()}/ClearRecentAlerts`);
+    }
+
+    CurrentFooterTab = tabName;
+};
+
+QB.Phone.Functions.UpdateOwnContactCard = function() {
+    var PlayerData = QB.Phone.Data.PlayerData || {};
+    var CharInfo = PlayerData.charinfo || {};
+    var FullName = PhoneSanitizeText(((CharInfo.firstname || "") + " " + (CharInfo.lastname || "")).trim()) || "My contact";
+    var PhoneNumber = PhoneSanitizeText(CharInfo.phone || "Unavailable") || "Unavailable";
+
+    $(".phone-own-contact-name").text(FullName);
+    $(".phone-own-contact-number").text(PhoneNumber);
+};
+
+var PhoneCallLabels = {
+    outgoing: "Outgoing",
+    incoming: "Incoming",
+    missed: "Missed"
+};
+
+var PhoneCallIcons = {
+    outgoing: 'fas fa-phone-volume',
+    incoming: 'fas fa-phone-arrow-down-left',
+    missed: 'fas fa-phone-slash'
+};
+
+var PhoneCallColors = {
+    outgoing: "#2ecc71",
+    incoming: "#5dade2",
+    missed: "#e74c3c"
+};
+
+function buildQuickCallList(recentcalls) {
+    var quickCalls = [];
+    var seenNumbers = {};
+
+    $.each((recentcalls || []).slice().reverse(), function(_, recentCall) {
+        var phoneNumber = String(recentCall.number || "");
+        if (!phoneNumber || seenNumbers[phoneNumber]) {
+            return;
+        }
+
+        seenNumbers[phoneNumber] = true;
+        quickCalls.push(recentCall);
+    });
+
+    return quickCalls.slice(0, 3);
+}
+
+function renderQuickCallFavorites(recentcalls) {
+    var FavoritesObject = $(".phone-recent-favorites");
+    FavoritesObject.html("");
+
+    var QuickCalls = buildQuickCallList(recentcalls);
+    if (QuickCalls.length === 0) {
+        FavoritesObject.append('<div class="phone-recent-empty">No recent calls yet. Start a call and your quick redial list will appear here.</div>');
+        return;
+    }
+
+    $.each(QuickCalls, function(index, recentCall) {
+        var callerName = PhoneSanitizeText(recentCall.anonymous ? "Anonymous" : recentCall.name || recentCall.number || "Unknown");
+        var phoneNumber = PhoneSanitizeText(recentCall.number || "");
+        var avatarLetter = callerName.charAt(0).toUpperCase() || "#";
+        var element = '<div class="phone-recent-favorite" id="recent-favorite-'+index+'"><div class="phone-recent-favorite-avatar">'+avatarLetter+'</div><div class="phone-recent-favorite-name">'+callerName+'</div><div class="phone-recent-favorite-number">'+phoneNumber+'</div></div>';
+
+        FavoritesObject.append(element);
+        $("#recent-favorite-"+index).data('recentData', recentCall);
+    });
+}
+
 $(document).on('click', '.phone-app-footer-button', function(e){
     e.preventDefault();
 
     var PressedFooterTab = $(this).data('phonefootertab');
+    QB.Phone.Functions.SwitchPhoneTab(PressedFooterTab);
+});
 
-    if (PressedFooterTab !== CurrentFooterTab) {
-        var PreviousTab = $(this).parent().find('[data-phonefootertab="'+CurrentFooterTab+'"');
+$(document).on('click', '.phone-call-shortcut', function(e){
+    e.preventDefault();
+    QB.Phone.Functions.SwitchPhoneTab($(this).data('phonequicktab'));
+});
 
-        $('.phone-app-footer').find('[data-phonefootertab="'+CurrentFooterTab+'"').removeClass('phone-selected-footer-tab');
-        $(this).addClass('phone-selected-footer-tab');
+$(document).on('click', '#phone-share-nearby-contact', function(e){
+    e.preventDefault();
 
-        $(".phone-"+CurrentFooterTab).hide();
-        $(".phone-"+PressedFooterTab).show();
-
-        if (PressedFooterTab == "recent") {
-            $.post(`https://${GetParentResourceName()}/ClearRecentAlerts`);
-        } else if (PressedFooterTab == "suggestedcontacts") {
-            $.post(`https://${GetParentResourceName()}/ClearRecentAlerts`);
-        }
-
-        CurrentFooterTab = PressedFooterTab;
-    }
+    $.post(`https://${GetParentResourceName()}/GiveContactDetails`, JSON.stringify({}), function() {
+        QB.Phone.Notifications.Add("fas fa-address-card", "Contacts", "Your contact card was shared with the nearest person.", "#4ade80", 2500);
+    });
 });
 
 $(document).on("click", "#phone-search-icon", function(e){
@@ -59,27 +154,49 @@ $(document).on("click", "#phone-search-icon", function(e){
 
 QB.Phone.Functions.SetupRecentCalls = function(recentcalls) {
     $(".phone-recent-calls").html("");
+    renderQuickCallFavorites(recentcalls);
+
+    if (!recentcalls || recentcalls.length === 0) {
+        $(".phone-recent-calls").append('<div class="phone-recent-empty">No recent calls yet. Your missed, incoming, and outgoing calls will show up here.</div>');
+        return;
+    }
 
     recentcalls = recentcalls.reverse();
 
     $.each(recentcalls, function(i, recentCall){
-        var FirstLetter = (recentCall.name).charAt(0);
-        var TypeIcon = 'fas fa-phone-slash';
-        var IconStyle = "color: #e74c3c;";
-        if (recentCall.type === "outgoing") {
-            TypeIcon = 'fas fa-phone-volume';
-            var IconStyle = "color: #2ecc71;";
+        var callerName = PhoneSanitizeText(recentCall.name || recentCall.number || "Unknown");
+        if (callerName === "") {
+            callerName = "Unknown";
         }
+        var phoneNumber = PhoneSanitizeText(recentCall.number || "");
+        var FirstLetter = callerName.charAt(0).toUpperCase();
+        var TypeIcon = PhoneCallIcons[recentCall.type] || PhoneCallIcons.missed;
+        var IconStyle = "color: " + (PhoneCallColors[recentCall.type] || PhoneCallColors.missed) + ";";
+        var TypeLabel = PhoneCallLabels[recentCall.type] || "Recent";
         if (recentCall.anonymous) {
             FirstLetter = "A";
-            recentCall.name = "Anonymous";
+            callerName = "Anonymous";
         }
-        var elem = '<div class="phone-recent-call" id="recent-'+i+'"><div class="phone-recent-call-image">'+FirstLetter+'</div> <div class="phone-recent-call-name">'+recentCall.name+'</div> <div class="phone-recent-call-type"><i class="'+TypeIcon+'" style="'+IconStyle+'"></i></div> <div class="phone-recent-call-time">'+recentCall.time+'</div> </div>'
+        var elem = '<div class="phone-recent-call" id="recent-'+i+'"><div class="phone-recent-call-image">'+FirstLetter+'</div><div class="phone-recent-call-name">'+callerName+'</div><div class="phone-recent-call-number">'+phoneNumber+'</div><div class="phone-recent-call-type"><i class="'+TypeIcon+'" style="'+IconStyle+'"></i><span class="phone-recent-call-label">'+TypeLabel+'</span></div><div class="phone-recent-call-time">'+PhoneSanitizeText(recentCall.time || "")+'</div></div>';
 
         $(".phone-recent-calls").append(elem);
         $("#recent-"+i).data('recentData', recentCall);
     });
 }
+
+$(document).on('click', '.phone-recent-favorite', function(e){
+    e.preventDefault();
+
+    var RecentData = $(this).data('recentData');
+    if (!RecentData) {
+        return;
+    }
+
+    SetupCall({
+        number: RecentData.number,
+        name: RecentData.name
+    });
+});
 
 $(document).on('click', '.phone-recent-call', function(e){
     e.preventDefault();
@@ -188,6 +305,7 @@ QB.Phone.Functions.LoadContacts = function(myContacts) {
     $(ContactsObject).html("");
     var TotalContacts = 0;
 
+    QB.Phone.Functions.UpdateOwnContactCard();
     $(".phone-contacts").hide();
     $(".phone-recent").hide();
     $(".phone-keypad").hide();
@@ -663,18 +781,22 @@ QB.Phone.Functions.AnswerCall = function(CallData) {
 }
 
 QB.Phone.Functions.SetupSuggestedContacts = function(Suggested) {
+    Suggested = Suggested || [];
     $(".suggested-contacts").html("");
     AmountOfSuggestions = Suggested.length;
     if (AmountOfSuggestions > 0) {
         $(".amount-of-suggested-contacts").html(AmountOfSuggestions + " contacts");
         Suggested = Suggested.reverse();
         $.each(Suggested, function(index, suggest){
-            var elem = '<div class="suggested-contact" id="suggest-'+index+'"> <i class="fas fa-exclamation-circle"></i> <span class="suggested-name">'+suggest.name[0]+' '+suggest.name[1]+' &middot; <span class="suggested-number">'+suggest.number+'</span></span> </div>';
+            var suggestedName = PhoneSanitizeText((suggest.name[0] || "") + ' ' + (suggest.name[1] || ""));
+            var suggestedNumber = PhoneSanitizeText(suggest.number || "");
+            var elem = '<div class="suggested-contact" id="suggest-'+index+'"> <i class="fas fa-exclamation-circle"></i> <span class="suggested-name">'+suggestedName+' &middot; <span class="suggested-number">'+suggestedNumber+'</span></span> </div>';
             $(".suggested-contacts").append(elem);
             $("#suggest-"+index).data('SuggestionData', suggest);
         });
     } else {
         $(".amount-of-suggested-contacts").html("0 contacts");
+        $(".suggested-contacts").append('<div class="phone-suggested-empty">Nearby players can share their contact card with you. New suggestions will appear here.</div>');
     }
 }
 
