@@ -1,3 +1,7 @@
 function setUpCameraApp(url){
-    $('.phone-tab-button').click();
+    const homeButton = document.querySelector('.phone-tab-button');
+
+    if (homeButton) {
+        homeButton.click();
+    }
 }

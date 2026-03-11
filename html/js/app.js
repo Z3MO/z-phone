@@ -188,7 +188,7 @@ QB.Phone.Functions.SetupApplications = function(data) {
     // Update widgets with real-time data
     QB.Phone.Functions.UpdateWidgets();
 
-    $('[data-toggle="tooltip"]').tooltip();
+    ZPhoneUI.initTooltips();
 }
 
 QB.Phone.Functions.CreateHomePage = function(apps, dockApps) {
@@ -580,7 +580,10 @@ QB.Phone.Functions.CloseApplication = function() {
 }
 
 QB.Phone.Functions.HeaderTextColor = function(newColor, Timeout) {
-    $(".phone-header").animate({color: newColor}, Timeout);
+    document.querySelectorAll(".phone-header").forEach(function (header) {
+        header.style.transition = `color ${Timeout}ms ease`;
+        header.style.color = newColor;
+    });
 }
 
 QB.Phone.Animations.BottomSlideUp = function(Object, Timeout, Percentage) {

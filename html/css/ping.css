@@ -12,60 +12,80 @@
 
 .ping-header {
     position: absolute;
-    top: 45%;
+    top: 38%;
     width: 90%;
     left: 0;
     right: 0;
     margin: 0 auto;
 }
 
+.ping-input-label {
+    margin-bottom: 1.2vh;
+    color: #fff;
+    font-size: 1.15vh;
+    font-weight: 600;
+    text-align: center;
+    text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
+}
+
 .ping-sender-piinger{
     position: absolute;
-    font-size: 1vw;
+    appearance: none;
+    font-size: 1.3vh;
     font-weight: 500;
     width: 50%;
     left: 0;
     right: 0;
-    margin: 25% auto;
-    padding: 2% 0% 2% 0%;
+    margin: 11vh auto 0;
+    padding: 1.2vh 0;
     border-radius: 0.8vh;
     border: none;
     color: #fff;
     text-align: center;
+    font-family: inherit;
     background: linear-gradient(180deg, #4B91F7 0%, #367AF6 100%);
     background-origin: border-box;
     transition: 0.25s;
     box-shadow: 0px 0.5px 1.5px rgba(54, 122, 246, 0.25), inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2);
+    cursor: pointer;
 }
 
 .ping-sender-piinger > i{
     margin-right: 0.5vw;
 }
 
-.ping-sender-piinger:hover{
+.ping-sender-piinger:hover,
+.ping-sender-piinger:focus-visible{
     filter: drop-shadow(0px 0px 10px #4B91F7);
 }
 
 .ping-menu-text{
-    position: absolute;
     height: 4vh;
     width: 95%;
     border: none;
     outline: none;
     text-align: center;
-    font-size: 1.2vw;
+    font-size: 1.45vh;
     font-weight: 400;
     border-radius: 0.8vh;
     overflow: hidden;
     color: black;
     transition: 0.25s;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.2);
+    padding: 0 1vh 0 3vh;
+    box-sizing: border-box;
+}
+
+.ping-menu-text:focus{
+    box-shadow: 0 0 0 0.15vh rgba(75, 145, 247, 0.35), 0 10px 24px rgba(15, 23, 42, 0.22);
 }
 
 #ping-menu-icon{
     position: absolute;
     left: 0.8vw;
-    top: 1.2vh;
-    font-size: 1vw;
+    top: 3.8vh;
+    font-size: 1.1vh;
     color: orangered;
     text-shadow: 1px 1px 5px rgba(0,0,0,0.3);
 }
