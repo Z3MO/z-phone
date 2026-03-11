@@ -64,16 +64,14 @@ function createMailEmptyState() {
     const description = document.createElement('div');
 
     wrapper.className = 'mail-empty-state';
-    wrapper.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;height:50%;color:#a1a1aa;background-color:transparent;font-family:sans-serif;';
 
-    icon.className = 'fa-solid fa-inbox';
-    icon.style.cssText = 'font-size:5vh;margin-bottom:2vh;opacity:0.3;';
+    icon.className = 'fa-solid fa-inbox mail-empty-state-icon';
 
     title.textContent = 'No Mail';
-    title.style.cssText = 'font-size:2vh;font-weight:600;color:#f9fafb;';
+    title.className = 'mail-empty-state-title';
 
     description.textContent = 'Your inbox is empty';
-    description.style.cssText = 'font-size:1.5vh;';
+    description.className = 'mail-empty-state-text';
 
     wrapper.appendChild(icon);
     wrapper.appendChild(title);

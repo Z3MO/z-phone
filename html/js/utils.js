@@ -6,6 +6,10 @@ window.ZPhoneUI = (function () {
             return window.GetParentResourceName();
         }
 
+        if (document.body && document.body.dataset && document.body.dataset.resourceName) {
+            return document.body.dataset.resourceName;
+        }
+
         return "z-phone";
     }
 
@@ -41,9 +45,10 @@ window.ZPhoneUI = (function () {
             }).trim();
         }
 
-        const container = document.createElement("div");
-        container.innerHTML = String(value ?? "");
-        return (container.textContent || "").trim();
+        return String(value ?? "")
+            .replace(/<[^>]*>/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
     }
 
     function sanitizeImageUrl(urlValue) {

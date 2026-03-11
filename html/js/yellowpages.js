@@ -176,7 +176,7 @@ function createProxiCard(proxi) {
         toggleHint.textContent = 'Hide (click image to copy URL)';
         attachedToggle.appendChild(toggleText);
 
-        image.className = 'proxi-preview-image';
+        image.className = 'image proxi-preview-image';
         image.src = safeImageUrl;
         image.alt = 'Attached Proxi image';
 
@@ -206,7 +206,7 @@ function createProxiCard(proxi) {
         const trashIcon = document.createElement('i');
 
         trash.className = 'proxi-trash';
-        trash.dataset.proxiid = String(proxi.id);
+        trash.setAttribute('data-proxi-id', String(proxi.id));
         trashIcon.className = 'fas fa-trash';
         trash.appendChild(trashIcon);
         card.appendChild(trash);
@@ -258,7 +258,11 @@ function copyProxiImageUrl(image) {
         if (QB.Phone && QB.Phone.Notifications && QB.Phone.Notifications.Add) {
             QB.Phone.Notifications.Add('fas fa-ad', 'Proxi', 'Image URL copied to clipboard', '#ff8f1a', 2000);
         }
-    }).catch(function () {});
+    }).catch(function () {
+        if (QB.Phone && QB.Phone.Notifications && QB.Phone.Notifications.Add) {
+            QB.Phone.Notifications.Add('fas fa-ad', 'Proxi', 'Unable to copy the image URL right now.', '#ff8f1a', 2000);
+        }
+    });
 }
 
 QB.Phone.Functions.RefreshProxis = function (proxis) {
@@ -449,7 +453,7 @@ document.addEventListener('click', function (event) {
         }, 150);
 
         ZPhoneUI.postNui('DeleteProxi', {
-            id: Number(deleteButton.dataset.proxiid),
+            id: Number(deleteButton.getAttribute('data-proxi-id')),
         });
     }
 });
