@@ -10,6 +10,29 @@
     overflow: hidden;
 }
 
+/* Shared call action button styles */
+.phone-call-action {
+    position: absolute;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 0;
+    width: 5.8vh;
+    height: 5.8vh;
+    border-radius: 50%;
+    transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.phone-call-action:active {
+    transform: translateY(0.1vh) scale(0.96);
+}
+.phone-call-action i {
+    font-size: 2vh;
+    pointer-events: none;
+}
+
 .phone-call-incoming {
     display: none;
     height: 100%;
@@ -54,18 +77,10 @@
     font-weight: 800;
 }
 #incoming-answer {
-    position: absolute;
     bottom: 7.2vh;
     left: 6.2vh;
     color: #ecfff3;
     background: linear-gradient(145deg, #26b862, #39d47a);
-    width: 5.8vh;
-    height: 5.8vh;
-    line-height: 5.8vh;
-    text-align: center;
-    font-size: 2vh;
-    border-radius: 50%;
-    transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
     box-shadow: 0 1vh 2.6vh rgba(23, 141, 78, 0.34);
 }
 #incoming-answer:hover {
@@ -74,18 +89,10 @@
     box-shadow: 0 1.2vh 2.8vh rgba(23, 141, 78, 0.42);
 }
 #incoming-deny {
-    position: absolute;
     bottom: 7.2vh;
     right: 6.2vh;
     color: #fff3f3;
     background: linear-gradient(145deg, #d84a4a, #ff5e5e);
-    width: 5.8vh;
-    height: 5.8vh;
-    line-height: 5.8vh;
-    text-align: center;
-    font-size: 2vh;
-    border-radius: 50%;
-    transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
     box-shadow: 0 1vh 2.6vh rgba(161, 45, 45, 0.34);
 }
 #incoming-deny:hover {
@@ -139,20 +146,12 @@
     font-weight: 800;
 }
 #outgoing-cancel {
-    position: absolute;
     bottom: 7.2vh;
     margin: 0 auto;
     left: 0;
     right: 0;
     color: #fff3f3;
     background: linear-gradient(145deg, #d84a4a, #ff5e5e);
-    width: 5.8vh;
-    height: 5.8vh;
-    line-height: 5.8vh;
-    text-align: center;
-    font-size: 2vh;
-    border-radius: 50%;
-    transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
     box-shadow: 0 1vh 2.6vh rgba(161, 45, 45, 0.34);
 }
 #outgoing-cancel:hover {
@@ -261,20 +260,12 @@
     border: 0.1vh solid rgba(255, 255, 255, 0.1);
 }
 #ongoing-cancel {
-    position: absolute;
     bottom: 7.2vh;
     margin: 0 auto;
     left: 0;
     right: 0;
     color: #fff3f3;
     background: linear-gradient(145deg, #d84a4a, #ff5e5e);
-    width: 5.8vh;
-    height: 5.8vh;
-    line-height: 5.8vh;
-    text-align: center;
-    font-size: 2vh;
-    border-radius: 50%;
-    transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
     box-shadow: 0 1vh 2.6vh rgba(161, 45, 45, 0.34);
 }
 #ongoing-cancel:hover {
@@ -422,6 +413,11 @@
     outline: none;
     z-index: 100;
     color: #f5fbff;
+    transition: background .2s ease;
+}
+
+#contact-search:focus {
+    background: rgba(255, 255, 255, 0.06);
 }
 
 #contact-search::placeholder{
@@ -434,7 +430,7 @@
     font-size: 1.35vh;
     padding-right: 0;
     margin-left: 0;
-    transition: .3s;
+    transition: color .3s ease, transform .2s ease;
     color: rgba(240, 247, 255, 0.88);
     z-index: 150;
     cursor: pointer;
@@ -442,6 +438,11 @@
 
 #phone-search-icon:hover {
     color: #71d4ff;
+    transform: scale(1.08);
+}
+
+#phone-search-icon:active {
+    transform: scale(0.96);
 }
 
 #phone-plus-icon {
@@ -833,25 +834,27 @@
 
 .phone-keypad-preview {
     position: relative;
-    margin-top: 0.6vh;
+    margin-top: 0.8vh;
     width: 100%;
-    padding: 0.7vh 0.75vh;
-    border-radius: 1.4vh;
-    background: rgba(5, 12, 20, 0.26);
-    border: 0.1vh solid rgba(255, 255, 255, 0.05);
+    padding: 0.8vh 1vh;
+    border-radius: 1.5vh;
+    background: rgba(5, 12, 20, 0.32);
+    border: 0.1vh solid rgba(255, 255, 255, 0.08);
     text-align: center;
+    box-shadow: inset 0 0.2vh 0.6vh rgba(0, 0, 0, 0.18);
 }
 
 .phone-keypad-preview-name {
     color: white;
-    font-size: 1.08vh;
+    font-size: 1.12vh;
     font-weight: 700;
+    text-shadow: 0 0.1vh 0.2vh rgba(0, 0, 0, 0.3);
 }
 
 .phone-keypad-preview-meta {
-    margin-top: 0.15vh;
-    color: rgba(220, 230, 240, 0.72);
-    font-size: 0.88vh;
+    margin-top: 0.2vh;
+    color: rgba(220, 230, 240, 0.76);
+    font-size: 0.92vh;
 }
 
 #phone-keypad-input:empty::before {
@@ -972,6 +975,11 @@
     filter: drop-shadow(0px 0px 16px rgba(33, 201, 104, 0.62));
 }
 
+.phone-keypad-key-call:active {
+    transform: translateY(0) scale(0.96);
+    filter: brightness(1.08);
+}
+
 .phone-keypad-key {
     position: relative;
     height: 4.8vh;
@@ -995,6 +1003,12 @@
     background: linear-gradient(150deg, rgba(111, 173, 232, 0.24), rgba(255, 255, 255, 0.08));
     border-color: rgba(111, 173, 232, 0.24);
     filter: drop-shadow(0px 0px 16px rgba(122, 151, 179, 0.36));
+}
+
+.phone-keypad-key:active {
+    transform: translateY(0) scale(0.94);
+    background: linear-gradient(150deg, rgba(111, 173, 232, 0.32), rgba(255, 255, 255, 0.12));
+    filter: brightness(1.1);
 }
 
 .phone-keypad-key-number {

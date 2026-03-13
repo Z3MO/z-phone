@@ -176,8 +176,12 @@
                             <div class="phone-call-incoming-caller">Unknown Number</div>
                             <div class="phone-call-incoming-picture"></div>
 
-                            <i class="fa-solid fa-phone" id="incoming-answer"></i>
-                            <i class="fa-solid fa-phone" id="incoming-deny"></i>
+                            <button type="button" id="incoming-answer" class="phone-call-action phone-call-action--answer" aria-label="Answer incoming call">
+                                <i class="fa-solid fa-phone"></i>
+                            </button>
+                            <button type="button" id="incoming-deny" class="phone-call-action phone-call-action--deny" aria-label="Decline incoming call">
+                                <i class="fa-solid fa-phone-slash"></i>
+                            </button>
                         </div>
 
                         <div class="phone-call-outgoing">
@@ -185,7 +189,9 @@
                             <div class="phone-call-outgoing-caller">Unknown Number</div>
                             <div class="phone-call-outgoing-picture"></div>
 
-                            <i class="fa-solid fa-phone" id="outgoing-cancel"></i>
+                            <button type="button" id="outgoing-cancel" class="phone-call-action phone-call-action--cancel" aria-label="Cancel outgoing call">
+                                <i class="fa-solid fa-phone-slash"></i>
+                            </button>
                         </div>
 
                         <div class="phone-call-ongoing">
@@ -194,7 +200,9 @@
                             <div class="phone-call-ongoing-picture"></div>
                             <div class="phone-call-ongoing-time">05:05</div>
 
-                            <i class="fa-solid fa-phone" id="ongoing-cancel"></i>
+                            <button type="button" id="ongoing-cancel" class="phone-call-action phone-call-action--end" aria-label="End ongoing call">
+                                <i class="fa-solid fa-phone-slash"></i>
+                            </button>
                         </div>
                     </div>
 
