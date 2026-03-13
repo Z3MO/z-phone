@@ -530,7 +530,7 @@
     top: 1.7vh;
     max-width: 16vh;
     line-height: 1.2;
-    font-size: 1.6vh;
+    font-size: 1.8vh;
     font-weight: 700;
 }
 
@@ -540,7 +540,7 @@
     top: 4.2vh;
     max-width: 16vh;
     color: rgba(224, 234, 244, 0.78);
-    font-size: 1.25vh;
+    font-size: 1.4vh;
     font-weight: 500;
 }
 
@@ -692,7 +692,7 @@
 
 .phone-recent-call-name {
     color: white;
-    font-size: 1.65vh;
+    font-size: 1.8vh;
     font-weight: 700;
     white-space: nowrap;
     overflow: hidden;
@@ -700,7 +700,7 @@
 }
 
 .phone-recent-call-type {
-    font-size: 1.2vh;
+    font-size: 1.35vh;
     color: rgba(218, 228, 238, 0.65);
     display: inline-flex;
     align-items: center;
@@ -714,14 +714,14 @@
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.07);
     color: rgba(236, 244, 252, 0.88);
-    font-size: 1.1vh;
+    font-size: 1.25vh;
     font-weight: 700;
     letter-spacing: 0.01em;
 }
 
 .phone-recent-call-time {
     flex-shrink: 0;
-    font-size: 1.2vh;
+    font-size: 1.35vh;
     font-weight: 600;
     color: rgba(240, 247, 255, 0.7);
     text-align: right;
@@ -774,39 +774,64 @@
 
 .suggested-contact {
     position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1.2vh;
     min-height: 8.5vh;
     width: 100%;
-    margin-bottom: 1vh;
-    background: linear-gradient(150deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.05));
-    border: 0.1vh solid rgba(255, 255, 255, 0.13);
-    border-left: none;
-    border-radius: 1.6vh;
-    box-shadow: 0 0.9vh 2vh rgba(0, 0, 0, 0.18);
-    transition: .12s ease-in-out;
-    will-change: transform;
+    padding: 1.2vh;
+    margin-bottom: 0.8vh;
+    background: linear-gradient(150deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.04));
+    border: 0.1vh solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.4vh;
+    box-sizing: border-box;
+    box-shadow: 0 0.6vh 1.6vh rgba(0, 0, 0, 0.14);
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
 }
 
 .suggested-contact:hover {
     transform: translateY(-0.12vh);
-    background: linear-gradient(150deg, rgba(111, 173, 232, 0.24), rgba(255, 255, 255, 0.06));
+    background: linear-gradient(150deg, rgba(111, 173, 232, 0.18), rgba(255, 255, 255, 0.06));
+    border-color: rgba(111, 173, 232, 0.26);
+    box-shadow: 0 0.9vh 2vh rgba(0, 0, 0, 0.22);
+}
+
+.suggested-contact:active {
+    transform: scale(0.98);
+    filter: brightness(0.92);
 }
 
 .suggested-contact > i {
-    position: absolute;
-    top: 2.5vh;
-    left: 1.5vh;
-    font-size: 1.6vh;
+    flex-shrink: 0;
+    width: 5vh;
+    height: 5vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8vh;
     font-weight: 700;
-    color: #4a9cf1;
+    color: white;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4a9cf1, #276db8);
+    box-shadow: 0 0.4vh 1vh rgba(0, 0, 0, 0.2);
+}
+
+.suggested-contact-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4vh;
 }
 
 .suggested-name {
-    position: absolute;
-    left: 4.1vh;
-    top: 1.7vh;
     color: white;
-    font-size: 1.65vh;
+    font-size: 1.8vh;
     font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .suggested-number {
@@ -816,12 +841,9 @@
 }
 
 .suggested-meta {
-    position: absolute;
-    left: 4.1vh;
-    top: 4.5vh;
-    color: rgba(235, 239, 227, 0.72);
-    font-size: 1.3vh;
+    font-size: 1.35vh;
     font-weight: 500;
+    color: rgba(235, 239, 227, 0.72);
 }
 
 /* Keypad Contact */

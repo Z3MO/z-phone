@@ -353,8 +353,10 @@ function renderSuggestedContacts() {
         element.id = 'suggest-' + index;
         element.innerHTML = '' +
             '<i class="fas fa-exclamation-circle"></i>' +
-            '<span class="suggested-name"></span>' +
-            '<span class="suggested-meta"></span>';
+            '<div class="suggested-contact-info">' +
+                '<span class="suggested-name"></span>' +
+                '<span class="suggested-meta"></span>' +
+            '</div>';
 
         element.querySelector('.suggested-name').textContent = firstName + (lastName ? ' ' + lastName : '') + ' · ' + formatPhoneDisplay(number);
         element.querySelector('.suggested-meta').textContent = bank ? 'Bank ' + bank : 'Tap to save this contact';
