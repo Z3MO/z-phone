@@ -535,6 +535,7 @@ QB.Phone.Functions.SetupRecentCalls = function(recentcalls) {
         var element = document.createElement('div');
         var icon = document.createElement('i');
         var image = document.createElement('div');
+        var info = document.createElement('div');
         var name = document.createElement('div');
         var meta = document.createElement('div');
         var time = document.createElement('div');
@@ -542,9 +543,12 @@ QB.Phone.Functions.SetupRecentCalls = function(recentcalls) {
 
         element.className = 'phone-recent-call';
         element.id = 'recent-' + index;
+        element.style.borderLeftColor = accentData.accent;
         image.className = 'phone-recent-call-image';
         image.textContent = createAvatarLabel(displayName, recentCall.number, recentCall.anonymous);
         image.style.background = 'linear-gradient(135deg, ' + accentData.accent + ', rgba(34, 111, 206, 0.92))';
+
+        info.className = 'phone-recent-call-info';
 
         name.className = 'phone-recent-call-name';
         name.textContent = displayName;
@@ -557,12 +561,14 @@ QB.Phone.Functions.SetupRecentCalls = function(recentcalls) {
         meta.appendChild(icon);
         meta.appendChild(badge);
 
+        info.appendChild(name);
+        info.appendChild(meta);
+
         time.className = 'phone-recent-call-time';
         time.textContent = recentCall.time;
 
         element.appendChild(image);
-        element.appendChild(name);
-        element.appendChild(meta);
+        element.appendChild(info);
         element.appendChild(time);
         $(element).data('recentData', recentCall);
         fragment.appendChild(element);
