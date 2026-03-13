@@ -812,6 +812,7 @@
 .phone-keypad-display {
     position: relative;
     width: 100%;
+    margin-top: 1.2vh;
     padding: 0.6vh 1vh;
     border-radius: 1.6vh;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.04));
@@ -870,7 +871,7 @@
 
 .phone-keypad-title {
     color: white;
-    font-size: 2.1vh;
+    font-size: 2.4vh;
     font-weight: 800;
     letter-spacing: 0.02em;
 }
@@ -878,8 +879,8 @@
 .phone-keypad-subtitle {
     margin-top: 0.4vh;
     color: rgba(214, 225, 237, 0.72);
-    font-size: 1.02vh;
-    max-width: 13vh;
+    font-size: 1.15vh;
+    max-width: 14vh;
     line-height: 1.4;
 }
 
@@ -895,6 +896,10 @@
     border: 0;
     border-radius: 50%;
     color: #edf7ff;
+    font-size: 1.4vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: rgba(255, 255, 255, 0.12);
     box-shadow: inset 0 0 0 0.1vh rgba(255, 255, 255, 0.08);
     cursor: pointer;
@@ -926,7 +931,7 @@
 
 .phone-keypad-key-call {
     position: relative;
-    display: inline-flex;
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
