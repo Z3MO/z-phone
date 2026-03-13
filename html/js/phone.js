@@ -543,7 +543,6 @@ QB.Phone.Functions.SetupRecentCalls = function(recentcalls) {
 
         element.className = 'phone-recent-call';
         element.id = 'recent-' + index;
-        element.style.borderLeftColor = accentData.accent;
         image.className = 'phone-recent-call-image';
         image.textContent = createAvatarLabel(displayName, recentCall.number, recentCall.anonymous);
         image.style.background = 'linear-gradient(135deg, ' + accentData.accent + ', rgba(34, 111, 206, 0.92))';
