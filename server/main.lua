@@ -2,6 +2,11 @@ local QBCore = exports['qb-core']:GetCoreObject()
 local Hashtags = {} -- Located in the Twitter File as well ??
 local Calls = {}
 local WebHook = Config.Webhook
+local ContactsHasIban = false
+local ContactShareCooldowns = {}
+local CallRequestCooldowns = {}
+local CONTACT_SHARE_COOLDOWN_MS = 1500
+local CALL_REQUEST_COOLDOWN_MS = 1200
 
 -- Functions
 local function escape_sqli(source)
@@ -20,13 +25,126 @@ local function SplitStringToArray(string)
     return retval
 end
 
+local function trim(value)
+    return (tostring(value or ''):gsub('^%s+', ''):gsub('%s+$', ''))
+end
+
+local function sanitizeText(value, maxLength)
+    local sanitized = trim(tostring(value or ''):gsub('[^%w%s%-%._\']', ''):gsub('%s+', ' '))
+    if maxLength and #sanitized > maxLength then
+        sanitized = sanitized:sub(1, maxLength)
+    end
+    return sanitized
+end
+
+local function sanitizePhoneNumber(value)
+    return tostring(value or ''):gsub('%D', ''):sub(1, 15)
+end
+
+local function sanitizeIban(value)
+    return tostring(value or ''):gsub('[^%w%-]', ''):sub(1, 32)
+end
+
+local function isOnCooldown(cache, key, durationMs)
+    local now = GetGameTimer()
+    local lastTick = cache[key] or 0
+
+    if (now - lastTick) < durationMs then
+        return true
+    end
+
+    cache[key] = now
+    return false
+end
+
+local function hasStoredContactConflict(citizenId, name, number, ignoreName, ignoreNumber)
+    local storedContacts = exports.oxmysql:executeSync('SELECT name, number FROM player_contacts WHERE citizenid = ?', {citizenId})
+
+    for _, contact in pairs(storedContacts or {}) do
+        local contactName = sanitizeText(contact.name, 48)
+        local contactNumber = sanitizePhoneNumber(contact.number)
+        local isIgnoredRow = ignoreName ~= nil and ignoreNumber ~= nil and contactName == ignoreName and contactNumber == ignoreNumber
+
+        if not isIgnoredRow and contactNumber == number then
+            return true
+        end
+    end
+
+    return false
+end
+
+local function getPlayerCoords(playerId)
+    local ped = GetPlayerPed(playerId)
+    if not ped or ped == 0 then return nil end
+    return GetEntityCoords(ped)
+end
+
+local function getDistanceBetweenPlayers(sourceId, targetId)
+    local sourceCoords = getPlayerCoords(sourceId)
+    local targetCoords = getPlayerCoords(targetId)
+    if not sourceCoords or not targetCoords then return nil end
+    return #(sourceCoords - targetCoords)
+end
+
+local function buildSuggestionData(player)
+    return {
+        name = {
+            [1] = sanitizeText(player.PlayerData.charinfo.firstname, 24),
+            [2] = sanitizeText(player.PlayerData.charinfo.lastname, 24)
+        },
+        number = sanitizePhoneNumber(player.PlayerData.charinfo.phone),
+        bank = sanitizeIban(player.PlayerData.charinfo.account)
+    }
+end
+
+local function ensureContactsSchema()
+    local hasIbanColumn = tonumber(exports.oxmysql:scalarSync("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'player_contacts' AND COLUMN_NAME = 'iban'") or 0)
+
+    if hasIbanColumn == 0 then
+        exports.oxmysql:executeSync("ALTER TABLE player_contacts ADD COLUMN iban VARCHAR(32) DEFAULT ''")
+        hasIbanColumn = tonumber(exports.oxmysql:scalarSync("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'player_contacts' AND COLUMN_NAME = 'iban'") or 0)
+    end
+
+    ContactsHasIban = hasIbanColumn > 0
+end
+
+CreateThread(function()
+    Wait(500)
+    ensureContactsSchema()
+end)
+
+local function sendContactSuggestion(sourceId, targetId, radius)
+    local src = tonumber(sourceId)
+    local target = tonumber(targetId)
+    local maxRadius = radius or 5.0
+
+    if not src or not target or src == target then
+        return false, 'Invalid target player.'
+    end
+
+    local player = QBCore.Functions.GetPlayer(src)
+    local targetPlayer = QBCore.Functions.GetPlayer(target)
+    if not player or not targetPlayer then
+        return false, 'Player is no longer available.'
+    end
+
+    local distance = getDistanceBetweenPlayers(src, target)
+    if not distance or distance > maxRadius then
+        return false, 'Player must be within 5m.'
+    end
+
+    TriggerClientEvent('qb-phone:client:AddNewSuggestion', target, buildSuggestionData(player))
+    return true, ('Your number was sent to ID %s.'):format(target)
+end
+
 -- Callbacks
 
 QBCore.Functions.CreateCallback('qb-phone:server:GetCallState', function(source, cb, ContactData)
-    local number = tostring(ContactData.number)
+    local number = sanitizePhoneNumber(ContactData and ContactData.number)
     local Target = QBCore.Functions.GetPlayerByPhone(number)
     local Player = QBCore.Functions.GetPlayer(source)
 
+    if not Player or number == '' then return cb(false, false) end
     if not Target then return cb(false, false) end
 
     if Target.PlayerData.citizenid == Player.PlayerData.citizenid then return cb(false, false) end
@@ -158,6 +276,53 @@ QBCore.Functions.CreateCallback("qb-phone:server:GetWebhook",function(_, cb)
 	cb(WebHook)
 end)
 
+QBCore.Functions.CreateCallback('qb-phone:server:GetNearbyPhonePlayers', function(source, cb)
+    local nearbyPlayers = {}
+    local currentPlayer = QBCore.Functions.GetPlayer(source)
+    if not currentPlayer then
+        cb(nearbyPlayers)
+        return
+    end
+
+    for _, playerId in ipairs(QBCore.Functions.GetPlayers()) do
+        local targetId = tonumber(playerId)
+        if targetId and targetId ~= source then
+            local targetPlayer = QBCore.Functions.GetPlayer(targetId)
+            local distance = targetPlayer and getDistanceBetweenPlayers(source, targetId)
+            if targetPlayer and distance and distance <= 5.0 then
+                nearbyPlayers[#nearbyPlayers + 1] = {
+                    id = targetId,
+                    name = ('%s %s'):format(
+                        sanitizeText(targetPlayer.PlayerData.charinfo.firstname, 24),
+                        sanitizeText(targetPlayer.PlayerData.charinfo.lastname, 24)
+                    ),
+                    distance = math.floor(distance * 10 + 0.5) / 10
+                }
+            end
+        end
+    end
+
+    table.sort(nearbyPlayers, function(a, b)
+        if a.distance == b.distance then
+            return a.id < b.id
+        end
+
+        return a.distance < b.distance
+    end)
+
+    cb(nearbyPlayers)
+end)
+
+QBCore.Functions.CreateCallback('qb-phone:server:SharePhoneContact', function(source, cb, targetId)
+    if isOnCooldown(ContactShareCooldowns, source, CONTACT_SHARE_COOLDOWN_MS) then
+        cb(false, 'Wait a moment before sharing again.')
+        return
+    end
+
+    local success, message = sendContactSuggestion(source, targetId, 5.0)
+    cb(success, message)
+end)
+
 -- Events
 RegisterNetEvent('qb-phone:server:SetCallState', function(bool)
     local src = source
@@ -172,8 +337,13 @@ end)
 RegisterNetEvent('qb-phone:server:CallContact', function(TargetData, CallId, AnonymousCall)
     local src = source
     local Ply = QBCore.Functions.GetPlayer(src)
-    local Target = QBCore.Functions.GetPlayerByPhone(tostring(TargetData.number))
-    if not Target or not Ply then return end
+    local number = sanitizePhoneNumber(TargetData and TargetData.number)
+    local Target = QBCore.Functions.GetPlayerByPhone(number)
+    if not Target or not Ply or number == '' then return end
+    if Ply.PlayerData.citizenid == Target.PlayerData.citizenid then return end
+    if isOnCooldown(CallRequestCooldowns, src, CALL_REQUEST_COOLDOWN_MS) then return end
+    if Calls[Ply.PlayerData.citizenid] and Calls[Ply.PlayerData.citizenid].inCall then return end
+    if Calls[Target.PlayerData.citizenid] and Calls[Target.PlayerData.citizenid].inCall then return end
 
     TriggerClientEvent('qb-phone:client:GetCalled', Target.PlayerData.source, Ply.PlayerData.charinfo.phone, CallId, AnonymousCall)
 end)
@@ -184,8 +354,32 @@ RegisterNetEvent('qb-phone:server:EditContact', function(newName, newNumber, New
 
     if not Player then return end
 
-    exports.oxmysql:execute('UPDATE player_contacts SET name = ?, number = ?, iban = ? WHERE citizenid = ? AND name = ? AND number = ? AND iban = ?',
-    {newName, newNumber, NewIban, Player.PlayerData.citizenid, oldName, oldNumber, oldIban})
+    newName = sanitizeText(newName, 48)
+    newNumber = sanitizePhoneNumber(newNumber)
+    NewIban = sanitizeIban(NewIban)
+    oldName = sanitizeText(oldName, 48)
+    oldNumber = sanitizePhoneNumber(oldNumber)
+    oldIban = sanitizeIban(oldIban)
+
+    if newName == '' or #newNumber < 3 or oldName == '' or #oldNumber < 3 then
+        return
+    end
+
+    if newNumber == sanitizePhoneNumber(Player.PlayerData.charinfo.phone) then
+        return TriggerClientEvent('qb-phone:client:CustomNotification', src, 'Phone', "You can't save your own number.", 'fas fa-user-pen', '#e84118', 2500)
+    end
+
+    if hasStoredContactConflict(Player.PlayerData.citizenid, newName, newNumber, oldName, oldNumber) then
+        return TriggerClientEvent('qb-phone:client:CustomNotification', src, 'Phone', 'Another contact already uses that number.', 'fas fa-user-pen', '#e84118', 2500)
+    end
+
+    if ContactsHasIban then
+        exports.oxmysql:execute('UPDATE player_contacts SET name = ?, number = ?, iban = ? WHERE citizenid = ? AND name = ? AND number = ?',
+            {newName, newNumber, NewIban, Player.PlayerData.citizenid, oldName, oldNumber})
+    else
+        exports.oxmysql:execute('UPDATE player_contacts SET name = ?, number = ? WHERE citizenid = ? AND name = ? AND number = ?',
+            {newName, newNumber, Player.PlayerData.citizenid, oldName, oldNumber})
+    end
 end)
 
 RegisterNetEvent('qb-phone:server:RemoveContact', function(Name, Number)
@@ -194,6 +388,10 @@ RegisterNetEvent('qb-phone:server:RemoveContact', function(Name, Number)
 
     if not Player then return end
 
+    Name = sanitizeText(Name, 48)
+    Number = sanitizePhoneNumber(Number)
+    if Name == '' or #Number < 3 then return end
+
     exports.oxmysql:execute('DELETE FROM player_contacts WHERE name = ? AND number = ? AND citizenid = ?',
         {Name, Number, Player.PlayerData.citizenid})
 end)
@@ -201,11 +399,24 @@ end)
 RegisterNetEvent('qb-phone:server:AddNewContact', function(name, number, iban)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
-    local iban = iban or 0
+    iban = sanitizeIban(iban or 0)
+    name = sanitizeText(name, 48)
+    number = sanitizePhoneNumber(number)
 
     if not Player then return end
+    if name == '' or #number < 3 then return end
+    if number == sanitizePhoneNumber(Player.PlayerData.charinfo.phone) then
+        return TriggerClientEvent('qb-phone:client:CustomNotification', src, 'Phone', "You can't save your own number.", 'fas fa-address-book', '#e84118', 2500)
+    end
+    if hasStoredContactConflict(Player.PlayerData.citizenid, name, number) then
+        return TriggerClientEvent('qb-phone:client:CustomNotification', src, 'Phone', 'That contact already exists.', 'fas fa-address-book', '#e84118', 2500)
+    end
 
-    exports.oxmysql:insert('INSERT INTO player_contacts (citizenid, name, number, iban) VALUES (?, ?, ?, ?)', {Player.PlayerData.citizenid, tostring(name), number, iban})
+    if ContactsHasIban then
+        exports.oxmysql:insert('INSERT INTO player_contacts (citizenid, name, number, iban) VALUES (?, ?, ?, ?)', {Player.PlayerData.citizenid, tostring(name), number, iban})
+    else
+        exports.oxmysql:insert('INSERT INTO player_contacts (citizenid, name, number) VALUES (?, ?, ?)', {Player.PlayerData.citizenid, tostring(name), number})
+    end
 end)
 
 RegisterNetEvent('qb-phone:server:AddRecentCall', function(type, data)
@@ -228,17 +439,14 @@ RegisterNetEvent('qb-phone:server:AddRecentCall', function(type, data)
 end)
 
 RegisterNetEvent('qb-phone:server:GiveContactDetails', function(PlayerId)
-    local src = source
-    local Player = QBCore.Functions.GetPlayer(src)
-    local SuggestionData = {
-        name = {
-            [1] = Player.PlayerData.charinfo.firstname,
-            [2] = Player.PlayerData.charinfo.lastname
-        },
-        number = Player.PlayerData.charinfo.phone,
-        bank = Player.PlayerData.charinfo.account
-    }
-    TriggerClientEvent('qb-phone:client:AddNewSuggestion', PlayerId, SuggestionData)
+    if isOnCooldown(ContactShareCooldowns, source, CONTACT_SHARE_COOLDOWN_MS) then
+        return
+    end
+
+    local success = sendContactSuggestion(source, PlayerId, 5.0)
+    if not success then
+        return
+    end
 end)
 
 RegisterNetEvent('qb-phone:server:CancelCall', function(ContactData)

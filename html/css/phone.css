@@ -3,8 +3,10 @@
     display: none;
     height: 100%;
     width: 100%;
-    background: #1C1B1E;  /* fallback for old browsers */
-    animation: AnimationName 35s ease infinite;
+    background:
+        radial-gradient(circle at 18% 16%, rgba(70, 140, 230, 0.24), transparent 38%),
+        radial-gradient(circle at 82% 88%, rgba(36, 196, 143, 0.14), transparent 34%),
+        linear-gradient(170deg, #0b111b 0%, #101a28 56%, #0a121d 100%);
     overflow: hidden;
 }
 
@@ -16,72 +18,80 @@
 .phone-call-incoming-title {
     position: relative;
     text-align: center;
-    top: 7.5vh;
-    color: white;
-    font-size: 2vh;
-    text-shadow: 0 0 1vh rgba(0, 0, 0, 0.1);
+    top: 6.8vh;
+    color: rgba(221, 235, 250, 0.82);
+    font-size: 1.55vh;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 .phone-call-incoming-caller {
     position: relative;
     text-align: center;
-    top: 10vh;
+    top: 9.4vh;
     color: white;
-    font-size: 2.5vh;
-    text-shadow: 0 0 1vh rgba(0, 0, 0, 0.1);
+    font-size: 3vh;
+    font-weight: 700;
+    text-shadow: 0 0.3vh 0.8vh rgba(0, 0, 0, 0.36);
 }
 .phone-call-incoming-picture {
     position: absolute;
     margin: 0 auto;
-    width: 17vh;
-    height: 17vh;
+    width: 16.2vh;
+    height: 16.2vh;
     left: 0;
     right: 0;
-    top: 20vh;
+    top: 18.8vh;
     border-radius: 50%;
-    border: .2vh solid #ffffff6c;
-    background: rgba(27, 27, 27, 0.25);
-    box-shadow: 0 0 .5vh 0 rgba(0, 0, 0, 0.5);
+    border: 0.22vh solid rgba(255, 255, 255, 0.22);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
+    box-shadow: 0 1.2vh 3.2vh rgba(0, 0, 0, 0.32);
     animation: pulse 2s infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 5.2vh;
+    font-weight: 800;
 }
 #incoming-answer {
     position: absolute;
-    bottom: 8vh;
-    left: 5vh;
-    transform: rotate(90deg);
-    color: lightgreen;
-    background-color: white;
-    padding: 1.5vh;
-    font-size: 2.2vh;
+    bottom: 7.2vh;
+    left: 6.2vh;
+    color: #ecfff3;
+    background: linear-gradient(145deg, #26b862, #39d47a);
+    width: 5.8vh;
+    height: 5.8vh;
+    line-height: 5.8vh;
+    text-align: center;
+    font-size: 2vh;
     border-radius: 50%;
-    transition: .1s;
-    animation: pulse 2s infinite;
+    transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
+    box-shadow: 0 1vh 2.6vh rgba(23, 141, 78, 0.34);
 }
 #incoming-answer:hover {
-    background-color: green;
-    color: white;
-    transform: rotate(180deg);
-    filter: drop-shadow(0 0.2rem 1rem green);
-    transition: .2s;
+    transform: translateY(-0.2vh);
+    filter: saturate(1.12);
+    box-shadow: 0 1.2vh 2.8vh rgba(23, 141, 78, 0.42);
 }
 #incoming-deny {
     position: absolute;
-    bottom: 8vh;
-    right: 5vh;
-    transform: rotate(0deg);
-    color: red;
-    background-color: white;
-    padding: 1.5vh;
-    font-size: 2.2vh;
+    bottom: 7.2vh;
+    right: 6.2vh;
+    color: #fff3f3;
+    background: linear-gradient(145deg, #d84a4a, #ff5e5e);
+    width: 5.8vh;
+    height: 5.8vh;
+    line-height: 5.8vh;
+    text-align: center;
+    font-size: 2vh;
     border-radius: 50%;
-    transition: .1s;
-    animation: pulse 2s infinite;
+    transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
+    box-shadow: 0 1vh 2.6vh rgba(161, 45, 45, 0.34);
 }
 #incoming-deny:hover {
-    background-color: red;
-    color: white;
-    transform: rotate(-90deg);
-    filter: drop-shadow(0 0.2rem 1rem red);
-    transition: .2s;
+    transform: translateY(-0.2vh);
+    filter: saturate(1.12);
+    box-shadow: 0 1.2vh 2.8vh rgba(161, 45, 45, 0.42);
 }
 
 /* Outgoing */
@@ -93,53 +103,62 @@
 .phone-call-outgoing-title {
     position: relative;
     text-align: center;
-    top: 7.5vh;
-    color: white;
-    font-size: 2vh;
-    text-shadow: 0 0 1vh rgba(0, 0, 0, 0.1);
+    top: 6.8vh;
+    color: rgba(221, 235, 250, 0.82);
+    font-size: 1.55vh;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 .phone-call-outgoing-caller {
     position: relative;
     text-align: center;
-    top: 10vh;
+    top: 9.4vh;
     color: white;
-    font-size: 2.5vh;
-    text-shadow: 0 0 1vh rgba(0, 0, 0, 0.1);
+    font-size: 3vh;
+    font-weight: 700;
+    text-shadow: 0 0.3vh 0.8vh rgba(0, 0, 0, 0.36);
 }
 .phone-call-outgoing-picture {
     position: absolute;
     margin: 0 auto;
-    width: 17vh;
-    height: 17vh;
+    width: 16.2vh;
+    height: 16.2vh;
     left: 0;
     right: 0;
-    top: 20vh;
+    top: 18.8vh;
     border-radius: 50%;
-    border: .2vh solid #ffffff6c;
-    background: rgba(27, 27, 27, 0.25);
-    box-shadow: 0 0 .5vh 0 rgba(0, 0, 0, 0.5);
+    border: 0.22vh solid rgba(255, 255, 255, 0.22);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
+    box-shadow: 0 1.2vh 3.2vh rgba(0, 0, 0, 0.32);
     animation: pulse 2s infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 5.2vh;
+    font-weight: 800;
 }
 #outgoing-cancel {
     position: absolute;
-    bottom: 8vh;
+    bottom: 7.2vh;
     margin: 0 auto;
-    left: 40.8%;
-    transform: rotate(-270deg);
-    color: red;
-    background-color: white;
-    padding: 1.5vh;
-    font-size: 2.5vh;
+    left: 0;
+    right: 0;
+    color: #fff3f3;
+    background: linear-gradient(145deg, #d84a4a, #ff5e5e);
+    width: 5.8vh;
+    height: 5.8vh;
+    line-height: 5.8vh;
+    text-align: center;
+    font-size: 2vh;
     border-radius: 50%;
-    transition: background-color .1s ease-in-out;
-    animation: pulse 2s infinite;
+    transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
+    box-shadow: 0 1vh 2.6vh rgba(161, 45, 45, 0.34);
 }
 #outgoing-cancel:hover {
-    background-color: red;
-    color: white;
-    transform: rotate(-180deg);
-    filter: drop-shadow(0 0.2rem 1rem red);
-    transition: .2s;
+    transform: translateY(-0.2vh);
+    filter: saturate(1.12);
+    box-shadow: 0 1.2vh 2.8vh rgba(161, 45, 45, 0.42);
 }
 @-webkit-keyframes pulse {
     0% {
@@ -192,61 +211,76 @@
 .phone-call-ongoing-title {
     position: relative;
     text-align: center;
-    top: 7.5vh;
-    color: white;
-    font-size: 2vh;
-    text-shadow: 0 0 1vh rgba(0, 0, 0, 0.1);
+    top: 6.8vh;
+    color: rgba(221, 235, 250, 0.82);
+    font-size: 1.55vh;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 .phone-call-ongoing-caller {
     position: relative;
     text-align: center;
-    top: 10vh;
+    top: 9.4vh;
     color: white;
-    font-size: 2.5vh;
-    text-shadow: 0 0 1vh rgba(0, 0, 0, 0.1);
+    font-size: 3vh;
+    font-weight: 700;
+    text-shadow: 0 0.3vh 0.8vh rgba(0, 0, 0, 0.36);
 }
 .phone-call-ongoing-picture {
     position: absolute;
     margin: 0 auto;
-    width: 17vh;
-    height: 17vh;
+    width: 16.2vh;
+    height: 16.2vh;
     left: 0;
     right: 0;
-    top: 20vh;
+    top: 18.8vh;
     border-radius: 50%;
-    border: .2vh solid #ffffff6c;
-    background: rgba(27, 27, 27, 0.25);
-    box-shadow: 0 0 .5vh 0 rgba(0, 0, 0, 0.5);
+    border: 0.22vh solid rgba(255, 255, 255, 0.22);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
+    box-shadow: 0 1.2vh 3.2vh rgba(0, 0, 0, 0.32);
     animation: pulse 2s infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 5.2vh;
+    font-weight: 800;
 }
 .phone-call-ongoing-time {
     position: relative;
     text-align: center;
-    top: 33vh;
-    color: white;
-    font-size: 1.2vh;
-    text-shadow: 0 0 1vh rgba(0, 0, 0, 0.1);
+    top: 30.8vh;
+    width: max-content;
+    margin: 0 auto;
+    padding: 0.5vh 1.4vh;
+    color: rgba(227, 239, 252, 0.94);
+    font-size: 1.35vh;
+    font-weight: 600;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 0.1vh solid rgba(255, 255, 255, 0.1);
 }
 #ongoing-cancel {
     position: absolute;
-    bottom: 8vh;
+    bottom: 7.2vh;
     margin: 0 auto;
-    left: 40.8%;
-    transform: rotate(-270deg);
-    color: red;
-    background-color: white;
-    padding: 1.5vh;
-    font-size: 2.5vh;
+    left: 0;
+    right: 0;
+    color: #fff3f3;
+    background: linear-gradient(145deg, #d84a4a, #ff5e5e);
+    width: 5.8vh;
+    height: 5.8vh;
+    line-height: 5.8vh;
+    text-align: center;
+    font-size: 2vh;
     border-radius: 50%;
-    transition: background-color .1s ease-in-out;
-    animation: pulse 2s infinite;
+    transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
+    box-shadow: 0 1vh 2.6vh rgba(161, 45, 45, 0.34);
 }
 #ongoing-cancel:hover {
-    background-color: red;
-    color: white;
-    transform: rotate(-180deg);
-    filter: drop-shadow(0 0.2rem 1rem red);
-    transition: .2s;
+    transform: translateY(-0.2vh);
+    filter: saturate(1.12);
+    box-shadow: 0 1.2vh 2.8vh rgba(161, 45, 45, 0.42);
 }
 
 .noselect {
@@ -264,76 +298,161 @@
     display: none;
     height: 100%;
     width: 100%;
-    background: #14171A;
+    background:
+        radial-gradient(ellipse at 80% 10%, rgba(46, 120, 200, 0.18), transparent 50%),
+        radial-gradient(ellipse at 20% 90%, rgba(30, 80, 160, 0.10), transparent 50%),
+        linear-gradient(180deg, #0c1220 0%, #101826 55%, #0c1220 100%);
     overflow: hidden;
 }
 
 .phone-app-header {
-    position: relative;
-    font-size:2vw;
-    font-weight: 600;
-    top: 10%;
+    position: absolute;
+    top: 6.2vh;
     left: 5%;
+    width: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
     color: white;
+    z-index: 2;
+}
+
+.phone-app-header-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2vh;
+}
+
+.phone-app-header-copy p {
+    margin: 0;
+    font-size: 2.1vh;
+    font-weight: 700;
+    letter-spacing: 0.01em;
 }
 
 #total-contacts {
-    position: relative;
-    font-size: 1vw;
+    display: block;
+    margin-top: 0.5vh;
+    font-size: 1.3vh;
     font-weight: 500;
-    top: -3.5vh;
-    color: white;
+    color: rgba(232, 240, 250, 0.72);
 }
 
 .phone-contacts {
     display: block;
     position: absolute;
-    height: 62%;
+    height: 63%;
     width: 100%;
-    top: 23%;
+    top: 15.1vh;
+}
+
+.phone-contacts-toolbar {
+    position: absolute;
+    top: 0;
+    left: 5%;
+    width: 90%;
+    display: flex;
+    align-items: center;
+    gap: 0.9vh;
+}
+
+.phone-contacts-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.8vh;
+    margin-left: auto;
+}
+
+.phone-toolbar-action {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    width: 4.5vh;
+    height: 4.5vh;
+    border-radius: 1.35vh;
+    color: #eef6ff;
+    background: rgba(255, 255, 255, 0.08);
+    border: 0.1vh solid rgba(255, 255, 255, 0.11);
+    box-shadow: 0 0.8vh 1.8vh rgba(0, 0, 0, 0.18);
+    font-size: 1.35vh;
+    font-family: inherit;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.phone-toolbar-action:hover {
+    transform: translateY(-0.1vh);
+    box-shadow: 0 1vh 2vh rgba(0, 0, 0, 0.24);
+    filter: saturate(1.08);
+}
+
+.phone-toolbar-action--primary {
+    background: linear-gradient(145deg, #1f70cb, #3ba2ff);
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 0.9vh 1.9vh rgba(11, 64, 118, 0.36);
 }
 
 .phone-contacts-header {
-    position: absolute;
-    top: 0;
-    height: 4vh;
-    width: 100%;
+    position: relative;
+    flex: 1;
+    height: 5.5vh;
+    display: flex;
+    align-items: center;
+    gap: 0.8vh;
+    padding: 0 1.1vh;
+    border: 0.1vh solid rgba(255, 255, 255, 0.13);
+    border-radius: 1.5vh;
+    background: rgba(255, 255, 255, 0.09);
+    box-shadow: 0 0.8vh 1.7vh rgba(0, 0, 0, 0.16), inset 0 0 0 0.1vh rgba(255, 255, 255, 0.03);
 }
 
 #contact-search {
-    display: none;
-    position: absolute;
+    display: block;
+    position: relative;
     border: none;
-    bottom: 1vh;
-    width: 80%;
-    left: 5%;
-    height: 2vh;
-    font-size: 0.8vw;
-    font-weight:400;
+    width: calc(100% - 2.8vh);
+    height: 100%;
+    font-size: 1.45vh;
+    font-weight: 500;
     border-radius: 0.5vh;
-    box-shadow: 0 0 .2vh 0 rgba(0, 0, 0, 0.281);
-    text-align: center;
+    background: transparent;
+    text-align: left;
     outline: none;
     z-index: 100;
+    color: #f5fbff;
 }
 
 #contact-search::placeholder{
-    color: lightgrey;
+    color: rgba(221, 230, 239, 0.5);
 }
 
-.phone-contacts-header > i {
-    float: right;
+#phone-search-icon {
+    position: relative;
     line-height: 4vh;
-    font-size: 0.8vw;
-    padding-right: 2vh;
-    margin-left: 0.2vh;
+    font-size: 1.35vh;
+    padding-right: 0;
+    margin-left: 0;
     transition: .3s;
-    color: white;
+    color: rgba(240, 247, 255, 0.88);
     z-index: 150;
+    cursor: pointer;
 }
 
-.phone-contacts-header > i:hover {
-    color: dodgerblue;
+#phone-search-icon:hover {
+    color: #71d4ff;
+}
+
+#phone-plus-icon {
+    position: relative;
+    top: auto;
+    right: auto;
+}
+
+.phone-toolbar-action i,
+#phone-plus-icon i {
+    font-size: 1.4vh;
 }
 
 .phone-contact-list::-webkit-scrollbar {
@@ -341,89 +460,121 @@
 }
 
 .phone-contact-list::-webkit-scrollbar-thumb {
-    background-color: dodgerblue;
+    background-color: rgba(46, 145, 234, 0.6);
+    border-radius: 2px;
 }
 
 .phone-contact-list {
     position: absolute;
-    height: 85%;
-    top: 4.5vh;
-    width: 100%;
+    height: 84%;
+    top: 7vh;
+    width: 90%;
     margin: 0 auto;
     left: 0;
     right: 0;
     overflow-y: scroll;
     overflow-x: hidden;
+    contain: layout paint;
 }
 
 .phone-contact {
     position: relative;
     width: 100%;
     color: white;
-    height: 4.5vh;
-    background-color: rgba(23, 23, 23, 90%);
-    border-radius: 1vh;
-    box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+    min-height: 8.8vh;
+    margin-bottom: 1vh;
+    background: linear-gradient(150deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.05));
+    border: 0.1vh solid rgba(255, 255, 255, 0.13);
+    border-radius: 1.6vh;
+    box-shadow: 0 0.9vh 2vh rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+    transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    will-change: transform;
+}
+
+.phone-contact:hover {
+    transform: translateY(-0.14vh);
+    background: linear-gradient(150deg, rgba(111, 173, 232, 0.24), rgba(255, 255, 255, 0.06));
+    border-color: rgba(111, 173, 232, 0.34);
 }
 
 .phone-contact-firstletter {
     position: absolute;
-    height: 3.4vh;
-    width: 3.4vh;
-    margin: .5vh;
-    margin-left: .6vh;
+    height: 4.8vh;
+    width: 4.8vh;
+    margin: 1.5vh 0 0 1.2vh;
     text-align: center;
-    font-size: 1.5vw;
+    font-size: 1.8vh;
     font-weight: 700;
-    line-height: 3.5vh;
+    line-height: 4.8vh;
     border-radius: 50%;
     color: white;
+    box-shadow: inset 0 0 0 0.12vh rgba(255, 255, 255, 0.18);
 }
 
 .phone-contact-name {
     position: absolute;
-    left: 5vh;
-    line-height: 4.5vh;
-    font-size: 1vw;
+    left: 7.4vh;
+    top: 1.7vh;
+    max-width: 16vh;
+    line-height: 1.2;
+    font-size: 1.6vh;
+    font-weight: 700;
+}
+
+.phone-contact-subtitle {
+    position: absolute;
+    left: 7.4vh;
+    top: 4.2vh;
+    max-width: 16vh;
+    color: rgba(224, 234, 244, 0.78);
+    font-size: 1.25vh;
     font-weight: 500;
 }
 
 .phone-contact-actions {
     position: absolute;
-    top: 0.5vh;
-    right: 2vh;
-    font-size: 0.7vw;
+    top: 1.8vh;
+    right: 1.6vh;
+    font-size: 1.45vh;
     transition: .2s;
+    color: rgba(255, 255, 255, 0.66);
 }
 
 .phone-contact-actions:hover {
-    color: dodgerblue;
+    color: #71d4ff;
 }
 
 .phone-contact-action-buttons {
     display: none;
     position: absolute;
-    bottom: 1.2vh;
-    height: 5vh;
-    width: 95%;
+    bottom: 0.6vh;
+    height: 4.5vh;
+    width: calc(100% - 2vh);
     margin: 0 auto;
     left: 0;
     right: 0;
+    padding-top: 0.8vh;
+    border-top: 0.1vh solid rgba(255, 255, 255, 0.08);
+    align-items: center;
+    justify-content: center;
+    gap: 3.5vh;
 }
 
 .phone-contact-action-buttons > i {
-    position: relative;
-    float: left;
-    margin-left: 5vh;
-    left: -.2vh;
-    top: 1vh;
-    font-size: 1vw;
+    position: static;
+    float: none;
+    margin-left: 0;
+    left: 0;
+    top: 0;
+    font-size: 1.5vh;
     color: white;
     transition: .1s;
+    cursor: pointer;
 }
 
 .phone-contact-action-buttons > i:hover {
-    color: lightsteelblue;
+    color: #8fd9ff;
 }
 
 /* Recent Contacts */
@@ -433,15 +584,28 @@
     height: 100%;
     width: 100%;
     top: 0;
-    background: #14171A;
+    background: transparent;
 }
 
 .phone-recent-header {
-    padding-top: 5vh;
-    font-size:1.6vw;
-    font-weight: 600;
+    position: absolute;
+    top: 7.2vh;
+    left: 5%;
+    width: 90%;
     color: white;
-    text-align: center;
+}
+
+.phone-recent-header > span {
+    display: block;
+    font-size: 2vh;
+    font-weight: 700;
+}
+
+.phone-recent-header p {
+    margin: 0.5vh 0 0 0;
+    font-size: 1.25vh;
+    font-weight: 500;
+    color: rgba(232, 240, 248, 0.72);
 }
 
 .phone-recent-calls::-webkit-scrollbar {
@@ -450,70 +614,91 @@
 
 .phone-recent-calls {
     position: absolute;
-    width: 100%;
+    width: 90%;
     height: 65%;
     margin: 0 auto;
     left: 0;
     right: 0;
-    top: 20%;
+    top: 15vh;
     overflow-x: hidden;
     overflow-y: scroll;
+    contain: layout paint;
+    padding-bottom: 8.5vh;
 }
 .phone-recent-call {
     position: relative;
-    height: 6.25vh;
+    min-height: 8.8vh;
     width: 100%;
     left: 0;
     right: 0;
-    margin:0 auto;
-    background: rgba(23, 23, 23, 90%);
-    box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
-    border-radius: 0.15rem;
+    margin: 0 auto 1vh auto;
+    background: linear-gradient(150deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.05));
+    box-shadow: 0 0.9vh 2vh rgba(0, 0, 0, 0.18);
+    border: 0.1vh solid rgba(255, 255, 255, 0.13);
+    border-radius: 1.6vh;
+    transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 }
 
 .phone-recent-call:hover {
-    background-color: rgba(71, 78, 104, 0.2);
+    transform: translateY(-0.14vh);
+    background: linear-gradient(150deg, rgba(111, 173, 232, 0.24), rgba(255, 255, 255, 0.06));
+    border-color: rgba(111, 173, 232, 0.3);
 }
 
 .phone-recent-call-image {
     position: absolute;
-    width: 4vh;
-    height: 4vh;
-    top: 1.2vh;
-    left: 1vh;
+    width: 5.2vh;
+    height: 5.2vh;
+    top: 1.3vh;
+    left: 1.2vh;
     text-align: center;
-    line-height: 4.2vh;
-    font-size: 1.2vw;
+    line-height: 5.2vh;
+    font-size: 1.6vh;
     font-weight: 800;
     color: white;
     border-radius: 50%;
-    background: #404258;  /* fallback for old browsers */
+    background: linear-gradient(135deg, #276db8, #2a83d6);
 }
 
 .phone-recent-call-name {
     position: absolute;
-    top: 1.1vh;
-    left: 6vh;
+    top: 1.5vh;
+    left: 7.8vh;
     color: white;
-    font-size: 0.8vw;
-    font-weight: 600;
+    font-size: 1.55vh;
+    font-weight: 700;
 }
 
 .phone-recent-call-type {
     position: absolute;
-    bottom: 1.1vh;
-    left: 6vh;
-    font-size: 0.6vw;
-    color: rgba(54, 54, 54, 0.808);
+    bottom: 1.5vh;
+    left: 7.8vh;
+    font-size: 1.2vh;
+    color: rgba(218, 228, 238, 0.65);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6vh;
+}
+
+.phone-recent-call-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35vh 0.85vh;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(236, 244, 252, 0.92);
+    font-size: 1.05vh;
+    font-weight: 700;
+    letter-spacing: 0.01em;
 }
 
 .phone-recent-call-time {
     position: absolute;
-    bottom: 1.1vh;
-    right: 1.75vh;
-    font-size: 0.8vw;
+    bottom: 1.5vh;
+    right: 2vh;
+    font-size: 1.2vh;
     font-weight: 600;
-    color: white;
+    color: rgba(240, 247, 255, 0.82);
 }
 
 /* Suggested Contact */
@@ -523,34 +708,37 @@
     height: 100%;
     width: 100%;
     top: 0;
-    background: #14171A;;
+    background: transparent;
 }
 
 .phone-suggestedcontacts-header {
     position: absolute;
     width: 100%;
     height: 8vh;
-    top: 5vh;
+    top: 4.4vh;
     text-align: center;
-    font-size: 1.6vw;
-    font-weight: 500;
+    font-size: 2.0vh;
+    font-weight: 700;
     line-height: 5vh;
     color: white;
 }
 
 .phone-suggestedcontacts-header p {
-    font-size: 1vw;
-    font-weight:500;
-    margin-top: -2vh;
+    font-size: 1.3vh;
+    font-weight: 500;
+    margin-top: -1.8vh;
+    color: rgba(230, 239, 248, 0.72);
 }
 
 .suggested-contacts {
     position: absolute;
-    width: 100%;
-    height: 60%;
-    top: 23%;
+    width: 90%;
+    height: 58%;
+    top: 12.4vh;
+    left: 5%;
     overflow-x: hidden;
     overflow-y: scroll;
+    contain: layout paint;
 }
 
 .suggested-contacts::-webkit-scrollbar {
@@ -559,55 +747,122 @@
 
 .suggested-contact {
     position: relative;
-    height: 6vh;
+    min-height: 8.5vh;
     width: 100%;
-    background: rgba(23, 23, 23, 90%);
-    border-radius: 0.15rem;
-    box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
-    transition: .05s ease-in-out;
+    margin-bottom: 1vh;
+    background: linear-gradient(150deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.05));
+    border: 0.1vh solid rgba(255, 255, 255, 0.13);
+    border-radius: 1.6vh;
+    box-shadow: 0 0.9vh 2vh rgba(0, 0, 0, 0.18);
+    transition: .12s ease-in-out;
+    will-change: transform;
 }
 
 .suggested-contact:hover {
-    background-color: rgba(235, 225, 52, 0.1);
+    transform: translateY(-0.12vh);
+    background: linear-gradient(150deg, rgba(111, 173, 232, 0.24), rgba(255, 255, 255, 0.06));
 }
 
 .suggested-contact > i {
     position: absolute;
-    top: 1.5vh;
-    left: 0.7vw;
-    font-size: 1.6vw;
+    top: 2.5vh;
+    left: 1.5vh;
+    font-size: 1.6vh;
     font-weight: 700;
-    color: rgb(255, 164, 44);
+    color: #4a9cf1;
 }
 
 .suggested-name {
     position: absolute;
-    left: 3vw;
-    top: 1.5vh;
+    left: 4.1vh;
+    top: 1.7vh;
     color: white;
-    font-size: 1vw;
-    font-weight: 500;
+    font-size: 1.5vh;
+    font-weight: 700;
 }
 
 .suggested-number {
     color: white;
-    font-size: 1vw;
+    font-size: 1.35vh;
+    font-weight: 500;
+}
+
+.suggested-meta {
+    position: absolute;
+    left: 4.1vh;
+    top: 4.5vh;
+    color: rgba(235, 239, 227, 0.72);
+    font-size: 1.2vh;
     font-weight: 500;
 }
 
 /* Keypad Contact */
-#phone-keypad-input {
-    position: absolute;
-    margin: 0 auto;
-    left: 0;
-    right: 0;
-    top: 11vh;
-    width: 60%;
+.phone-keypad-display {
+    position: relative;
+    width: 100%;
+    padding: 1vh 1vh 0.85vh 1vh;
+    border-radius: 2vh;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.04));
+    border: 0.1vh solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 1vh 2.2vh rgba(0, 0, 0, 0.22);
+    box-sizing: border-box;
+}
+
+.phone-keypad-display-label {
+    color: rgba(219, 229, 239, 0.62);
+    font-size: 0.92vh;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
     text-align: center;
-    font-size: 1.6vw;
-    font-weight: 600;
+}
+
+#phone-keypad-input {
+    position: relative;
+    width: 100%;
+    margin-top: 0.45vh;
+    text-align: center;
+    font-size: 2.15vh;
+    font-weight: 700;
     overflow: hidden;
     color: white;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+    min-height: 2.45vh;
+}
+
+.phone-keypad-preview {
+    position: relative;
+    margin-top: 0.6vh;
+    width: 100%;
+    padding: 0.7vh 0.75vh;
+    border-radius: 1.4vh;
+    background: rgba(5, 12, 20, 0.26);
+    border: 0.1vh solid rgba(255, 255, 255, 0.05);
+    text-align: center;
+}
+
+.phone-keypad-preview-name {
+    color: white;
+    font-size: 1.08vh;
+    font-weight: 700;
+}
+
+.phone-keypad-preview-meta {
+    margin-top: 0.15vh;
+    color: rgba(220, 230, 240, 0.72);
+    font-size: 0.88vh;
+}
+
+#phone-keypad-input:empty::before {
+    content: 'Enter number';
+    color: rgba(214, 225, 237, 0.36);
+    letter-spacing: 0.04em;
+}
+
+#phone-keypad-input.phone-keypad-input-clearing {
+    color: rgba(255, 205, 129, 0.92);
+    letter-spacing: 0.02em;
 }
 
 .phone-keypad {
@@ -616,59 +871,150 @@
     height: 100%;
     width: 100%;
     top: 0;
-    background: #14171A;
+    left: 0;
+    background:
+        radial-gradient(circle at 16% 14%, rgba(73, 149, 214, 0.17), transparent 28%),
+        radial-gradient(circle at 82% 78%, rgba(61, 208, 146, 0.12), transparent 25%),
+        linear-gradient(180deg, rgba(14, 20, 30, 0.86), rgba(10, 16, 24, 0.72));
+    overflow: hidden;
+    padding: 6.8vh 5% 11.1vh 5%;
+    box-sizing: border-box;
+}
+
+.phone-keypad-toolbar {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.phone-keypad-title {
+    color: white;
+    font-size: 1.9vh;
+    font-weight: 700;
+}
+
+.phone-keypad-subtitle {
+    margin-top: 0.4vh;
+    color: rgba(214, 225, 237, 0.7);
+    font-size: 0.98vh;
+    max-width: 12.8vh;
+    line-height: 1.35;
+}
+
+.phone-keypad-toolbar-actions {
+    display: flex;
+    gap: 0.6vh;
+}
+
+.phone-keypad-action {
+    appearance: none;
+    height: 3.5vh;
+    width: 3.5vh;
+    border: 0;
+    border-radius: 50%;
+    color: #edf7ff;
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: inset 0 0 0 0.1vh rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.phone-keypad-action:hover {
+    transform: translateY(-0.08vh);
+    background: rgba(255, 255, 255, 0.16);
+    box-shadow: inset 0 0 0 0.1vh rgba(255, 255, 255, 0.14), 0 0.5vh 1.2vh rgba(0, 0, 0, 0.14);
 }
 
 .phone-keypad-keys {
-    position: absolute;
-    left: 2.1vw;
-    right:0;
-    margin:0 auto;
-    width: 90%;
-    top: 30%;
+    position: relative;
+    width: 100%;
+    margin-top: 1.2vh;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.85vh 0.8vh;
+    justify-items: center;
     color: white;
+    box-sizing: border-box;
 }
 
 .phone-keypad-key-call {
-    position: absolute;
-    margin: 0 auto;
-    bottom: 20%;
-    left: 0;
-    right: 0;
-    font-size: 1.2vw;
-    height: 5vh;
-    width: 5vh;
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.28vh;
+    margin: 1.1vh auto 0 auto;
+    font-size: 1.9vh;
+    height: 5.35vh;
+    width: 5.35vh;
     text-align: center;
-    line-height: 5.3vh;
-    background-color: #41c922;
+    background: linear-gradient(135deg, #25b45e, #4adc87);
     color: white;
     border-radius: 50%;
-    transition: .1s;
+    border: 0;
+    transition: transform 0.12s ease, filter 0.12s ease;
+    box-shadow: 0 1.2vh 2.8vh rgba(31, 140, 74, 0.42);
+    z-index: 2;
+}
+
+.phone-keypad-key-call span {
+    font-size: 0.76vh;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
 }
 
 .phone-keypad-key-call:hover {
-    filter: drop-shadow(0px 0px 20px green);
+    transform: translateY(-0.12vh) scale(1.02);
+    filter: drop-shadow(0px 0px 16px rgba(33, 201, 104, 0.62));
 }
 
 .phone-keypad-key {
     position: relative;
-    float: left;
-    height: 5vh;
-    width: 5vh;
-    margin: 0vh 0.5vw 0.9vh 0.5vw;
-    text-align: center;
-    line-height: 5vh;
+    height: 4.8vh;
+    width: 4.8vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     font-weight: 600;
-    font-size: 1.6vw;
     color: white;
-    background-color: darkgrey;
-    color: white;
-    border-radius: 50%;
-    transition: .1s;
+    background: linear-gradient(150deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06));
+    border-radius: 1.9vh;
+    transition: transform 0.12s ease, filter 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+    box-shadow: inset 0 0 0 0.1vh rgba(255, 255, 255, 0.09), 0 0.5vh 1.3vh rgba(0, 0, 0, 0.22);
+    border: 0.1vh solid rgba(255, 255, 255, 0.05);
 }
 
 .phone-keypad-key:hover {
-    filter: drop-shadow(0px 0px 20px dimgrey);
+    transform: translateY(-0.08vh);
+    background: linear-gradient(150deg, rgba(111, 173, 232, 0.24), rgba(255, 255, 255, 0.08));
+    border-color: rgba(111, 173, 232, 0.24);
+    filter: drop-shadow(0px 0px 16px rgba(122, 151, 179, 0.36));
+}
+
+.phone-keypad-key-number {
+    font-size: 1.72vh;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.phone-keypad-key-letters {
+    margin-top: 0.16vh;
+    min-height: 0.78vh;
+    color: rgba(219, 229, 239, 0.72);
+    font-size: 0.58vh;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.phone-app-footer {
+    backdrop-filter: blur(1vh);
 }
 
 /* Add Contact */
@@ -678,16 +1024,17 @@
     height: 100%;
     width: 100%;
     top: -100%;
-    background: #14171A;
+    background: linear-gradient(180deg, rgba(11, 15, 21, 0.99), rgba(12, 18, 25, 0.99));
     z-index: 102;
+    backdrop-filter: blur(1vh);
 }
 
 .phone-add-contact-header {
     color: white;
     padding-top: 6vh;
-    padding-left: 2vh;
-    font-size: 1.3vw;
-    font-weight:500;
+    padding-left: 2.5vh;
+    font-size: 2.0vh;
+    font-weight: 700;
 }
 
 .phone-add-contact-name {
@@ -695,33 +1042,33 @@
     color: white;
     top: 12vh;
     left: 6vh;
-    background: none;
-    border: none;
+    background: rgba(255, 255, 255, 0.06);
+    border: 0.15vh solid rgba(255, 255, 255, 0.12);
     outline: none;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.555);
-    height: 3.5vh;
+    height: 4vh;
     width: 20vh;
     text-indent: .4vh;
-    border-radius: .5vh .5vh 0 0;
+    border-radius: 1vh;
     transition: .1s;
-    font-size: 0.8vw;;
+    font-size: 1.5vh;
 }
 
 #phone-add-contact-name-icon {
     position: absolute;
-    top: 13.1vh;
-    left: 2.1vh;
-    font-size: 1.3vw;;
+    top: 13.2vh;
+    left: 2.2vh;
+    font-size: 1.6vh;
     font-weight: 500;
     color: white;
 }
 
 .phone-add-contact-name:focus {
-    border-bottom: 2px solid #30336b;
+    border-color: rgba(46, 145, 234, 0.7);
+    background: rgba(46, 145, 234, 0.08);
 }
 
 .phone-add-contact-name:valid {
-    border-bottom: 2px solid #6ab04c;
+    border-color: rgba(106, 176, 76, 0.6);
 }
 
 .phone-add-contact-number {
@@ -729,16 +1076,15 @@
     color: white;
     top: 19vh;
     left: 6vh;
-    background: none;
-    border: none;
+    background: rgba(255, 255, 255, 0.06);
+    border: 0.15vh solid rgba(255, 255, 255, 0.12);
     outline: none;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.555);
-    height: 3.5vh;
+    height: 4vh;
     width: 20vh;
     text-indent: .4vh;
-    border-radius: .5vh .5vh 0 0;
+    border-radius: 1vh;
     transition: .1s;
-    font-size: 0.8vw;
+    font-size: 1.5vh;
 }
 
 .phone-add-contact-number::-webkit-inner-spin-button {
@@ -746,11 +1092,12 @@
 }
 
 .phone-add-contact-number:focus {
-    border-bottom: 2px solid #30336b;
+    border-color: rgba(46, 145, 234, 0.7);
+    background: rgba(46, 145, 234, 0.08);
 }
 
 .phone-add-contact-number:valid {
-    border-bottom: 2px solid #6ab04c;
+    border-color: rgba(106, 176, 76, 0.6);
 }
 
 .phone-add-contact-iban {
@@ -758,16 +1105,16 @@
     color: white;
     top: 26vh;
     left: 6vh;
-    background: none;
-    border: none;
+    background: rgba(255, 255, 255, 0.06);
+    border: 0.15vh solid rgba(255, 255, 255, 0.12);
     outline: none;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.555);
-    height: 3.5vh;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    height: 4vh;
     width: 20vh;
     text-indent: .4vh;
-    border-radius: .5vh .5vh 0 0;
+    border-radius: 1vh;
     transition: .1s;
-    font-size: 0.8vw;
+    font-size: 1.5vh;
 }
 
 .phone-add-contact-iban::-webkit-inner-spin-button {
@@ -775,27 +1122,28 @@
 }
 
 .phone-add-contact-iban:focus {
-    border-bottom: 2px solid #30336b;
+    border-color: rgba(46, 145, 234, 0.7);
+    background: rgba(46, 145, 234, 0.08);
 }
 
 .phone-add-contact-iban:valid {
-    border-bottom: 2px solid #6ab04c;
+    border-color: rgba(106, 176, 76, 0.6);
 }
 
 #phone-add-contact-number-icon {
     position: absolute;
-    top: 20.1vh;
-    left: 2.1vh;
-    font-size: 1vw;
+    top: 20.2vh;
+    left: 2.2vh;
+    font-size: 1.5vh;
     font-weight: 600;
     color: white;
 }
 
 #phone-add-contact-iban-icon {
     position: absolute;
-    top: 27.1vh;
-    left: 2.1vh;
-    font-size: 0.9vw;
+    top: 27.2vh;
+    left: 2.2vh;
+    font-size: 1.4vh;
     font-weight: 600;
     color: white;
 }
@@ -811,16 +1159,17 @@
     color: white;
     float: left;
     width: 50%;
-    height: 3vh;
+    height: 4vh;
     text-align: center;
+    line-height: 4vh;
     transition: .1s;
-    font-size: 0.8vw;
-    font-weight: 500;
+    font-size: 1.4vh;
+    font-weight: 600;
 }
 
 .phone-add-contact-button:hover {
     color: #eb4d4b;
-    font-size: 0.9vw;
+    font-size: 1.45vh;
     background: rgba(204, 10, 30, 0.2);
     border-radius: 5px;
 }
@@ -833,17 +1182,18 @@
     height: 100%;
     width: 100%;
     top: -100%;
-    background: #14171A;
+    background: linear-gradient(180deg, rgba(11, 15, 21, 0.99), rgba(12, 18, 25, 0.99));
     z-index: 102;
+    backdrop-filter: blur(1vh);
 }
 
 
 .phone-edit-contact-header {
     color: white;
     padding-top: 6vh;
-    padding-left: 2vh;
-    font-size: 1.3vw;
-    font-weight:500;
+    padding-left: 2.5vh;
+    font-size: 2.0vh;
+    font-weight: 700;
 }
 
 .phone-edit-contact-name {
@@ -851,34 +1201,34 @@
     color: white;
     top: 12vh;
     left: 6vh;
-    background: none;
-    border: none;
+    background: rgba(255, 255, 255, 0.06);
+    border: 0.15vh solid rgba(255, 255, 255, 0.12);
     outline: none;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.555);
-    height: 3.5vh;
+    height: 4vh;
     width: 20vh;
     text-indent: .4vh;
-    border-radius: .5vh .5vh 0 0;
+    border-radius: 1vh;
     transition: .1s;
-    font-size: 0.9vw;
+    font-size: 1.5vh;
     font-weight: 500;
 }
 
 #phone-edit-contact-name-icon {
     position: absolute;
-    top: 13.1vh;
-    left: 2.1vh;
-    font-size: 1.3vw;
+    top: 13.2vh;
+    left: 2.2vh;
+    font-size: 1.6vh;
     font-weight: 500;
     color: white;
 }
 
 .phone-edit-contact-name:focus {
-    border-bottom: 2px solid #30336b;
+    border-color: rgba(46, 145, 234, 0.7);
+    background: rgba(46, 145, 234, 0.08);
 }
 
 .phone-edit-contact-name:valid {
-    border-bottom: 2px solid #6ab04c;
+    border-color: rgba(106, 176, 76, 0.6);
 }
 
 .phone-edit-contact-number {
@@ -886,16 +1236,15 @@
     top: 19vh;
     color: white;
     left: 6vh;
-    background: none;
-    border: none;
+    background: rgba(255, 255, 255, 0.06);
+    border: 0.15vh solid rgba(255, 255, 255, 0.12);
     outline: none;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.555);
-    height: 3.5vh;
+    height: 4vh;
     width: 20vh;
     text-indent: .4vh;
-    border-radius: .5vh .5vh 0 0;
+    border-radius: 1vh;
     transition: .1s;
-    font-size: 0.9vw;
+    font-size: 1.5vh;
     font-weight: 500;
 }
 
@@ -904,11 +1253,12 @@
 }
 
 .phone-edit-contact-number:focus {
-    border-bottom: 2px solid #30336b;
+    border-color: rgba(46, 145, 234, 0.7);
+    background: rgba(46, 145, 234, 0.08);
 }
 
 .phone-edit-contact-number:valid {
-    border-bottom: 2px solid #6ab04c;
+    border-color: rgba(106, 176, 76, 0.6);
 }
 
 .phone-edit-contact-iban {
@@ -916,16 +1266,15 @@
     color: white;
     top: 26vh;
     left: 6vh;
-    background: none;
-    border: none;
+    background: rgba(255, 255, 255, 0.06);
+    border: 0.15vh solid rgba(255, 255, 255, 0.12);
     outline: none;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.555);
-    height: 3.5vh;
+    height: 4vh;
     width: 20vh;
     text-indent: .4vh;
-    border-radius: .5vh .5vh 0 0;
+    border-radius: 1vh;
     transition: .1s;
-    font-size: 0.9vw;
+    font-size: 1.5vh;
     font-weight: 500;
 }
 
@@ -934,27 +1283,28 @@
 }
 
 .phone-edit-contact-iban:focus {
-    border-bottom: 2px solid #30336b;
+    border-color: rgba(46, 145, 234, 0.7);
+    background: rgba(46, 145, 234, 0.08);
 }
 
 .phone-edit-contact-iban:valid {
-    border-bottom: 2px solid #6ab04c;
+    border-color: rgba(106, 176, 76, 0.6);
 }
 
 #phone-edit-contact-number-icon {
     position: absolute;
-    top: 20.1vh;
-    left: 2.1vh;
-    font-size: 1vw;
+    top: 20.2vh;
+    left: 2.2vh;
+    font-size: 1.5vh;
     font-weight: 600;
     color: white;
 }
 
 #phone-edit-contact-iban-icon {
     position: absolute;
-    top: 27.1vh;
-    left: 2.1vh;
-    font-size: 0.9vw;
+    top: 27.2vh;
+    left: 2.2vh;
+    font-size: 1.4vh;
     font-weight: 600;
     color: white;
 }
@@ -970,16 +1320,17 @@
     color: white;
     float: left;
     width: 33.33%;
-    height: 3vh;
+    height: 4vh;
     text-align: center;
+    line-height: 4vh;
     transition: .1s;
-    font-size: 0.8vw;
-    font-weight: 500;
+    font-size: 1.4vh;
+    font-weight: 600;
 }
 
 .phone-edit-contact-button:hover {
     color: #eb4d4b;
-    font-size: 0.9vw;
+    font-size: 1.45vh;
     background: rgba(204, 10, 30, 0.2);
     border-radius: 5px;
 }
@@ -987,11 +1338,20 @@
 /* App Footer */
 .phone-app-footer {
     position: absolute;
-    height: 4vh;
-    width: 100%;
-    bottom: 4%;
+    height: 5.2vh;
+    width: 90%;
+    left: 5%;
+    bottom: 3.5%;
     z-index: 101;
-    font-size: 0.8vw;
+    font-size: 1.3vh;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6vh;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 0.1vh solid rgba(255, 255, 255, 0.11);
+    box-shadow: 0 0.8vh 2vh rgba(0, 0, 0, 0.2);
 }
 
 .phone-app-footer-button {
@@ -1000,12 +1360,174 @@
     width: 25%;
     text-align: center;
     float: left;
-    color: white;
+    color: rgba(232, 240, 248, 0.72);
     transition: 0.2s;
+    border-radius: 999px;
+    line-height: 3vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.phone-app-footer-button i {
+    font-size: 1.55vh;
 }
 
 .phone-selected-footer-tab {
-    color: dodgerblue;
+    color: #eef9ff;
+    background: linear-gradient(135deg, #226fce, #2d91e9);
+}
+
+.phone-contact-empty,
+.phone-nearby-share-empty {
+    width: 100%;
+    margin-top: 2vh;
+    padding: 2.6vh 1.8vh;
+    border-radius: 1.6vh;
+    text-align: center;
+    color: rgba(222, 232, 242, 0.75);
+    background: rgba(255, 255, 255, 0.045);
+    border: 0.1vh dashed rgba(255, 255, 255, 0.1);
+    font-size: 1.35vh;
+}
+
+.phone-nearby-share-modal {
+    display: none;
+    position: absolute;
+    inset: 0;
+    z-index: 120;
+    background: rgba(5, 10, 16, 0.72);
+    backdrop-filter: blur(1.2vh);
+}
+
+.phone-nearby-share-sheet {
+    position: absolute;
+    left: 5%;
+    bottom: 3.5%;
+    width: 90%;
+    max-height: 64%;
+    padding: 1.8vh 1.4vh 1.4vh 1.4vh;
+    border-radius: 2vh;
+    background: linear-gradient(180deg, rgba(18, 27, 37, 0.98), rgba(11, 17, 24, 0.98));
+    border: 0.1vh solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 1.6vh 4vh rgba(0, 0, 0, 0.35);
+}
+
+.phone-nearby-share-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1vh;
+}
+
+.phone-nearby-share-header p {
+    margin: 0;
+    color: white;
+    font-size: 1.8vh;
+    font-weight: 700;
+}
+
+.phone-nearby-share-subtitle {
+    display: block;
+    margin-top: 0.5vh;
+    color: rgba(220, 230, 240, 0.72);
+    font-size: 1.25vh;
+}
+
+.phone-nearby-share-close {
+    appearance: none;
+    height: 3vh;
+    width: 3vh;
+    border: 0;
+    border-radius: 50%;
+    color: white;
+    background: rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+}
+
+.phone-nearby-share-searchbox {
+    display: flex;
+    align-items: center;
+    gap: 0.8vh;
+    margin-top: 1.4vh;
+    padding: 1vh 1.2vh;
+    border-radius: 1.4vh;
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(230, 239, 248, 0.76);
+}
+
+.phone-nearby-share-searchbox input {
+    flex: 1;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: white;
+    font-size: 1.35vh;
+}
+
+.phone-nearby-share-searchbox input::placeholder {
+    color: rgba(219, 228, 238, 0.44);
+}
+
+.phone-nearby-share-status {
+    margin-top: 1.2vh;
+    color: rgba(220, 230, 240, 0.75);
+    font-size: 1.3vh;
+}
+
+.phone-nearby-share-list {
+    margin-top: 1.2vh;
+    max-height: 26vh;
+    overflow-y: auto;
+}
+
+.phone-nearby-share-player {
+    appearance: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1vh;
+    width: 100%;
+    margin-bottom: 0.8vh;
+    padding: 1.1vh 1.2vh;
+    border: 0;
+    border-radius: 1.4vh;
+    background: rgba(255, 255, 255, 0.04);
+    color: white;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.phone-nearby-share-player:hover {
+    transform: translateY(-0.06vh);
+    background: rgba(73, 147, 214, 0.14);
+}
+
+.phone-nearby-share-player-main {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.phone-nearby-share-player-name {
+    font-size: 1.45vh;
+    font-weight: 700;
+}
+
+.phone-nearby-share-player-meta {
+    margin-top: 0.4vh;
+    color: rgba(220, 230, 240, 0.7);
+    font-size: 1.2vh;
+}
+
+.phone-nearby-share-player-send {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6vh;
+    color: #8fd9ff;
+    font-size: 1.3vh;
+    font-weight: 700;
 }
 
 /* Check Box Input */
@@ -1014,7 +1536,7 @@
     position: relative;
     bottom: 2.5vh;
     left: 0.5vh;
-    font-size: 1.0vh;
+    font-size: 1.4vh;
     color: white;
 }
 
@@ -1212,10 +1734,6 @@
     /* Fallback hover for non-footer buttons */
     color: #ff5252;
     transform: scale(1.1);
-}
-
-.phone-menu-accept{
-    /* This class is now mainly for identification */
 }
 
 .phone-menu-footer .phone-menu-cancel:hover {

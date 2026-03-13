@@ -1020,38 +1020,52 @@ QB.Screen.Notification = function(title, content, icon, timeout, color) {
     });
 }
 
-$(document).on('keydown', function() {
-    switch(event.keyCode) {
-        case 27: // ESCAPE
-        if (up){
-            $('#popup').fadeOut('slow');
-            $('.popupclass').fadeOut('slow');
-            $('.popupclass').html("");
-            up = false
-        } else {
-            QB.Phone.Functions.Close();
-            break;
-        }
-    }
+// ─── Image viewer helpers ───────────────────────────────────────────────────
+
+/** Open the full-screen image viewer with the given image URL. */
+QB.Screen.popUp = function(imageUrl) {
+    if (up) return; // already open
+
+    $('.image-viewer-frame').html(
+        '<button id="image-viewer-close" aria-label="Close image"><i class="fa-solid fa-xmark"></i></button>' +
+        '<img class="image-viewer-img" src="' + imageUrl + '" alt="Full-size image">'
+    );
+    $('#image-viewer').fadeIn(250);
+    up = true;
+};
+
+/** Close the full-screen image viewer. */
+QB.Screen.popDown = function() {
+    if (!up) return; // already closed
+
+    $('#image-viewer').fadeOut(200, function() {
+        $('.image-viewer-frame').html(
+            '<button id="image-viewer-close" aria-label="Close image"><i class="fa-solid fa-xmark"></i></button>'
+        );
+    });
+    up = false;
+};
+
+// Close viewer when clicking the × button
+$(document).on('click', '#image-viewer-close', function(e) {
+    e.stopPropagation(); // don't also fire the backdrop handler
+    QB.Screen.popDown();
 });
 
-QB.Screen.popUp = function(source){
-    if(!up){
-        $('#popup').fadeIn('slow');
-        $('.popupclass').fadeIn('slow');
-        $('<img class="popupclass2" src='+source+'>').appendTo('.popupclass')
-        up = true
-    }
-}
+// Close viewer when clicking the dark backdrop (outside the image card)
+$(document).on('click', '#image-viewer', function() {
+    QB.Screen.popDown();
+});
 
-QB.Screen.popDown = function(){
-    if(up){
-        $('#popup').fadeOut('slow');
-        $('.popupclass').fadeOut('slow');
-        $('.popupclass').html("");
-        up = false
+// Escape key: close viewer first; if viewer is not open, close the phone
+$(document).on('keydown', function(e) {
+    if (e.keyCode !== 27) return;
+    if (up) {
+        QB.Screen.popDown();
+    } else {
+        QB.Phone.Functions.Close();
     }
-}
+});
 
 $(document).ready(function(){
     window.addEventListener('message', function(event) {
@@ -1090,7 +1104,9 @@ $(document).ready(function(){
                     if (OpenedChatData.number !== null && OpenedChatData.number == event.data.chatNumber) {
                         QB.Phone.Functions.SetupChatMessages(event.data.chatData);
                     } else {
-                        QB.Phone.Functions.LoadWhatsappChats(event.data.Chats);
+                        $.post(`https://${GetParentResourceName()}/GetWhatsappChats`, JSON.stringify({}), function(chats){
+                            QB.Phone.Functions.LoadWhatsappChats(chats);
+                        });
                     }
                 }
                 break;
@@ -1128,9 +1144,9 @@ $(document).ready(function(){
                 if (!QB.Phone.Data.IsOpen) {
                     QB.Phone.Animations.BottomSlideUp('.container', 250, -50);
                 }
-                $(".phone-call-ongoing-time").html(timeString);
-                $(".phone-currentcall-title").html(event.data.Name);
-                $(".phone-currentcall-contact").html(timeString);
+                $(".phone-call-ongoing-time").text(timeString);
+                $(".phone-currentcall-title").text(event.data.Name || 'In call');
+                $(".phone-currentcall-contact").text(timeString);
                 break;
             case "CancelOngoingCall":
                 QB.Phone.Animations.TopSlideUp('.phone-application-container', 250, -50);

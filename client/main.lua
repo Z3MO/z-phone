@@ -351,6 +351,38 @@ local function CallContact(CallData, AnonymousCall)
     end
 end
 
+local function sanitizeText(value, maxLength)
+    local sanitized = tostring(value or ''):gsub('[^%w%s%-%._\']', ''):gsub('%s+', ' '):gsub('^%s+', ''):gsub('%s+$', '')
+    if maxLength and #sanitized > maxLength then
+        sanitized = sanitized:sub(1, maxLength)
+    end
+    return sanitized
+end
+
+local function sanitizePhoneNumber(value)
+    local sanitized = tostring(value or ''):gsub('%D', '')
+    return sanitized:sub(1, 15)
+end
+
+local function sanitizeIban(value)
+    local sanitized = tostring(value or ''):gsub('[^%w%-]', '')
+    return sanitized:sub(1, 32)
+end
+
+local function isDuplicateContact(name, number, ignoreNumber)
+    for _, contact in pairs(PhoneData.Contacts) do
+        if tostring(contact.number) == tostring(number) and tostring(ignoreNumber) ~= tostring(number) then
+            return true
+        end
+
+        if tostring(contact.name) == tostring(name) and tostring(contact.number) == tostring(number) then
+            return true
+        end
+    end
+
+    return false
+end
+
 local function AnswerCall()
     if (PhoneData.CallData.CallType == "incoming" or PhoneData.CallData.CallType == "outgoing") and PhoneData.CallData.InCall and not PhoneData.CallData.AnsweredCall then
         PhoneData.CallData.CallType = "ongoing"
@@ -437,14 +469,22 @@ end) RegisterKeyMapping('+decline', 'Decline Phone Call', 'keyboard', 'J')
 
 -- NUI Callbacks
 
-RegisterNUICallback('DissalowMoving', function()
-    if not Config.AllowWalking then return end
+RegisterNUICallback('DissalowMoving', function(_, cb)
+    if not Config.AllowWalking then
+        cb('ok')
+        return
+    end
     SetNuiFocusKeepInput(false)
+    cb('ok')
 end)
 
-RegisterNUICallback('AllowMoving', function()
-    if not Config.AllowWalking then return end
+RegisterNUICallback('AllowMoving', function(_, cb)
+    if not Config.AllowWalking then
+        cb('ok')
+        return
+    end
     SetNuiFocusKeepInput(true)
+    cb('ok')
 end)
 
 
@@ -511,20 +551,58 @@ RegisterNUICallback('Close', function()
 end)
 
 RegisterNUICallback('AddNewContact', function(data, cb)
+    local contactName = sanitizeText(data.ContactName, 48)
+    local contactNumber = sanitizePhoneNumber(data.ContactNumber)
+    local contactIban = sanitizeIban(data.ContactIban)
+    local playerPhone = sanitizePhoneNumber(PhoneData.PlayerData and PhoneData.PlayerData.charinfo and PhoneData.PlayerData.charinfo.phone)
+
+    if contactName == '' or #contactNumber < 3 then
+        TriggerEvent('qb-phone:client:CustomNotification', 'Phone', 'Enter a valid contact name and number.', 'fas fa-address-book', '#e84118', 2500)
+        cb(PhoneData.Contacts)
+        return
+    end
+
+    if contactNumber == playerPhone then
+        TriggerEvent('qb-phone:client:CustomNotification', 'Phone', "You can't save your own number.", 'fas fa-address-book', '#e84118', 2500)
+        cb(PhoneData.Contacts)
+        return
+    end
+
+    if isDuplicateContact(contactName, contactNumber) then
+        TriggerEvent('qb-phone:client:CustomNotification', 'Phone', 'That contact already exists.', 'fas fa-address-book', '#e84118', 2500)
+        cb(PhoneData.Contacts)
+        return
+    end
+
     PhoneData.Contacts[#PhoneData.Contacts+1] = {
-        name = data.ContactName,
-        number = data.ContactNumber,
-        iban = data.ContactIban,
+        name = contactName,
+        number = contactNumber,
+        iban = contactIban,
     }
     Wait(100)
     cb(PhoneData.Contacts)
-    if PhoneData.Chats[data.ContactNumber] and next(PhoneData.Chats[data.ContactNumber]) then
-        PhoneData.Chats[data.ContactNumber].name = data.ContactName
+    if PhoneData.Chats[contactNumber] and next(PhoneData.Chats[contactNumber]) then
+        PhoneData.Chats[contactNumber].name = contactName
     end
-    TriggerServerEvent('qb-phone:server:AddNewContact', data.ContactName, data.ContactNumber, data.ContactIban)
+    TriggerServerEvent('qb-phone:server:AddNewContact', contactName, contactNumber, contactIban)
 end)
 
 RegisterNetEvent('qb-phone:client:AddNewSuggestion', function(SuggestionData)
+    local incomingNumber = sanitizePhoneNumber(SuggestionData.number)
+    if incomingNumber == '' then return end
+
+    for _, suggestion in pairs(PhoneData.SuggestedContacts) do
+        if sanitizePhoneNumber(suggestion.number) == incomingNumber then
+            return
+        end
+    end
+
+    for _, contact in pairs(PhoneData.Contacts) do
+        if sanitizePhoneNumber(contact.number) == incomingNumber then
+            return
+        end
+    end
+
     PhoneData.SuggestedContacts[#PhoneData.SuggestedContacts+1] = SuggestionData
     SendNUIMessage({
         action = "PhoneNotification",
@@ -540,15 +618,34 @@ RegisterNetEvent('qb-phone:client:AddNewSuggestion', function(SuggestionData)
 end)
 
 RegisterNUICallback('EditContact', function(data, cb)
-    local NewName = data.CurrentContactName
-    local NewNumber = data.CurrentContactNumber
-    local NewIban = data.CurrentContactIban
-    local OldName = data.OldContactName
-    local OldNumber = data.OldContactNumber
-    local OldIban = data.OldContactIban
+    local NewName = sanitizeText(data.CurrentContactName, 48)
+    local NewNumber = sanitizePhoneNumber(data.CurrentContactNumber)
+    local NewIban = sanitizeIban(data.CurrentContactIban)
+    local OldName = sanitizeText(data.OldContactName, 48)
+    local OldNumber = sanitizePhoneNumber(data.OldContactNumber)
+    local OldIban = sanitizeIban(data.OldContactIban)
+    local playerPhone = sanitizePhoneNumber(PhoneData.PlayerData and PhoneData.PlayerData.charinfo and PhoneData.PlayerData.charinfo.phone)
+
+    if NewName == '' or #NewNumber < 3 then
+        TriggerEvent('qb-phone:client:CustomNotification', 'Phone', 'Enter a valid contact name and number.', 'fas fa-user-pen', '#e84118', 2500)
+        cb(PhoneData.Contacts)
+        return
+    end
+
+    if NewNumber == playerPhone then
+        TriggerEvent('qb-phone:client:CustomNotification', 'Phone', "You can't save your own number.", 'fas fa-user-pen', '#e84118', 2500)
+        cb(PhoneData.Contacts)
+        return
+    end
+
+    if isDuplicateContact(NewName, NewNumber, OldNumber) then
+        TriggerEvent('qb-phone:client:CustomNotification', 'Phone', 'Another contact already uses that number.', 'fas fa-user-pen', '#e84118', 2500)
+        cb(PhoneData.Contacts)
+        return
+    end
 
     for _, v in pairs(PhoneData.Contacts) do
-        if v.name == OldName and v.number == OldNumber and v.iban == NewIban then
+        if sanitizeText(v.name, 48) == OldName and sanitizePhoneNumber(v.number) == OldNumber and sanitizeIban(v.iban) == OldIban then
             v.name = NewName
             v.number = NewNumber
             v.iban = NewIban
@@ -588,11 +685,11 @@ RegisterNUICallback('RemoveSuggestion', function(data, cb)
 end)
 
 RegisterNUICallback('DeleteContact', function(data, cb)
-    local Name = data.CurrentContactName
-    local Number = data.CurrentContactNumber
+    local Name = sanitizeText(data.CurrentContactName, 48)
+    local Number = sanitizePhoneNumber(data.CurrentContactNumber)
 
     for k, v in pairs(PhoneData.Contacts) do
-        if v.name == Name and v.number == Number then
+        if sanitizeText(v.name, 48) == Name and sanitizePhoneNumber(v.number) == Number then
             table.remove(PhoneData.Contacts, k)
 
             TriggerEvent('qb-phone:client:CustomNotification',
@@ -627,6 +724,19 @@ RegisterNUICallback('ClearGeneralAlerts', function(data, cb)
 end)
 
 RegisterNUICallback('CallContact', function(data, cb)
+    local safeNumber = sanitizePhoneNumber(data.ContactData and data.ContactData.number)
+    local safeName = sanitizeText((data.ContactData and data.ContactData.name) or safeNumber, 48)
+    if safeNumber == '' then
+        cb({
+            CanCall = false,
+            IsOnline = false,
+            InCall = PhoneData.CallData.InCall,
+        })
+        return
+    end
+
+    data.ContactData.number = safeNumber
+    data.ContactData.name = safeName
     local hasVPN = QBCore.Functions.HasItem(Config.VPNItem)
     QBCore.Functions.TriggerCallback('qb-phone:server:GetCallState', function(CanCall, IsOnline)
         local status = {
@@ -639,6 +749,27 @@ RegisterNUICallback('CallContact', function(data, cb)
             CallContact(data.ContactData, hasVPN)
         end
     end, data.ContactData)
+end)
+
+RegisterNUICallback('GetNearbyPhonePlayers', function(_, cb)
+    QBCore.Functions.TriggerCallback('qb-phone:server:GetNearbyPhonePlayers', function(players)
+        cb(players or {})
+    end)
+end)
+
+RegisterNUICallback('SharePhoneContact', function(data, cb)
+    local targetId = tonumber(data.targetId)
+    if not targetId then
+        cb({ success = false, message = 'Invalid player ID.' })
+        return
+    end
+
+    QBCore.Functions.TriggerCallback('qb-phone:server:SharePhoneContact', function(success, message)
+        cb({
+            success = success == true,
+            message = message or (success and 'Number shared.' or 'Unable to share number.')
+        })
+    end, targetId)
 end)
 
 RegisterNUICallback("TakePhoto", function(_, cb)
@@ -959,7 +1090,7 @@ end)
 
 RegisterNetEvent('qb-phone:client:GiveContactDetails', function()
     local player, distance = QBCore.Functions.GetClosestPlayer()
-    if player ~= -1 and distance < 2.5 then
+    if player ~= -1 and distance < 5.0 then
         local PlayerId = GetPlayerServerId(player)
         TriggerServerEvent('qb-phone:server:GiveContactDetails', PlayerId)
     else

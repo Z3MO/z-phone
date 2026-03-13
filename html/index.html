@@ -64,18 +64,21 @@
     <link rel="stylesheet" href="./css/calculator.css">
     <link rel="stylesheet" href="./css/party.css">
 
-    <!-- CDN's -->
+    <!--  CDN's -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> <!-- JQuery -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.js" integrity="sha512-hkvXFLlESjeYENO4CNi69z3A1puvONQV5Uh+G4TUDayZxSLyic5Kba9hhuiNLbHqdnKNMk2PxXKm0v7KDnWkYA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Modern emoji picker - Native implementation in message.js (no external library needed) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script> <!-- Bootstrap -->
-    <script src="https://code.jquery.com/color/jquery.color-2.2.0.min.js" integrity="sha256-aSe2ZC5QeunlL/w/7PsVKmV+fa0eDbmybn/ptsKHR6I=" crossorigin="anonymous"></script> <!-- Color CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.css" integrity="sha512-vEia6TQGr3FqC6h55/NdU3QSM5XR6HSl5fW71QTKrgeER98LIMGwymBVM867C1XHIkYD9nMTfWK2A0xcodKHNA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://code.jquery.com/color/jquery.color-2.2.0.min.js" integrity="sha256-aSe2ZC5QeunlL/w/7PsVKmV+fa0eDbmybn/ptsKHR6I=" crossorigin="anonymous"></script> <!--Color CDN -->
+    <!-- No longer using EmojiOneArea - replaced with custom vanilla JS emoji picker -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"> <!-- Bootstrap -->
 </head>
     <body style="background-color: transparent !important">
-        <div id="popup">
-            <div class="popupclass">
-                <div id="close"></div>
+        <!-- Full-screen image viewer overlay -->
+        <div id="image-viewer">
+            <div class="image-viewer-frame">
+                <button id="image-viewer-close" aria-label="Close image">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
         </div>
         <div class="container disableSelection">
@@ -197,15 +200,26 @@
 
                     <div class="phone-app">
                         <div class="phone-app-header">
-                            <p>Contacts</p>
-                            <span id="total-contacts">0 contacts</span>
+                            <div class="phone-app-header-copy">
+                                <p>Contacts</p>
+                                <span id="total-contacts">0 contacts</span>
+                            </div>
                         </div>
 
                         <div class="phone-contacts">
-                            <div class="phone-contacts-header">
-                                <input type="text" id="contact-search" placeholder="Contact name" spellcheck="false">
-                                <i id="phone-search-icon" class="fa-solid fa-magnifying-glass"></i>
-                                <i id="phone-plus-icon" class="fa-solid fa-plus"></i>
+                            <div class="phone-contacts-toolbar">
+                                <div class="phone-contacts-header">
+                                    <i id="phone-search-icon" class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" id="contact-search" placeholder="Search contacts or numbers" spellcheck="false">
+                                </div>
+                                <div class="phone-contacts-actions">
+                                    <button type="button" class="phone-toolbar-action phone-share-trigger" aria-label="Share your number with a nearby player">
+                                        <i class="fa-solid fa-share-nodes"></i>
+                                    </button>
+                                    <button type="button" id="phone-plus-icon" class="phone-toolbar-action phone-toolbar-action--primary" aria-label="Add new contact">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
                             </div>
 
                             <div class="phone-contact-list">
@@ -213,10 +227,12 @@
                         </div>
 
                         <div class="phone-recent">
-                            <div class="phone-recent-header"><p>Call History</p></div>
+                            <div class="phone-recent-header">
+                                <span>Call History</span>
+                                <p id="total-recent-calls">0 recent calls</p>
+                            </div>
 
                             <div class="phone-recent-calls">
-                                <div class="phone-recent-call"> <div class="phone-recent-call-image">P</div> <div class="phone-recent-call-name">Pieter Post</div> <div class="phone-recent-call-type"><i class="fa-solid fa-phone-slash"></i></div> <div class="phone-recent-call-time">12:05</div> </div>
                             </div>
                         </div>
 
@@ -231,23 +247,44 @@
                         </div>
 
                         <div class="phone-keypad noselect">
-                            <div id="phone-keypad-input"></div>
+                            <div class="phone-keypad-toolbar">
+                                <div class="phone-keypad-toolbar-copy">
+                                    <div class="phone-keypad-title">Dialer</div>
+                                    <div class="phone-keypad-subtitle">Tap numbers to dial or quickly jump into a saved contact.</div>
+                                </div>
+                                <div class="phone-keypad-toolbar-actions">
+                                    <button type="button" class="phone-keypad-action" id="phone-keypad-backspace" aria-label="Delete last digit">
+                                        <i class="fa-solid fa-delete-left"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="phone-keypad-display">
+                                <div class="phone-keypad-display-label">Number</div>
+                                <div id="phone-keypad-input"></div>
+                                <div class="phone-keypad-preview">
+                                    <div class="phone-keypad-preview-name">No contact selected</div>
+                                    <div class="phone-keypad-preview-meta">Enter a number or pick someone from history.</div>
+                                </div>
+                            </div>
 
                             <div class="phone-keypad-keys">
-                                <div class="phone-keypad-key" data-keypadvalue="1">1</div>
-                                <div class="phone-keypad-key" data-keypadvalue="2">2</div>
-                                <div class="phone-keypad-key" data-keypadvalue="3">3</div>
-                                <div class="phone-keypad-key" data-keypadvalue="4">4</div>
-                                <div class="phone-keypad-key" data-keypadvalue="5">5</div>
-                                <div class="phone-keypad-key" data-keypadvalue="6">6</div>
-                                <div class="phone-keypad-key" data-keypadvalue="7">7</div>
-                                <div class="phone-keypad-key" data-keypadvalue="8">8</div>
-                                <div class="phone-keypad-key" data-keypadvalue="9">9</div>
-                                <div class="phone-keypad-key" data-keypadvalue="*">*</div>
-                                <div class="phone-keypad-key" data-keypadvalue="0">0</div>
-                                <div class="phone-keypad-key" data-keypadvalue="#">#</div>
+                                <div class="phone-keypad-key" data-keypadvalue="1"><span class="phone-keypad-key-number">1</span><span class="phone-keypad-key-letters">&nbsp;</span></div>
+                                <div class="phone-keypad-key" data-keypadvalue="2"><span class="phone-keypad-key-number">2</span><span class="phone-keypad-key-letters">ABC</span></div>
+                                <div class="phone-keypad-key" data-keypadvalue="3"><span class="phone-keypad-key-number">3</span><span class="phone-keypad-key-letters">DEF</span></div>
+                                <div class="phone-keypad-key" data-keypadvalue="4"><span class="phone-keypad-key-number">4</span><span class="phone-keypad-key-letters">GHI</span></div>
+                                <div class="phone-keypad-key" data-keypadvalue="5"><span class="phone-keypad-key-number">5</span><span class="phone-keypad-key-letters">JKL</span></div>
+                                <div class="phone-keypad-key" data-keypadvalue="6"><span class="phone-keypad-key-number">6</span><span class="phone-keypad-key-letters">MNO</span></div>
+                                <div class="phone-keypad-key" data-keypadvalue="7"><span class="phone-keypad-key-number">7</span><span class="phone-keypad-key-letters">PQRS</span></div>
+                                <div class="phone-keypad-key" data-keypadvalue="8"><span class="phone-keypad-key-number">8</span><span class="phone-keypad-key-letters">TUV</span></div>
+                                <div class="phone-keypad-key" data-keypadvalue="9"><span class="phone-keypad-key-number">9</span><span class="phone-keypad-key-letters">WXYZ</span></div>
+                                <div class="phone-keypad-key" data-keypadvalue="*"><span class="phone-keypad-key-number">*</span><span class="phone-keypad-key-letters">Clear</span></div>
+                                <div class="phone-keypad-key" data-keypadvalue="0"><span class="phone-keypad-key-number">0</span><span class="phone-keypad-key-letters">+</span></div>
+                                <div class="phone-keypad-key" data-keypadvalue="#"><span class="phone-keypad-key-number">#</span><span class="phone-keypad-key-letters">Hash</span></div>
                             </div>
-                            <div class="phone-keypad-key-call"><i class="fa-solid fa-phone"></i></div>
+                            <button type="button" class="phone-keypad-key-call" aria-label="Call entered number">
+                                <i class="fa-solid fa-phone"></i>
+                                <span>Call</span>
+                            </button>
                         </div>
 
                         <div class="phone-add-contact">
@@ -257,7 +294,7 @@
                             <input type="text" class="phone-add-contact-name" placeholder="Contact Name" required spellcheck="false">
 
                             <i id="phone-add-contact-number-icon" class="fa-solid fa-phone"></i>
-                            <input type="number" class="phone-add-contact-number" placeholder="Phone number" required spellcheck="false">
+                            <input type="tel" inputmode="numeric" class="phone-add-contact-number" placeholder="Phone number" required spellcheck="false">
 
                             <i id="phone-add-contact-iban-icon" class="fa-solid fa-money-check-dollar"></i>
                             <input type="text" class="phone-add-contact-iban" placeholder="Bank nr. (Not required)" required spellcheck="false">
@@ -275,7 +312,7 @@
                             <input type="text" class="phone-edit-contact-name" placeholder="Contact Name" required spellcheck="false">
 
                             <i id="phone-edit-contact-number-icon" class="fa-solid fa-phone"></i>
-                            <input type="number" class="phone-edit-contact-number" placeholder="Phone number" required spellcheck="false">
+                            <input type="tel" inputmode="numeric" class="phone-edit-contact-number" placeholder="Phone number" required spellcheck="false">
 
                             <i id="phone-edit-contact-iban-icon" class="fa-solid fa-money-check-dollar"></i>
                             <input type="text" class="phone-edit-contact-iban" placeholder="Bank nr. (Not required)" required spellcheck="false">
@@ -284,6 +321,28 @@
                                 <div class="phone-edit-contact-button" id="edit-contact-save"><p>Save</p></div>
                                 <div class="phone-edit-contact-button" id="edit-contact-delete"><p>Delete</p></div>
                                 <div class="phone-edit-contact-button" id="edit-contact-cancel"><p>Cancel</p></div>
+                            </div>
+                        </div>
+
+                        <div class="phone-nearby-share-modal" aria-hidden="true">
+                            <div class="phone-nearby-share-sheet">
+                                <div class="phone-nearby-share-header">
+                                    <div>
+                                        <p>Share Your Number</p>
+                                        <span class="phone-nearby-share-subtitle">Choose a nearby player within a 5m radius.</span>
+                                    </div>
+                                    <button type="button" class="phone-nearby-share-close" aria-label="Close nearby share sheet">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+
+                                <div class="phone-nearby-share-searchbox">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" id="phone-nearby-share-search" placeholder="Search by player ID or name" spellcheck="false">
+                                </div>
+
+                                <div class="phone-nearby-share-status">Your number will be sent as a suggested contact.</div>
+                                <div class="phone-nearby-share-list"></div>
                             </div>
                         </div>
 

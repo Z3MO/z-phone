@@ -538,10 +538,11 @@ $(document).on('click', '#pulse-sendmessage-chat', function(e){ // Submit Button
     };
     $('.pulse-box-image-input').val("");
 });
-// Clicks
-$(document).on('click', '#image-container', function(e){
+// Open the image viewer when a pulse post image is tapped
+$(document).on('click', '.pulses-pulse .image', function(e){
     e.preventDefault();
-    QB.Screen.popUp(source)
+    var imageUrl = $(this).attr('src');
+    QB.Screen.popUp(imageUrl);
 });
 
 $(document).on('click', '.pulse-reply', function(e){

@@ -754,6 +754,17 @@
                 return clone(mockState.recentCalls);
             case "GetSuggestedContacts":
                 return clone(mockState.suggestedContacts);
+            case "GetNearbyPhonePlayers":
+                return clone([
+                    { id: 18, name: "Alex Johnson", distance: 2.1 },
+                    { id: 22, name: "Jordan Lee", distance: 3.4 },
+                    { id: 31, name: "Casey Wrench", distance: 4.6 }
+                ]);
+            case "SharePhoneContact":
+                return {
+                    success: true,
+                    message: `Number shared with ID ${payload.targetId}.`
+                };
             case "CallContact":
                 return mockCallStatus(payload);
             case "AddNewContact": {
