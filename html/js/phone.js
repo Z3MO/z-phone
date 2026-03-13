@@ -305,19 +305,47 @@ function renderContacts() {
         var element = document.createElement('div');
         element.className = 'phone-contact';
         element.setAttribute('data-contact-number', safeNumber);
-        element.innerHTML = '' +
-            '<div class="phone-contact-firstletter" style="background-color:' + buildContactColor(safeName, contact.status) + ';">' + safeName.charAt(0).toUpperCase() + '</div>' +
-            '<div class="phone-contact-name"></div>' +
-            '<div class="phone-contact-subtitle"></div>' +
-            '<div class="phone-contact-actions"><i class="fas fa-sort-down"></i></div>' +
-            '<div class="phone-contact-action-buttons">' +
-                '<i class="fas fa-phone-volume" id="phone-start-call"></i>' +
-                '<i class="fa-solid fa-message" id="new-chat-phone"></i>' +
-                '<i class="fas fa-user-edit" id="edit-contact"></i>' +
-            '</div>';
 
-        element.querySelector('.phone-contact-name').textContent = safeName;
-        element.querySelector('.phone-contact-subtitle').textContent = safeNumber ? formatPhoneDisplay(safeNumber) : 'No number available';
+        var main = document.createElement('div');
+        main.className = 'phone-contact-main';
+
+        var avatar = document.createElement('div');
+        avatar.className = 'phone-contact-firstletter';
+        avatar.style.backgroundColor = buildContactColor(safeName, contact.status);
+        avatar.textContent = safeName.charAt(0).toUpperCase();
+
+        var details = document.createElement('div');
+        details.className = 'phone-contact-details';
+
+        var nameEl = document.createElement('div');
+        nameEl.className = 'phone-contact-name';
+        nameEl.textContent = safeName;
+
+        var subtitle = document.createElement('div');
+        subtitle.className = 'phone-contact-subtitle';
+        subtitle.textContent = safeNumber ? formatPhoneDisplay(safeNumber) : 'No number available';
+
+        details.appendChild(nameEl);
+        details.appendChild(subtitle);
+
+        var actions = document.createElement('div');
+        actions.className = 'phone-contact-actions';
+        actions.innerHTML = '<i class="fas fa-chevron-down"></i>';
+
+        main.appendChild(avatar);
+        main.appendChild(details);
+        main.appendChild(actions);
+
+        var buttons = document.createElement('div');
+        buttons.className = 'phone-contact-action-buttons';
+        buttons.innerHTML =
+            '<i class="fas fa-phone-volume" id="phone-start-call"></i>' +
+            '<i class="fa-solid fa-message" id="new-chat-phone"></i>' +
+            '<i class="fas fa-user-edit" id="edit-contact"></i>';
+
+        element.appendChild(main);
+        element.appendChild(buttons);
+
         $(element).data('contactData', {
             name: safeName,
             number: safeNumber,
@@ -793,7 +821,7 @@ $(document).on('click', '#phone-keypad-backspace', function(e) {
 $(document).on('click', '.phone-contact-actions', function(e){
     e.preventDefault();
 
-    var FocussedContact = $(this).parent();
+    var FocussedContact = $(this).closest('.phone-contact');
     var ContactId = FocussedContact.get(0);
 
     if (OpenedContact === null) {
