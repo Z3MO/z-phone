@@ -263,9 +263,8 @@ function setPhoneFooterTab(tabName) {
     var $oldTab = $('.phone-' + CurrentFooterTab);
     var $newTab = $('.phone-' + tabName);
 
-    $oldTab.stop(true, true).fadeOut(150, function() {
-        $newTab.stop(true, true).fadeIn(200);
-    });
+    $oldTab.stop(true, true).fadeOut(150);
+    $newTab.stop(true, true).delay(150).fadeIn(200);
 
     if (tabName === 'recent' || tabName === 'suggestedcontacts') {
         $.post(`https://${GetParentResourceName()}/ClearRecentAlerts`);
