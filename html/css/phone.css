@@ -54,6 +54,7 @@
     font-weight: 800;
 }
 #incoming-answer {
+    appearance: none;
     position: absolute;
     bottom: 7.2vh;
     left: 6.2vh;
@@ -65,6 +66,8 @@
     text-align: center;
     font-size: 2vh;
     border-radius: 50%;
+    border: 0;
+    cursor: pointer;
     transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
     box-shadow: 0 1vh 2.6vh rgba(23, 141, 78, 0.34);
 }
@@ -74,6 +77,7 @@
     box-shadow: 0 1.2vh 2.8vh rgba(23, 141, 78, 0.42);
 }
 #incoming-deny {
+    appearance: none;
     position: absolute;
     bottom: 7.2vh;
     right: 6.2vh;
@@ -85,6 +89,8 @@
     text-align: center;
     font-size: 2vh;
     border-radius: 50%;
+    border: 0;
+    cursor: pointer;
     transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
     box-shadow: 0 1vh 2.6vh rgba(161, 45, 45, 0.34);
 }
@@ -139,6 +145,7 @@
     font-weight: 800;
 }
 #outgoing-cancel {
+    appearance: none;
     position: absolute;
     bottom: 7.2vh;
     margin: 0 auto;
@@ -152,6 +159,8 @@
     text-align: center;
     font-size: 2vh;
     border-radius: 50%;
+    border: 0;
+    cursor: pointer;
     transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
     box-shadow: 0 1vh 2.6vh rgba(161, 45, 45, 0.34);
 }
@@ -261,6 +270,7 @@
     border: 0.1vh solid rgba(255, 255, 255, 0.1);
 }
 #ongoing-cancel {
+    appearance: none;
     position: absolute;
     bottom: 7.2vh;
     margin: 0 auto;
@@ -274,6 +284,8 @@
     text-align: center;
     font-size: 2vh;
     border-radius: 50%;
+    border: 0;
+    cursor: pointer;
     transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
     box-shadow: 0 1vh 2.6vh rgba(161, 45, 45, 0.34);
 }
@@ -420,7 +432,7 @@
     background: transparent;
     text-align: left;
     outline: none;
-    z-index: 100;
+    z-index: 2;
     color: #f5fbff;
 }
 
@@ -436,7 +448,7 @@
     margin-left: 0;
     transition: .3s;
     color: rgba(240, 247, 255, 0.88);
-    z-index: 150;
+    z-index: 2;
     cursor: pointer;
 }
 
