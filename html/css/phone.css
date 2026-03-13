@@ -635,6 +635,7 @@
     overflow-x: hidden;
     overflow-y: scroll;
     contain: layout paint;
+    padding-top: 0.5vh;
     padding-bottom: 8.5vh;
 }
 .phone-recent-call {
@@ -691,7 +692,7 @@
 
 .phone-recent-call-name {
     color: white;
-    font-size: 1.5vh;
+    font-size: 1.65vh;
     font-weight: 700;
     white-space: nowrap;
     overflow: hidden;
@@ -699,7 +700,7 @@
 }
 
 .phone-recent-call-type {
-    font-size: 1.1vh;
+    font-size: 1.2vh;
     color: rgba(218, 228, 238, 0.65);
     display: inline-flex;
     align-items: center;
@@ -713,14 +714,14 @@
     border-radius: 999px;
     background: rgba(255, 255, 255, 0.07);
     color: rgba(236, 244, 252, 0.88);
-    font-size: 1vh;
+    font-size: 1.1vh;
     font-weight: 700;
     letter-spacing: 0.01em;
 }
 
 .phone-recent-call-time {
     flex-shrink: 0;
-    font-size: 1.1vh;
+    font-size: 1.2vh;
     font-weight: 600;
     color: rgba(240, 247, 255, 0.7);
     text-align: right;
@@ -778,6 +779,7 @@
     margin-bottom: 1vh;
     background: linear-gradient(150deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.05));
     border: 0.1vh solid rgba(255, 255, 255, 0.13);
+    border-left: none;
     border-radius: 1.6vh;
     box-shadow: 0 0.9vh 2vh rgba(0, 0, 0, 0.18);
     transition: .12s ease-in-out;
