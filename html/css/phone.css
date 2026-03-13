@@ -821,10 +821,10 @@
 }
 
 .phone-keypad-display-label {
-    color: rgba(219, 229, 239, 0.62);
-    font-size: 0.92vh;
+    color: rgba(219, 229, 239, 0.65);
+    font-size: 0.96vh;
     font-weight: 700;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     text-align: center;
 }
@@ -856,14 +856,14 @@
 
 .phone-keypad-preview-name {
     color: white;
-    font-size: 1.08vh;
+    font-size: 1.12vh;
     font-weight: 700;
 }
 
 .phone-keypad-preview-meta {
     margin-top: 0.15vh;
-    color: rgba(220, 230, 240, 0.72);
-    font-size: 0.88vh;
+    color: rgba(220, 230, 240, 0.75);
+    font-size: 0.92vh;
 }
 
 #phone-keypad-input:empty::before {
@@ -889,7 +889,7 @@
         radial-gradient(circle at 82% 78%, rgba(61, 208, 146, 0.12), transparent 25%),
         linear-gradient(180deg, rgba(14, 20, 30, 0.86), rgba(10, 16, 24, 0.72));
     overflow: hidden;
-    padding: 6.8vh 5% 11.1vh 5%;
+    padding: 6.8vh 5% 13vh 5%;
     box-sizing: border-box;
 }
 
@@ -903,16 +903,17 @@
 
 .phone-keypad-title {
     color: white;
-    font-size: 1.9vh;
-    font-weight: 700;
+    font-size: 2.1vh;
+    font-weight: 800;
+    letter-spacing: 0.02em;
 }
 
 .phone-keypad-subtitle {
     margin-top: 0.4vh;
-    color: rgba(214, 225, 237, 0.7);
-    font-size: 0.98vh;
-    max-width: 12.8vh;
-    line-height: 1.35;
+    color: rgba(214, 225, 237, 0.72);
+    font-size: 1.02vh;
+    max-width: 13vh;
+    line-height: 1.4;
 }
 
 .phone-keypad-toolbar-actions {
@@ -1027,7 +1028,7 @@
 }
 
 .phone-keypad-key-number {
-    font-size: 1.72vh;
+    font-size: 1.8vh;
     font-weight: 700;
     line-height: 1;
 }
@@ -1036,7 +1037,7 @@
     margin-top: 0.16vh;
     min-height: 0.78vh;
     color: rgba(219, 229, 239, 0.72);
-    font-size: 0.58vh;
+    font-size: 0.62vh;
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;

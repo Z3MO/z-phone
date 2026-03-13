@@ -260,8 +260,12 @@ function setPhoneFooterTab(tabName) {
     $('.phone-app-footer').find('[data-phonefootertab="' + CurrentFooterTab + '"]').removeClass('phone-selected-footer-tab');
     $('.phone-app-footer').find('[data-phonefootertab="' + tabName + '"]').addClass('phone-selected-footer-tab');
 
-    $('.phone-' + CurrentFooterTab).hide();
-    $('.phone-' + tabName).show();
+    var $oldTab = $('.phone-' + CurrentFooterTab);
+    var $newTab = $('.phone-' + tabName);
+
+    $oldTab.stop(true, true).fadeOut(150, function() {
+        $newTab.stop(true, true).fadeIn(200);
+    });
 
     if (tabName === 'recent' || tabName === 'suggestedcontacts') {
         $.post(`https://${GetParentResourceName()}/ClearRecentAlerts`);
