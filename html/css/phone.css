@@ -812,27 +812,17 @@
 .phone-keypad-display {
     position: relative;
     width: 100%;
-    padding: 1vh 1vh 0.85vh 1vh;
-    border-radius: 2vh;
+    padding: 0.6vh 1vh;
+    border-radius: 1.6vh;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.04));
     border: 0.1vh solid rgba(255, 255, 255, 0.08);
     box-shadow: 0 1vh 2.2vh rgba(0, 0, 0, 0.22);
     box-sizing: border-box;
 }
 
-.phone-keypad-display-label {
-    color: rgba(219, 229, 239, 0.65);
-    font-size: 0.96vh;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    text-align: center;
-}
-
 #phone-keypad-input {
     position: relative;
     width: 100%;
-    margin-top: 0.45vh;
     text-align: center;
     font-size: 2.6vh;
     font-weight: 700;
@@ -841,29 +831,6 @@
     letter-spacing: 0.08em;
     white-space: nowrap;
     min-height: 2.8vh;
-}
-
-.phone-keypad-preview {
-    position: relative;
-    margin-top: 0.6vh;
-    width: 100%;
-    padding: 0.7vh 0.75vh;
-    border-radius: 1.4vh;
-    background: rgba(5, 12, 20, 0.26);
-    border: 0.1vh solid rgba(255, 255, 255, 0.05);
-    text-align: center;
-}
-
-.phone-keypad-preview-name {
-    color: white;
-    font-size: 1.12vh;
-    font-weight: 700;
-}
-
-.phone-keypad-preview-meta {
-    margin-top: 0.15vh;
-    color: rgba(220, 230, 240, 0.75);
-    font-size: 0.92vh;
 }
 
 #phone-keypad-input:empty::before {
@@ -889,7 +856,7 @@
         radial-gradient(circle at 82% 78%, rgba(61, 208, 146, 0.12), transparent 25%),
         linear-gradient(180deg, rgba(14, 20, 30, 0.86), rgba(10, 16, 24, 0.72));
     overflow: hidden;
-    padding: 6.8vh 5% 13vh 5%;
+    padding: 6.8vh 5% 12vh 5%;
     box-sizing: border-box;
 }
 
@@ -948,10 +915,10 @@
 .phone-keypad-keys {
     position: relative;
     width: 100%;
-    margin-top: 1.2vh;
+    margin-top: 1vh;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.85vh 0.8vh;
+    gap: 0.7vh;
     justify-items: center;
     color: white;
     box-sizing: border-box;
@@ -963,11 +930,11 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.28vh;
-    margin: 1.1vh auto 0 auto;
-    font-size: 1.9vh;
-    height: 5.6vh;
-    width: 5.6vh;
+    gap: 0.2vh;
+    margin: 0.8vh auto 0 auto;
+    font-size: 1.8vh;
+    height: 5vh;
+    width: 5vh;
     text-align: center;
     background: linear-gradient(135deg, #25b45e, #4adc87);
     color: white;
@@ -998,8 +965,8 @@
 
 .phone-keypad-key {
     position: relative;
-    height: 5.2vh;
-    width: 5.2vh;
+    height: 4.8vh;
+    width: 4.8vh;
     margin: 0;
     display: flex;
     flex-direction: column;
