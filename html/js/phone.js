@@ -260,8 +260,11 @@ function setPhoneFooterTab(tabName) {
     $('.phone-app-footer').find('[data-phonefootertab="' + CurrentFooterTab + '"]').removeClass('phone-selected-footer-tab');
     $('.phone-app-footer').find('[data-phonefootertab="' + tabName + '"]').addClass('phone-selected-footer-tab');
 
-    $('.phone-' + CurrentFooterTab).hide();
-    $('.phone-' + tabName).show();
+    var $oldTab = $('.phone-' + CurrentFooterTab);
+    var $newTab = $('.phone-' + tabName);
+
+    $oldTab.stop(true, true).fadeOut(150);
+    $newTab.stop(true, true).delay(150).fadeIn(200);
 
     if (tabName === 'recent' || tabName === 'suggestedcontacts') {
         $.post(`https://${GetParentResourceName()}/ClearRecentAlerts`);
@@ -302,19 +305,47 @@ function renderContacts() {
         var element = document.createElement('div');
         element.className = 'phone-contact';
         element.setAttribute('data-contact-number', safeNumber);
-        element.innerHTML = '' +
-            '<div class="phone-contact-firstletter" style="background-color:' + buildContactColor(safeName, contact.status) + ';">' + safeName.charAt(0).toUpperCase() + '</div>' +
-            '<div class="phone-contact-name"></div>' +
-            '<div class="phone-contact-subtitle"></div>' +
-            '<div class="phone-contact-actions"><i class="fas fa-sort-down"></i></div>' +
-            '<div class="phone-contact-action-buttons">' +
-                '<i class="fas fa-phone-volume" id="phone-start-call"></i>' +
-                '<i class="fa-solid fa-message" id="new-chat-phone"></i>' +
-                '<i class="fas fa-user-edit" id="edit-contact"></i>' +
-            '</div>';
 
-        element.querySelector('.phone-contact-name').textContent = safeName;
-        element.querySelector('.phone-contact-subtitle').textContent = safeNumber ? formatPhoneDisplay(safeNumber) : 'No number available';
+        var main = document.createElement('div');
+        main.className = 'phone-contact-main';
+
+        var avatar = document.createElement('div');
+        avatar.className = 'phone-contact-firstletter';
+        avatar.style.backgroundColor = buildContactColor(safeName, contact.status);
+        avatar.textContent = safeName.charAt(0).toUpperCase();
+
+        var details = document.createElement('div');
+        details.className = 'phone-contact-details';
+
+        var nameEl = document.createElement('div');
+        nameEl.className = 'phone-contact-name';
+        nameEl.textContent = safeName;
+
+        var subtitle = document.createElement('div');
+        subtitle.className = 'phone-contact-subtitle';
+        subtitle.textContent = safeNumber ? formatPhoneDisplay(safeNumber) : 'No number available';
+
+        details.appendChild(nameEl);
+        details.appendChild(subtitle);
+
+        var actions = document.createElement('div');
+        actions.className = 'phone-contact-actions';
+        actions.innerHTML = '<i class="fas fa-chevron-down"></i>';
+
+        main.appendChild(avatar);
+        main.appendChild(details);
+        main.appendChild(actions);
+
+        var buttons = document.createElement('div');
+        buttons.className = 'phone-contact-action-buttons';
+        buttons.innerHTML =
+            '<i class="fas fa-phone-volume" id="phone-start-call"></i>' +
+            '<i class="fa-solid fa-message" id="new-chat-phone"></i>' +
+            '<i class="fas fa-user-edit" id="edit-contact"></i>';
+
+        element.appendChild(main);
+        element.appendChild(buttons);
+
         $(element).data('contactData', {
             name: safeName,
             number: safeNumber,
@@ -350,8 +381,10 @@ function renderSuggestedContacts() {
         element.id = 'suggest-' + index;
         element.innerHTML = '' +
             '<i class="fas fa-exclamation-circle"></i>' +
-            '<span class="suggested-name"></span>' +
-            '<span class="suggested-meta"></span>';
+            '<div class="suggested-contact-info">' +
+                '<span class="suggested-name"></span>' +
+                '<span class="suggested-meta"></span>' +
+            '</div>';
 
         element.querySelector('.suggested-name').textContent = firstName + (lastName ? ' ' + lastName : '') + ' · ' + formatPhoneDisplay(number);
         element.querySelector('.suggested-meta').textContent = bank ? 'Bank ' + bank : 'Tap to save this contact';
@@ -532,6 +565,7 @@ QB.Phone.Functions.SetupRecentCalls = function(recentcalls) {
         var element = document.createElement('div');
         var icon = document.createElement('i');
         var image = document.createElement('div');
+        var info = document.createElement('div');
         var name = document.createElement('div');
         var meta = document.createElement('div');
         var time = document.createElement('div');
@@ -542,6 +576,8 @@ QB.Phone.Functions.SetupRecentCalls = function(recentcalls) {
         image.className = 'phone-recent-call-image';
         image.textContent = createAvatarLabel(displayName, recentCall.number, recentCall.anonymous);
         image.style.background = 'linear-gradient(135deg, ' + accentData.accent + ', rgba(34, 111, 206, 0.92))';
+
+        info.className = 'phone-recent-call-info';
 
         name.className = 'phone-recent-call-name';
         name.textContent = displayName;
@@ -554,12 +590,14 @@ QB.Phone.Functions.SetupRecentCalls = function(recentcalls) {
         meta.appendChild(icon);
         meta.appendChild(badge);
 
+        info.appendChild(name);
+        info.appendChild(meta);
+
         time.className = 'phone-recent-call-time';
         time.textContent = recentCall.time;
 
         element.appendChild(image);
-        element.appendChild(name);
-        element.appendChild(meta);
+        element.appendChild(info);
         element.appendChild(time);
         $(element).data('recentData', recentCall);
         fragment.appendChild(element);
@@ -783,7 +821,7 @@ $(document).on('click', '#phone-keypad-backspace', function(e) {
 $(document).on('click', '.phone-contact-actions', function(e){
     e.preventDefault();
 
-    var FocussedContact = $(this).parent();
+    var FocussedContact = $(this).closest('.phone-contact');
     var ContactId = FocussedContact.get(0);
 
     if (OpenedContact === null) {

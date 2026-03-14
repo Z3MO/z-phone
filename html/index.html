@@ -176,8 +176,12 @@
                             <div class="phone-call-incoming-caller">Unknown Number</div>
                             <div class="phone-call-incoming-picture"></div>
 
-                            <i class="fa-solid fa-phone" id="incoming-answer"></i>
-                            <i class="fa-solid fa-phone" id="incoming-deny"></i>
+                            <button type="button" id="incoming-answer" aria-label="Answer call">
+                                <i class="fa-solid fa-phone"></i>
+                            </button>
+                            <button type="button" id="incoming-deny" aria-label="Deny call">
+                                <i class="fa-solid fa-phone-slash"></i>
+                            </button>
                         </div>
 
                         <div class="phone-call-outgoing">
@@ -185,7 +189,9 @@
                             <div class="phone-call-outgoing-caller">Unknown Number</div>
                             <div class="phone-call-outgoing-picture"></div>
 
-                            <i class="fa-solid fa-phone" id="outgoing-cancel"></i>
+                            <button type="button" id="outgoing-cancel" aria-label="Cancel call">
+                                <i class="fa-solid fa-phone-slash"></i>
+                            </button>
                         </div>
 
                         <div class="phone-call-ongoing">
@@ -194,7 +200,9 @@
                             <div class="phone-call-ongoing-picture"></div>
                             <div class="phone-call-ongoing-time">05:05</div>
 
-                            <i class="fa-solid fa-phone" id="ongoing-cancel"></i>
+                            <button type="button" id="ongoing-cancel" aria-label="End call">
+                                <i class="fa-solid fa-phone-slash"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -259,12 +267,7 @@
                                 </div>
                             </div>
                             <div class="phone-keypad-display">
-                                <div class="phone-keypad-display-label">Number</div>
                                 <div id="phone-keypad-input"></div>
-                                <div class="phone-keypad-preview">
-                                    <div class="phone-keypad-preview-name">No contact selected</div>
-                                    <div class="phone-keypad-preview-meta">Enter a number or pick someone from history.</div>
-                                </div>
                             </div>
 
                             <div class="phone-keypad-keys">
@@ -349,15 +352,19 @@
                         <div class="phone-app-footer">
                             <div class="phone-app-footer-button" data-phonefootertab="suggestedcontacts">
                                 <i class="fa-solid fa-user-plus"></i>
+                                <span>Suggested</span>
                             </div>
                             <div class="phone-app-footer-button" data-phonefootertab="keypad">
                                 <i class="fa-solid fa-list-ol"></i>
+                                <span>Keypad</span>
                             </div>
                             <div class="phone-app-footer-button" data-phonefootertab="recent">
                                 <i class="fa-solid fa-clock"></i>
+                                <span>Recent</span>
                             </div>
                             <div class="phone-app-footer-button phone-selected-footer-tab" data-phonefootertab="contacts">
                                 <i class="fa-solid fa-address-book"></i>
+                                <span>Contacts</span>
                             </div>
                         </div>
                     </div>

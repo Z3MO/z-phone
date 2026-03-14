@@ -322,16 +322,36 @@
                     { name: "Jordan Lee", number: "555003", iban: "DEV-564738", status: true },
                     { name: "Mechanic Bay", number: "555200", iban: "DEV-000777", status: false },
                     { name: "Dispatch", number: "555800", iban: "DEV-005555", status: false },
-                    { name: "Mia Carter", number: "555114", iban: "DEV-444222", status: false }
+                    { name: "Mia Carter", number: "555114", iban: "DEV-444222", status: false },
+                    { name: "Sam Wilson", number: "555115", iban: "DEV-667788", status: true },
+                    { name: "Hospital", number: "555300", iban: "DEV-999111", status: false },
+                    { name: "Pizza Place", number: "555400", iban: "", status: false },
+                    { name: "City Hall", number: "555600", iban: "DEV-800900", status: false },
+                    { name: "Riley Morgan", number: "555116", iban: "", status: true }
                 ]
             },
             recentCalls: [
                 { name: "Jordan Lee", number: "555003", time: "14:22", type: "outgoing", anonymous: false },
-                { name: "Mechanic Bay", number: "555200", time: "09:14", type: "incoming", anonymous: false }
+                { name: "Mechanic Bay", number: "555200", time: "09:14", type: "incoming", anonymous: false },
+                { name: "Alex Johnson", number: "555002", time: "08:45", type: "missed", anonymous: false },
+                { name: "Mia Carter", number: "555114", time: "07:30", type: "outgoing", anonymous: false },
+                { name: "Dispatch", number: "555800", time: "16:10", type: "incoming", anonymous: false },
+                { name: "Unknown", number: "555999", time: "15:55", type: "missed", anonymous: true },
+                { name: "Jamie Fox", number: "555112", time: "13:05", type: "outgoing", anonymous: false },
+                { name: "Taylor Brooks", number: "555113", time: "12:40", type: "incoming", anonymous: false },
+                { name: "Hospital", number: "555300", time: "11:20", type: "outgoing", anonymous: false },
+                { name: "Pizza Place", number: "555400", time: "10:15", type: "incoming", anonymous: false },
+                { name: "Tow Service", number: "555500", time: "09:50", type: "missed", anonymous: false },
+                { name: "City Hall", number: "555600", time: "08:30", type: "outgoing", anonymous: false },
+                { name: "Unknown", number: "555777", time: "07:15", type: "missed", anonymous: true },
+                { name: "Garage", number: "555700", time: "06:45", type: "incoming", anonymous: false },
+                { name: "Sam Wilson", number: "555115", time: "05:30", type: "outgoing", anonymous: false }
             ],
             suggestedContacts: [
                 { name: ["Jamie", "Fox"], number: "555112", bank: "DEV-111222" },
-                { name: ["Taylor", "Brooks"], number: "555113", bank: "DEV-333444" }
+                { name: ["Taylor", "Brooks"], number: "555113", bank: "DEV-333444" },
+                { name: ["Riley", "Morgan"], number: "555116", bank: "" },
+                { name: ["Casey", "Reed"], number: "555117", bank: "DEV-555666" }
             ],
             whatsappChats: [
                 {
