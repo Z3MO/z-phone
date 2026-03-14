@@ -353,7 +353,7 @@
 .phone-contacts {
     display: block;
     position: absolute;
-    height: 63%;
+    height: calc(100% - 15.1vh);
     width: 100%;
     top: 15.1vh;
 }
@@ -487,6 +487,7 @@
     overflow-y: scroll;
     overflow-x: hidden;
     contain: layout paint;
+    padding-bottom: 8.5vh;
 }
 
 .phone-contact {
@@ -747,33 +748,32 @@
 
 .phone-suggestedcontacts-header {
     position: absolute;
-    width: 100%;
-    height: 8vh;
-    top: 4.4vh;
-    text-align: center;
+    width: 90%;
+    left: 5%;
+    top: 7.2vh;
     font-size: 2.0vh;
     font-weight: 700;
-    line-height: 5vh;
     color: white;
 }
 
 .phone-suggestedcontacts-header p {
-    font-size: 1.3vh;
+    font-size: 1.25vh;
     font-weight: 500;
-    margin-top: -1.8vh;
+    margin: 0.5vh 0 0 0;
     color: rgba(230, 239, 248, 0.72);
 }
 
 .suggested-contacts {
     position: absolute;
     width: 90%;
-    height: 58%;
-    top: 12.4vh;
+    height: 65%;
+    top: 15vh;
     left: 5%;
     overflow-x: hidden;
     overflow-y: scroll;
     contain: layout paint;
     padding-top: 0.5vh;
+    padding-bottom: 8.5vh;
 }
 
 .suggested-contacts::-webkit-scrollbar {
@@ -1059,10 +1059,6 @@
     font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-}
-
-.phone-app-footer {
-    backdrop-filter: blur(1vh);
 }
 
 /* Add Contact */
@@ -1386,45 +1382,57 @@
 /* App Footer */
 .phone-app-footer {
     position: absolute;
-    height: 5.2vh;
-    width: 90%;
-    left: 5%;
-    bottom: 3.5%;
+    height: 6.2vh;
+    width: 92%;
+    left: 4%;
+    bottom: 2.5%;
     z-index: 101;
     font-size: 1.3vh;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.6vh;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 0.1vh solid rgba(255, 255, 255, 0.11);
-    box-shadow: 0 0.8vh 2vh rgba(0, 0, 0, 0.2);
+    padding: 0.4vh;
+    border-radius: 2vh;
+    background: rgba(12, 18, 28, 0.82);
+    border: 0.1vh solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0.8vh 2vh rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(1.6vh);
 }
 
 .phone-app-footer-button {
     position: relative;
     height: 100%;
-    width: 25%;
+    flex: 1;
     text-align: center;
-    float: left;
-    color: rgba(232, 240, 248, 0.72);
-    transition: 0.2s;
-    border-radius: 999px;
-    line-height: 3vh;
+    color: rgba(232, 240, 248, 0.55);
+    transition: color 0.2s ease, background 0.2s ease;
+    border-radius: 1.6vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 0.25vh;
     cursor: pointer;
 }
 
+.phone-app-footer-button:hover {
+    color: rgba(232, 240, 248, 0.85);
+}
+
 .phone-app-footer-button i {
-    font-size: 1.55vh;
+    font-size: 1.5vh;
+}
+
+.phone-app-footer-button span {
+    font-size: 0.85vh;
+    font-weight: 600;
+    letter-spacing: 0.02em;
 }
 
 .phone-selected-footer-tab {
     color: #eef9ff;
     background: linear-gradient(135deg, #226fce, #2d91e9);
+    box-shadow: 0 0.4vh 1.2vh rgba(34, 111, 206, 0.35);
 }
 
 .phone-contact-empty,
