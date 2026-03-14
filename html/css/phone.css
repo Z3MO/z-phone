@@ -478,8 +478,8 @@
 
 .phone-contact-list {
     position: absolute;
-    height: 84%;
     top: 7vh;
+    bottom: 10.2vh;
     width: 90%;
     margin: 0 auto;
     left: 0;
@@ -557,7 +557,7 @@
 }
 
 .phone-contact-subtitle {
-    color: rgba(224, 234, 244, 0.78);
+    color: rgba(233, 241, 250, 0.9);
     font-size: 1.5vh;
     font-weight: 500;
     white-space: nowrap;
@@ -636,7 +636,7 @@
 .phone-recent-calls {
     position: absolute;
     width: 90%;
-    height: 65%;
+    bottom: 10.2vh;
     margin: 0 auto;
     left: 0;
     right: 0;
@@ -710,7 +710,7 @@
 
 .phone-recent-call-type {
     font-size: 1.5vh;
-    color: rgba(218, 228, 238, 0.65);
+    color: rgba(226, 236, 246, 0.84);
     display: inline-flex;
     align-items: center;
     gap: 0.5vh;
@@ -766,7 +766,7 @@
 .suggested-contacts {
     position: absolute;
     width: 90%;
-    height: 65%;
+    bottom: 10.2vh;
     top: 15vh;
     left: 5%;
     overflow-x: hidden;
@@ -851,7 +851,7 @@
 .suggested-meta {
     font-size: 1.5vh;
     font-weight: 500;
-    color: rgba(235, 239, 227, 0.72);
+    color: rgba(229, 239, 248, 0.84);
 }
 
 /* Keypad Contact */
