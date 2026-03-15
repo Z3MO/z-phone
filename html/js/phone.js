@@ -15,6 +15,11 @@ var CurrentEditContactData = {};
 var OpenedContact = null;
 var RecentCallsCache = [];
 var CallRequestInFlight = false;
+var MAX_DIAL_DIGITS = 10;
+var PhoneTabAnimating = false;
+var PhoneTabOrder = ['suggestedcontacts', 'keypad', 'recent', 'contacts'];
+var PhoneTabTransitionTimer = null;
+var ContactContextMenuTarget = null;
 
 var RecentCallStates = {
     missed: {
@@ -55,10 +60,6 @@ function sanitizePhoneNumber(value) {
     return String(value ?? '').replace(/\D/g, '').slice(0, 15);
 }
 
-function sanitizeDialTarget(value) {
-    return String(value ?? '').replace(/[^0-9*#]/g, '').slice(0, 20);
-}
-
 function sanitizePhoneIban(value) {
     return sanitizePhoneText(value, '', 32).replace(/[^a-zA-Z0-9-]/g, '').slice(0, 32);
 }
@@ -83,6 +84,20 @@ function formatPhoneDisplay(value) {
     }
 
     return digits.replace(/(\d{3})(\d{3})(\d{4})(\d+)/, '$1 $2 $3 $4').trim();
+}
+
+function formatDialerInputDisplay(value) {
+    var dialValue = String(value ?? '').replace(/[^0-9#]/g, '');
+
+    if (!dialValue.length) {
+        return '';
+    }
+
+    if (dialValue.includes('#')) {
+        return dialValue;
+    }
+
+    return formatPhoneDisplay(dialValue);
 }
 
 function getContactByNumber(number) {
@@ -122,7 +137,7 @@ function closeOpenedContactCard() {
 }
 
 function updateDialerPreview() {
-    var safeNumber = sanitizeDialTarget(keyPadHTML);
+    var safeNumber = String(keyPadHTML ?? '');
     var matchingContact = getContactByNumber(safeNumber);
     var previewName = $('.phone-keypad-preview-name');
     var previewMeta = $('.phone-keypad-preview-meta');
@@ -139,7 +154,7 @@ function updateDialerPreview() {
         return;
     }
 
-    previewName.text(formatPhoneDisplay(safeNumber));
+    previewName.text(formatDialerInputDisplay(safeNumber));
     previewMeta.text('Unsaved number · Ready to call');
 }
 
@@ -250,11 +265,61 @@ function buildContactColor(name, highlighted) {
     return QB.Phone.ContactColors[colorIndex] || '#3498db';
 }
 
+function getPhoneTabDirection(fromTab, toTab) {
+    var fromIndex = PhoneTabOrder.indexOf(fromTab);
+    var toIndex = PhoneTabOrder.indexOf(toTab);
+
+    if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) {
+        return 1;
+    }
+
+    return toIndex > fromIndex ? 1 : -1;
+}
+
+function animatePhoneFooterTabSwitch($oldTab, $newTab, direction) {
+    var leaveClass = direction > 0 ? 'phone-tab-leave-left' : 'phone-tab-leave-right';
+    var enterClass = direction > 0 ? 'phone-tab-enter-right' : 'phone-tab-enter-left';
+    var allClasses = 'phone-tab-enter-left phone-tab-enter-right phone-tab-leave-left phone-tab-leave-right';
+
+    if (PhoneTabTransitionTimer !== null) {
+        clearTimeout(PhoneTabTransitionTimer);
+        PhoneTabTransitionTimer = null;
+    }
+
+    $oldTab
+        .stop(true, true)
+        .removeClass(allClasses)
+        .css({ display: 'block', zIndex: 1, pointerEvents: 'none' })
+        .addClass(leaveClass);
+
+    $newTab
+        .stop(true, true)
+        .removeClass(allClasses)
+        .css({ display: 'block', zIndex: 2, pointerEvents: 'none' })
+        .addClass(enterClass);
+
+    PhoneTabTransitionTimer = setTimeout(function() {
+        $oldTab
+            .hide()
+            .removeClass(leaveClass)
+            .css({ zIndex: '', pointerEvents: '', transform: '', opacity: '' });
+
+        $newTab
+            .removeClass(enterClass)
+            .css({ zIndex: '', pointerEvents: '', transform: '', opacity: '' });
+
+        PhoneTabTransitionTimer = null;
+        PhoneTabAnimating = false;
+    }, 290);
+}
+
 function setPhoneFooterTab(tabName) {
-    if (!tabName || tabName === CurrentFooterTab) {
+    if (!tabName || tabName === CurrentFooterTab || PhoneTabAnimating) {
         return;
     }
 
+    PhoneTabAnimating = true;
+    closeContactContextMenu();
     closeOpenedContactCard();
 
     $('.phone-app-footer').find('[data-phonefootertab="' + CurrentFooterTab + '"]').removeClass('phone-selected-footer-tab');
@@ -262,9 +327,9 @@ function setPhoneFooterTab(tabName) {
 
     var $oldTab = $('.phone-' + CurrentFooterTab);
     var $newTab = $('.phone-' + tabName);
+    var tabDirection = getPhoneTabDirection(CurrentFooterTab, tabName);
 
-    $oldTab.stop(true, true).fadeOut(150);
-    $newTab.stop(true, true).delay(150).fadeIn(200);
+    animatePhoneFooterTabSwitch($oldTab, $newTab, tabDirection);
 
     if (tabName === 'recent' || tabName === 'suggestedcontacts') {
         $.post(`https://${GetParentResourceName()}/ClearRecentAlerts`);
@@ -310,7 +375,7 @@ function renderContacts() {
         main.className = 'phone-contact-main';
 
         var avatar = document.createElement('div');
-        avatar.className = 'phone-contact-firstletter';
+        avatar.className = 'phone-contact-avatar';
         avatar.style.backgroundColor = buildContactColor(safeName, contact.status);
         avatar.textContent = safeName.charAt(0).toUpperCase();
 
@@ -328,23 +393,10 @@ function renderContacts() {
         details.appendChild(nameEl);
         details.appendChild(subtitle);
 
-        var actions = document.createElement('div');
-        actions.className = 'phone-contact-actions';
-        actions.innerHTML = '<i class="fas fa-chevron-down"></i>';
-
         main.appendChild(avatar);
         main.appendChild(details);
-        main.appendChild(actions);
-
-        var buttons = document.createElement('div');
-        buttons.className = 'phone-contact-action-buttons';
-        buttons.innerHTML =
-            '<i class="fas fa-phone-volume" id="phone-start-call"></i>' +
-            '<i class="fa-solid fa-message" id="new-chat-phone"></i>' +
-            '<i class="fas fa-user-edit" id="edit-contact"></i>';
 
         element.appendChild(main);
-        element.appendChild(buttons);
 
         $(element).data('contactData', {
             name: safeName,
@@ -352,6 +404,7 @@ function renderContacts() {
             iban: sanitizePhoneIban(contact.iban || ''),
             status: !!contact.status
         });
+
         fragment.appendChild(element);
     });
 
@@ -374,20 +427,30 @@ function renderSuggestedContacts() {
     SuggestedContactsCache.forEach(function(suggest, index) {
         var firstName = sanitizePhoneText(suggest.name && suggest.name[0], 'Unknown', 24);
         var lastName = sanitizePhoneText(suggest.name && suggest.name[1], '', 24);
+        var fullName = firstName + (lastName ? ' ' + lastName : '');
         var number = sanitizePhoneNumber(suggest.number);
         var bank = sanitizePhoneIban(suggest.bank || '');
         var element = document.createElement('div');
         element.className = 'suggested-contact';
         element.id = 'suggest-' + index;
-        element.innerHTML = '' +
-            '<i class="fas fa-exclamation-circle"></i>' +
-            '<div class="suggested-contact-info">' +
-                '<span class="suggested-name"></span>' +
-                '<span class="suggested-meta"></span>' +
-            '</div>';
+        var initial = firstName.charAt(0).toUpperCase();
 
-        element.querySelector('.suggested-name').textContent = firstName + (lastName ? ' ' + lastName : '') + ' · ' + formatPhoneDisplay(number);
-        element.querySelector('.suggested-meta').textContent = bank ? 'Bank ' + bank : 'Tap to save this contact';
+        element.innerHTML = '' +
+            '<div class="suggested-contact-avatar"></div>' +
+            '<div class="suggested-contact-info">' +
+                '<div class="suggested-name"></div>' +
+                '<div class="suggested-details">' +
+                    '<span class="suggested-number"></span>' +
+                    '<span class="suggested-meta"></span>' +
+                '</div>' +
+            '</div>' +
+            '<div class="suggested-contact-add"><i class="fa-solid fa-user-plus"></i></div>';
+
+        element.querySelector('.suggested-contact-avatar').textContent = initial;
+        element.querySelector('.suggested-contact-avatar').style.backgroundColor = buildContactColor(fullName, false);
+        element.querySelector('.suggested-name').textContent = fullName;
+        element.querySelector('.suggested-number').textContent = formatPhoneDisplay(number);
+        element.querySelector('.suggested-meta').textContent = bank ? 'Bank ' + bank : 'New Suggestion';
         $(element).data('SuggestionData', {
             name: [firstName, lastName],
             number: number,
@@ -474,10 +537,137 @@ function getContactFromElement(element) {
     return $(element).closest('.phone-contact').data('contactData');
 }
 
+function ensureContactContextMenu() {
+    var existingMenu = $('.phone-contact-context-menu');
+    if (existingMenu.length) {
+        return existingMenu;
+    }
+
+    var menu = $(
+        '<div class="phone-contact-context-menu" aria-hidden="true">' +
+            '<button type="button" class="phone-contact-context-item" data-action="call"><i class="fas fa-phone-volume"></i><span>Call</span></button>' +
+            '<button type="button" class="phone-contact-context-item" data-action="message"><i class="fa-solid fa-message"></i><span>Message</span></button>' +
+            '<button type="button" class="phone-contact-context-item" data-action="edit"><i class="fas fa-user-edit"></i><span>Edit</span></button>' +
+        '</div>'
+    );
+
+    $('.phone-app').append(menu);
+    return menu;
+}
+
+function closeContactContextMenu() {
+    ContactContextMenuTarget = null;
+    $('.phone-contact-context-menu').removeClass('is-open').attr('aria-hidden', 'true');
+}
+
+function openContactContextMenu($contact) {
+    if (!$contact || !$contact.length) {
+        return;
+    }
+
+    var menu = ensureContactContextMenu();
+    var app = $('.phone-app');
+    var appElement = app.get(0);
+    var contactElement = $contact.get(0);
+
+    if (!appElement || !contactElement) {
+        return;
+    }
+
+    var appRect = appElement.getBoundingClientRect();
+    var contactRect = contactElement.getBoundingClientRect();
+
+    menu.removeClass('is-open').css({ left: 0, top: 0 }).attr('aria-hidden', 'false');
+
+    var menuWidth = menu.outerWidth();
+    var menuHeight = menu.outerHeight();
+    var spacing = 8;
+
+    var left = contactRect.right - appRect.left - menuWidth - spacing;
+    var top = contactRect.top - appRect.top + (contactRect.height - menuHeight) / 2;
+
+    var maxLeft = appRect.width - menuWidth - spacing;
+    var maxTop = appRect.height - menuHeight - spacing;
+
+    left = Math.max(spacing, Math.min(left, maxLeft));
+    top = Math.max(spacing, Math.min(top, maxTop));
+
+    ContactContextMenuTarget = $contact;
+    menu.css({ left: left + 'px', top: top + 'px' });
+
+    requestAnimationFrame(function() {
+        menu.addClass('is-open');
+    });
+}
+
+function openWhatsappChatWithContact(contactData) {
+    if (!contactData) {
+        return;
+    }
+
+    if (contactData.number !== QB.Phone.Data.PlayerData.charinfo.phone) {
+        $.post(`https://${GetParentResourceName()}/GetWhatsappChats`, JSON.stringify({}), function(chats){
+            QB.Phone.Functions.LoadWhatsappChats(chats);
+        });
+
+        $('.phone-application-container').animate({
+            top: -160+"%"
+        });
+        QB.Phone.Functions.HeaderTextColor("white", 400);
+        setTimeout(function(){
+            $('.phone-application-container').animate({
+                top: 0+"%"
+            });
+
+            QB.Phone.Functions.ToggleApp("phone", "none");
+            QB.Phone.Functions.ToggleApp("whatsapp", "block");
+            QB.Phone.Data.currentApplication = "whatsapp";
+
+            $.post(`https://${GetParentResourceName()}/GetWhatsappChat`, JSON.stringify({phone: contactData.number}), function(chat){
+                QB.Phone.Functions.SetupChatMessages(chat, {
+                    name: contactData.name,
+                    number: contactData.number
+                });
+            });
+
+            $('.whatsapp-openedchat-messages').animate({scrollTop: 9999}, 150);
+            $(".whatsapp-openedchat").css({"display":"block"});
+            $(".whatsapp-openedchat").css({left: 0+"vh"});
+            $(".whatsapp-chats").animate({left: 30+"vh"},100, function(){
+                $(".whatsapp-chats").css({"display":"none"});
+            });
+        }, 400)
+    } else {
+        QB.Phone.Notifications.Add("fa fa-phone-alt", "Phone", "You can't whatsapp yourself..", "default", 3500);
+    }
+}
+
+function openEditContactForm(contactData) {
+    if (!contactData) {
+        return;
+    }
+
+    CurrentEditContactData.name = sanitizePhoneText(contactData.name, 'Unknown Contact', 48);
+    CurrentEditContactData.number = sanitizePhoneNumber(contactData.number);
+
+    $(".phone-edit-contact-header").text(CurrentEditContactData.name + " Edit")
+    $(".phone-edit-contact-name").val(CurrentEditContactData.name);
+    $(".phone-edit-contact-number").val(CurrentEditContactData.number);
+    if (contactData.iban != null && contactData.iban != undefined) {
+        $(".phone-edit-contact-iban").val(contactData.iban);
+        CurrentEditContactData.iban = sanitizePhoneIban(contactData.iban)
+    } else {
+        $(".phone-edit-contact-iban").val("");
+        CurrentEditContactData.iban = "";
+    }
+
+    QB.Phone.Animations.TopSlideDown(".phone-edit-contact", 200, 0);
+}
+
 function setKeypadValue(nextValue) {
-    keyPadHTML = sanitizeDialTarget(nextValue);
+    keyPadHTML = String(nextValue ?? '');
     $('#phone-keypad-input').removeClass('phone-keypad-input-clearing');
-    $('#phone-keypad-input').text(formatPhoneDisplay(keyPadHTML));
+    $('#phone-keypad-input').text(formatDialerInputDisplay(keyPadHTML));
     updateDialerPreview();
 }
 
@@ -623,7 +813,7 @@ $(document).on('click', '.phone-recent-call', function(e){
 $(document).on('click', ".phone-keypad-key-call", function(e){
     e.preventDefault();
 
-    var InputNum = sanitizeDialTarget(keyPadHTML);
+    var InputNum = String(keyPadHTML ?? '');
 
     if (!InputNum.length) {
         QB.Phone.Notifications.Add("fas fa-phone", "Phone", "Enter a number first!");
@@ -657,6 +847,7 @@ QB.Phone.Functions.LoadContacts = function(myContacts) {
 
     $(".phone-"+CurrentFooterTab).show();
     togglePhonePrimaryHeader();
+    closeContactContextMenu();
     renderContacts();
 };
 
@@ -667,41 +858,7 @@ $(document).on('click', '#new-chat-phone', function(e){
         return;
     }
 
-    if (ContactData.number !== QB.Phone.Data.PlayerData.charinfo.phone) {
-        $.post(`https://${GetParentResourceName()}/GetWhatsappChats`, JSON.stringify({}), function(chats){
-            QB.Phone.Functions.LoadWhatsappChats(chats);
-        });
-
-        $('.phone-application-container').animate({
-            top: -160+"%"
-        });
-        QB.Phone.Functions.HeaderTextColor("white", 400);
-        setTimeout(function(){
-            $('.phone-application-container').animate({
-                top: 0+"%"
-            });
-
-            QB.Phone.Functions.ToggleApp("phone", "none");
-            QB.Phone.Functions.ToggleApp("whatsapp", "block");
-            QB.Phone.Data.currentApplication = "whatsapp";
-
-            $.post(`https://${GetParentResourceName()}/GetWhatsappChat`, JSON.stringify({phone: ContactData.number}), function(chat){
-                QB.Phone.Functions.SetupChatMessages(chat, {
-                    name: ContactData.name,
-                    number: ContactData.number
-                });
-            });
-
-            $('.whatsapp-openedchat-messages').animate({scrollTop: 9999}, 150);
-            $(".whatsapp-openedchat").css({"display":"block"});
-            $(".whatsapp-openedchat").css({left: 0+"vh"});
-            $(".whatsapp-chats").animate({left: 30+"vh"},100, function(){
-                $(".whatsapp-chats").css({"display":"none"});
-            });
-        }, 400)
-    } else {
-        QB.Phone.Notifications.Add("fa fa-phone-alt", "Phone", "You can't whatsapp yourself..", "default", 3500);
-    }
+    openWhatsappChatWithContact(ContactData);
 });
 
 $(document).on('click', '#edit-contact', function(e){
@@ -712,21 +869,7 @@ $(document).on('click', '#edit-contact', function(e){
         return;
     }
 
-    CurrentEditContactData.name = sanitizePhoneText(ContactData.name, 'Unknown Contact', 48);
-    CurrentEditContactData.number = sanitizePhoneNumber(ContactData.number);
-
-    $(".phone-edit-contact-header").text(CurrentEditContactData.name + " Edit")
-    $(".phone-edit-contact-name").val(CurrentEditContactData.name);
-    $(".phone-edit-contact-number").val(CurrentEditContactData.number);
-    if (ContactData.iban != null && ContactData.iban != undefined) {
-        $(".phone-edit-contact-iban").val(ContactData.iban);
-        CurrentEditContactData.iban = sanitizePhoneIban(ContactData.iban)
-    } else {
-        $(".phone-edit-contact-iban").val("");
-        CurrentEditContactData.iban = "";
-    }
-
-    QB.Phone.Animations.TopSlideDown(".phone-edit-contact", 200, 0);
+    openEditContactForm(ContactData);
 });
 
 $(document).on('click', '#edit-contact-save', function(e){
@@ -792,6 +935,10 @@ $(document).on('click', '.phone-keypad-key', function(e){
     e.preventDefault();
     var PressedButton = $(this).data('keypadvalue');
     if (!isNaN(PressedButton)) {
+        if (sanitizePhoneNumber(keyPadHTML).length >= MAX_DIAL_DIGITS) {
+            QB.Phone.Notifications.Add('fas fa-phone', 'Phone', 'Only 10 digits are allowed.');
+            return;
+        }
         setKeypadValue((keyPadHTML || '') + String(PressedButton));
     } else if (PressedButton == "#") {
         setKeypadValue((keyPadHTML || '') + '#');
@@ -818,39 +965,51 @@ $(document).on('click', '#phone-keypad-backspace', function(e) {
     }
 });
 
-$(document).on('click', '.phone-contact-actions', function(e){
+// Left click should not open the context menu.
+$(document).on('click', '.phone-contact', function(e){
+    if ($(e.target).closest('.phone-contact-context-menu').length) {
+        return;
+    }
+
     e.preventDefault();
+});
 
-    var FocussedContact = $(this).closest('.phone-contact');
-    var ContactId = FocussedContact.get(0);
+// Open contact actions with right-click/context menu only.
+$(document).on('contextmenu', '.phone-contact', function(e){
+    if ($(e.target).closest('.phone-contact-context-menu').length) {
+        return;
+    }
 
-    if (OpenedContact === null) {
-        $(FocussedContact).animate({
-            "height":"14vh"
-        }, 150, function(){
-            $(FocussedContact).find('.phone-contact-action-buttons').fadeIn(100);
-        });
-        OpenedContact = ContactId;
-    } else if (OpenedContact == ContactId) {
-        $(FocussedContact).find('.phone-contact-action-buttons').fadeOut(100, function(){
-            $(FocussedContact).animate({
-                "height":"8.8vh"
-            }, 150);
-        });
-        OpenedContact = null;
-    } else if (OpenedContact != ContactId) {
-        var PreviousContact = $(OpenedContact);
-        $(PreviousContact).find('.phone-contact-action-buttons').fadeOut(100, function(){
-            $(PreviousContact).animate({
-                "height":"8.8vh"
-            }, 150);
-            OpenedContact = ContactId;
-        });
-        $(FocussedContact).animate({
-            "height":"14vh"
-        }, 150, function(){
-            $(FocussedContact).find('.phone-contact-action-buttons').fadeIn(100);
-        });
+    e.preventDefault();
+    openContactContextMenu($(this));
+});
+
+$(document).on('click', '.phone-contact-context-item', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    var action = $(this).data('action');
+    var target = ContactContextMenuTarget;
+    var contactData = target && target.length ? target.data('contactData') : null;
+
+    closeContactContextMenu();
+
+    if (!contactData) {
+        return;
+    }
+
+    if (action === 'call') {
+        SetupCall(contactData);
+    } else if (action === 'message') {
+        openWhatsappChatWithContact(contactData);
+    } else if (action === 'edit') {
+        openEditContactForm(contactData);
+    }
+});
+
+$(document).on('click', function(e) {
+    if (!$(e.target).closest('.phone-contact, .phone-contact-context-menu').length) {
+        closeContactContextMenu();
     }
 });
 
@@ -1056,11 +1215,13 @@ QB.Phone.Functions.SetupSuggestedContacts = function(Suggested) {
     renderSuggestedContacts();
 }
 
-$(document).on('click', '.suggested-contact', function(e){
+$(document).on('click', '.suggested-contact-add', function(e){
     e.preventDefault();
+    e.stopPropagation();
 
-    var SuggestionData = $(this).data('SuggestionData');
-    SelectedSuggestion = this;
+    var parentContact = $(this).closest('.suggested-contact');
+    var SuggestionData = parentContact.data('SuggestionData');
+    SelectedSuggestion = parentContact.get(0);
 
     QB.Phone.Animations.TopSlideDown(".phone-add-contact", 200, 0);
 
