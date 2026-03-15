@@ -75,6 +75,24 @@ function IsAppJobBlocked(joblist, myjob) {
     return retval;
 }
 
+function buildApplicationIcon(app) {
+    var iconName = String((app && app.icon) || '');
+    var customStyle = app && app.style ? `style="${app.style}"` : '';
+
+    if (iconName.startsWith('fa')) {
+        return `<i class="ApplicationIcon ${iconName}" ${customStyle}></i>`;
+    }
+
+    var hasExtension = iconName.includes('.');
+    var baseName = hasExtension ? iconName.replace(/\.[^/.]+$/, '') : iconName;
+    var primaryPath = hasExtension ? `./img/apps/${iconName}` : `./img/apps/${iconName}.png`;
+    var fallbackPath = hasExtension
+        ? (iconName.endsWith('.png') ? `./img/apps/${baseName}.svg` : `./img/apps/${baseName}.png`)
+        : `./img/apps/${iconName}.svg`;
+
+    return `<img class="ApplicationIcon" src="${primaryPath}" data-fallback-src="${fallbackPath}" onerror="if(this.dataset.fallbackSrc&&this.src!==this.dataset.fallbackSrc){this.src=this.dataset.fallbackSrc;}else{this.onerror=null;this.style.opacity='0.35';}" ${customStyle}>`;
+}
+
 QB.Phone.Functions.SetupApplications = function(data) {
     QB.Phone.Data.Applications = data.applications;
 
@@ -115,11 +133,7 @@ QB.Phone.Functions.SetupApplications = function(data) {
     // Setup dock apps (for non-home pages)
     $.each(dockApps, function(i, app){
         var applicationSlot = $(".phone-footer-applications").find('[data-appslot="'+app.slot+'"]');
-        var customStyle = app.style ? `style="${app.style}"` : '';
-        
-        var icon = app.icon.startsWith('fa') ? 
-            `<i class="ApplicationIcon ${app.icon}" ${customStyle}></i>` : 
-            (app.icon.includes('.') ? `<img class="ApplicationIcon" src="./img/apps/${app.icon}" ${customStyle}>` : `<img class="ApplicationIcon" src="./img/apps/${app.icon}.png" ${customStyle}>`);
+        var icon = buildApplicationIcon(app);
         $(applicationSlot).html(icon + '<div class="app-unread-alerts">0</div>');
         $(applicationSlot).data('app', app.app);
         $(applicationSlot).attr('data-app', app.app); // Also set attribute for consistency
@@ -143,10 +157,7 @@ QB.Phone.Functions.SetupApplications = function(data) {
             var appIndex = page * appsPerPage + i;
             if (appIndex < allRemainingApps.length) {
                 var app = allRemainingApps[appIndex];
-                var customStyle = app.style ? `style="${app.style}"` : '';
-                var iconElement = app.icon.startsWith('fa') ? 
-                    `<i class="ApplicationIcon ${app.icon}" ${customStyle}></i>` : 
-                    (app.icon.includes('.') ? `<img class="ApplicationIcon" src="./img/apps/${app.icon}" ${customStyle}>` : `<img class="ApplicationIcon" src="./img/apps/${app.icon}.png" ${customStyle}>`);
+                var iconElement = buildApplicationIcon(app);
                     
                 var appElement = $(`
                     <div class="phone-application" data-appslot="${app.slot}" data-app="${app.app}">
@@ -244,10 +255,7 @@ QB.Phone.Functions.CreateHomePage = function(apps, dockApps) {
     // Add main apps to the apps section (first 4 apps)
     for (let i = 0; i < Math.min(4, apps.length); i++) {
         var app = apps[i];
-        var customStyle = app.style ? `style="${app.style}"` : '';
-        var iconElement = app.icon.startsWith('fa') ? 
-            `<i class="ApplicationIcon ${app.icon}" ${customStyle}></i>` : 
-            (app.icon.includes('.') ? `<img class="ApplicationIcon" src="./img/apps/${app.icon}" ${customStyle}>` : `<img class="ApplicationIcon" src="./img/apps/${app.icon}.png" ${customStyle}>`);
+        var iconElement = buildApplicationIcon(app);
             
         var appElement = $(`
             <div class="phone-application" data-appslot="${app.slot}" data-app="${app.app}">

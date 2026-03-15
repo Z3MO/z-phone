@@ -47,6 +47,104 @@ body {
     cursor: pointer;
 }
 
+/* Volume side buttons – left side of phone frame */
+#phone-volume-up,
+#phone-volume-down {
+    position: absolute;
+    right: 17.5vw; /* left edge of phone frame ~ 1.25 + 16.5 - button width */
+    width: 0.50vw;
+    height: 2.6vh;
+    background: rgba(180, 180, 180, 0.0);
+    border-radius: 0.4vh 0 0 0.4vh;
+    z-index: 160;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255, 255, 255, 0.1);
+    font-size: 0.7vh;
+    transition: background 0.2s ease, transform 0.1s ease;
+    border: none;
+    outline: none;
+}
+
+#phone-volume-up {
+    bottom: 50.4vh;
+}
+
+#phone-volume-down {
+    bottom: 44.5vh;
+}
+
+#phone-volume-up:hover,
+#phone-volume-down:hover {
+    color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.2);
+    transform: scaleX(1.2);
+}
+
+#phone-volume-up:active,
+#phone-volume-down:active {
+    color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.55);
+    transform: scaleX(1.1);
+}
+
+/* Volume HUD shown inside the phone screen */
+#volume-hud {
+    position: absolute;
+    top: 5vh;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 200;
+    display: none;
+    pointer-events: none;
+}
+
+.volume-hud-inner {
+    background: rgba(20, 20, 20, 0.88);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 2vh;
+    padding: 0.8vh 1.5vh;
+    display: flex;
+    align-items: center;
+    gap: 0.8vh;
+    min-width: 16vh;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+#volume-hud-icon {
+    font-size: 1.4vh;
+    color: rgba(255,255,255,0.8);
+    width: 1.8vh;
+    text-align: center;
+}
+
+.volume-hud-bar-track {
+    flex: 1;
+    height: 0.5vh;
+    background: rgba(255,255,255,0.15);
+    border-radius: 0.25vh;
+    overflow: hidden;
+}
+
+.volume-hud-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FFCC00, #FF9F0A);
+    border-radius: 0.25vh;
+    transition: width 0.2s ease;
+    width: 100%;
+}
+
+.volume-hud-label {
+    font-size: 1vh;
+    color: rgba(255,255,255,0.7);
+    min-width: 2.5vh;
+    text-align: right;
+    font-family: 'Josefin Sans', sans-serif;
+}
+
 .phone-background {
     position: absolute;
     width: 15.8vw; /*265.00399999999996px*/

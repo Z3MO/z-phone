@@ -124,6 +124,19 @@ RegisterNetEvent('qb-phone:client:UpdateMessages', function(ChatMessages, Sender
         },
     })
 
+    -- Play notification sound or vibrate based on current phone sound settings
+    if PhoneSettings then
+        if PhoneSettings.vibrate then
+            -- Vibrate mode: short controller rumble + a single quiet tick
+            DoVibrate(350, 60)
+            PlaySoundFrontend(-1, "CHECKPOINT_NORMAL", "HUD_MINI_GAME_SOUNDSET", true)
+        elseif not PhoneSettings.muted then
+            -- Normal mode: play the message notification tone
+            PlayPhoneNotificationSound("Message_Tone", "Phone_SoundSet_Default")
+        end
+        -- Muted: no sound, no vibration
+    end
+
     if PhoneData.isOpen then
         SendNUIMessage({
             action = "UpdateChat",

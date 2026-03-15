@@ -13,13 +13,17 @@
     const STORAGE_KEY = "z-phone-dev-state-v1";
     const DEV_RESOURCE_NAME = "z-phone-dev";
     const PLACEHOLDER_IMAGE = "https://placehold.co/720x480/png?text=Z-Phone+Dev";
+    const DEV_CALL_CONTACTS = {
+        incoming: { name: "Jordan Lee", number: "555003", anonymous: false },
+        outgoing: { name: "Alex Johnson", number: "555002", anonymous: false }
+    };
 
     const applicationConfig = {
         phone: { app: "phone", tooltipText: "Phone", icon: "dialer.svg", tooltipPos: "top", style: "font-size: 3.3vh", job: false, blockedjobs: [], slot: 1, Alerts: 0 },
         whatsapp: { app: "whatsapp", tooltipText: "Messages", icon: "messages.svg", tooltipPos: "top", style: "font-size: 3.3vh", job: false, blockedjobs: [], slot: 2, Alerts: 2 },
         camera: { app: "camera", tooltipText: "Camera", icon: "camera.svg", job: false, blockedjobs: [], slot: 3, Alerts: 0 },
         settings: { app: "settings", tooltipText: "Settings", icon: "settings.svg", job: false, blockedjobs: [], slot: 4, Alerts: 0 },
-        ping: { app: "ping", tooltipText: "Ping", icon: "ping", tooltipPos: "top", style: "font-size: 3.3vh", job: false, blockedjobs: [], slot: 5, Alerts: 0 },
+        ping: { app: "ping", tooltipText: "Ping", icon: "map.svg", tooltipPos: "top", style: "font-size: 3.3vh", job: false, blockedjobs: [], slot: 5, Alerts: 0 },
         mail: { app: "mail", tooltipText: "Mail", icon: "mail.svg", style: "font-size: 3vh", job: false, blockedjobs: [], slot: 6, Alerts: 1 },
         proxi: { app: "proxi", tooltipText: "Proxi", icon: "yellowpages.svg", style: "font-size: 2vh", job: false, blockedjobs: [], slot: 7, Alerts: 0 },
         pulses: { app: "pulses", tooltipText: "Pulses", icon: "pulses.svg", tooltipPos: "top", job: false, blockedjobs: [], slot: 8, Alerts: 0 },
@@ -28,7 +32,7 @@
         gallery: { app: "gallery", tooltipText: "Gallery", icon: "gallery.svg", tooltipPos: "bottom", style: "font-size: 2.7vh", job: false, blockedjobs: [], slot: 11, Alerts: 0 },
         garage: { app: "garage", tooltipText: "Garages", icon: "garages.svg", style: "font-size: 3.3vh", job: false, blockedjobs: [], slot: 12, Alerts: 0 },
         bank: { app: "bank", tooltipText: "Bank", icon: "fleeca.svg", style: "font-size: 2.7vh", job: false, blockedjobs: [], slot: 13, Alerts: 0 },
-        taxi: { app: "taxi", tooltipText: "Services", icon: "services", tooltipPos: "bottom", style: "font-size: 3vh", job: false, blockedjobs: [], slot: 14, Alerts: 0 }
+        taxi: { app: "taxi", tooltipText: "Services", icon: "services.svg", tooltipPos: "bottom", style: "font-size: 3vh", job: false, blockedjobs: [], slot: 14, Alerts: 0 }
     };
 
     function clone(data) {
@@ -300,7 +304,12 @@
             },
             metadata: {
                 profilepicture: "default",
-                background: "default",
+                background: "zphone-1",
+                soundSettings: {
+                    volume: 100,
+                    muted: false,
+                    vibrate: false
+                },
                 banner: "https://placehold.co/1280x360/png?text=Z-Phone+Dev+Banner",
                 bio: "Local browser preview mode for frontend iteration."
             }
@@ -314,8 +323,13 @@
             },
             phoneData: {
                 MetaData: {
-                    background: "default",
-                    profilepicture: "default"
+                    background: "zphone-1",
+                    profilepicture: "default",
+                    soundSettings: {
+                        volume: 100,
+                        muted: false,
+                        vibrate: false
+                    }
                 },
                 Contacts: [
                     { name: "Alex Johnson", number: "555002", iban: "DEV-102938", status: false },
@@ -573,8 +587,161 @@
 
     let mockState = loadState();
 
+    if (mockState.playerData && mockState.playerData.metadata && mockState.playerData.metadata.background === "default") {
+        mockState.playerData.metadata.background = "zphone-1";
+    }
+
+    if (mockState.phoneData && mockState.phoneData.MetaData && mockState.phoneData.MetaData.background === "default") {
+        mockState.phoneData.MetaData.background = "zphone-1";
+    }
+    let activeMockCall = null;
+    let activeMockCallTimer = null;
+    let activeOutgoingAnswerTimer = null;
+
     function saveState() {
         window.localStorage.setItem(STORAGE_KEY, JSON.stringify(mockState));
+    }
+
+    function clearMockCallTimers() {
+        if (activeMockCallTimer !== null) {
+            window.clearInterval(activeMockCallTimer);
+            activeMockCallTimer = null;
+        }
+
+        if (activeOutgoingAnswerTimer !== null) {
+            window.clearTimeout(activeOutgoingAnswerTimer);
+            activeOutgoingAnswerTimer = null;
+        }
+    }
+
+    function buildMockCallData(contactData, callType, answeredCall) {
+        const safeContact = {
+            name: String((contactData && contactData.name) || "Unknown Number"),
+            number: String((contactData && contactData.number) || "555000"),
+            anonymous: !!(contactData && contactData.anonymous)
+        };
+
+        return {
+            InCall: true,
+            CallType: callType,
+            AnsweredCall: answeredCall === true,
+            CallTime: 0,
+            CallId: Number(Date.now()),
+            TargetData: safeContact
+        };
+    }
+
+    function startMockOngoingTimer() {
+        if (!activeMockCall || activeMockCall.CallType !== "ongoing") {
+            return;
+        }
+
+        clearMockCallTimers();
+        activeMockCallTimer = window.setInterval(function() {
+            if (!activeMockCall || activeMockCall.CallType !== "ongoing") {
+                clearMockCallTimers();
+                return;
+            }
+
+            activeMockCall.CallTime = Number(activeMockCall.CallTime || 0) + 1;
+            dispatchPhoneEvent("UpdateCallTime", {
+                Time: activeMockCall.CallTime,
+                Name: activeMockCall.TargetData.name
+            });
+        }, 1000);
+    }
+
+    function syncMockHomeCall(callData) {
+        dispatchPhoneEvent("SetupHomeCall", {
+            CallData: callData || {
+                InCall: false,
+                CallType: null,
+                AnsweredCall: false,
+                TargetData: {},
+                CallTime: 0
+            }
+        });
+    }
+
+    function endMockCall(reason) {
+        clearMockCallTimers();
+        activeMockCall = null;
+        syncMockHomeCall(null);
+
+        if (reason === "incoming") {
+            dispatchPhoneEvent("IncomingCallAlert", {
+                CallData: DEV_CALL_CONTACTS.incoming,
+                Canceled: true,
+                AnonymousCall: false
+            });
+            return true;
+        }
+
+        if (reason === "outgoing") {
+            dispatchPhoneEvent("CancelOutgoingCall", {});
+            return true;
+        }
+
+        dispatchPhoneEvent("CancelOngoingCall", {});
+        return true;
+    }
+
+    function answerMockCall() {
+        if (!activeMockCall) {
+            return true;
+        }
+
+        clearMockCallTimers();
+        activeMockCall.CallType = "ongoing";
+        activeMockCall.AnsweredCall = true;
+        activeMockCall.CallTime = 0;
+        syncMockHomeCall(clone(activeMockCall));
+        dispatchPhoneEvent("AnswerCall", {
+            CallData: clone(activeMockCall)
+        });
+        startMockOngoingTimer();
+        return true;
+    }
+
+    function triggerIncomingCallScenario(contactData) {
+        clearMockCallTimers();
+        activeMockCall = buildMockCallData(contactData || DEV_CALL_CONTACTS.incoming, "incoming", false);
+        syncMockHomeCall(clone(activeMockCall));
+        dispatchPhoneEvent("IncomingCallAlert", {
+            CallData: clone(activeMockCall.TargetData),
+            Canceled: false,
+            AnonymousCall: !!activeMockCall.TargetData.anonymous
+        });
+        return true;
+    }
+
+    function triggerOutgoingCallScenario(contactData, autoAnswer) {
+        clearMockCallTimers();
+        activeMockCall = buildMockCallData(contactData || DEV_CALL_CONTACTS.outgoing, "outgoing", false);
+        syncMockHomeCall(clone(activeMockCall));
+
+        if (autoAnswer !== false) {
+            activeOutgoingAnswerTimer = window.setTimeout(function() {
+                answerMockCall();
+            }, 1800);
+        }
+
+        return true;
+    }
+
+    function saveMockSoundSettings(payload) {
+        const current = (mockState.phoneData && mockState.phoneData.MetaData && mockState.phoneData.MetaData.soundSettings) || {};
+        const soundSettings = {
+            volume: payload && payload.volume != null ? Number(payload.volume) : Number(current.volume || 100),
+            muted: !!(payload && payload.muted),
+            vibrate: !!(payload && payload.vibrate)
+        };
+
+        mockState.phoneData.MetaData.soundSettings = soundSettings;
+        mockState.playerData.metadata = mockState.playerData.metadata || {};
+        mockState.playerData.metadata.soundSettings = clone(soundSettings);
+        saveState();
+        return true;
     }
 
     function cloneApplications() {
@@ -645,7 +812,7 @@
         return {
             IsOnline: true,
             CanCall: true,
-            InCall: false,
+            InCall: !!activeMockCall,
             TargetNumber: targetNumber
         };
     }
@@ -730,11 +897,15 @@
             case "gps-vehicle-garage":
             case "sellVehicle":
             case "SetHouseLocation":
-            case "AnswerCall":
-            case "CancelOutgoingCall":
-            case "DenyIncomingCall":
-            case "CancelOngoingCall":
                 return true;
+            case "AnswerCall":
+                return answerMockCall();
+            case "CancelOutgoingCall":
+                return endMockCall("outgoing");
+            case "DenyIncomingCall":
+                return endMockCall("incoming");
+            case "CancelOngoingCall":
+                return endMockCall("ongoing");
             case "GetWhatsappChats":
                 return clone(sortChatsByLatest([...mockState.whatsappChats]));
             case "GetWhatsappChat":
@@ -785,8 +956,14 @@
                     success: true,
                     message: `Number shared with ID ${payload.targetId}.`
                 };
-            case "CallContact":
-                return mockCallStatus(payload);
+            case "CallContact": {
+                const status = mockCallStatus(payload);
+                triggerOutgoingCallScenario(payload && payload.ContactData ? payload.ContactData : DEV_CALL_CONTACTS.outgoing, true);
+                return {
+                    ...status,
+                    InCall: false
+                };
+            }
             case "AddNewContact": {
                 mockState.phoneData.Contacts.push({
                     name: payload.ContactName,
@@ -1079,6 +1256,8 @@
                 mockState.playerData.metadata.profilepicture = payload.profilepicture || "default";
                 saveState();
                 return true;
+            case "UpdatePhoneSoundSettings":
+                return saveMockSoundSettings(payload);
             default:
                 return true;
         }
@@ -1170,6 +1349,8 @@
     }
 
     function bootPhonePreview() {
+        clearMockCallTimers();
+        activeMockCall = null;
         const applications = cloneApplications();
         dispatchPhoneEvent("open", {
             AppData: applications,
@@ -1199,16 +1380,21 @@
         const badge = document.createElement("div");
         const title = document.createElement("div");
         const actions = document.createElement("div");
+        const scenarios = document.createElement("div");
         const resetButton = document.createElement("button");
         const reloadButton = document.createElement("button");
+        const incomingButton = document.createElement("button");
+        const outgoingButton = document.createElement("button");
+        const hangupButton = document.createElement("button");
 
         badge.id = "zphone-dev-badge";
-        badge.style.cssText = "position:fixed;top:16px;right:16px;z-index:99999;background:rgba(15,23,42,.92);color:#fff;padding:12px 14px;border-radius:14px;border:1px solid rgba(96,165,250,.35);box-shadow:0 16px 40px rgba(0,0,0,.28);font-family:system-ui,sans-serif;min-width:180px;backdrop-filter:blur(10px);";
+        badge.style.cssText = "position:fixed;top:16px;right:16px;z-index:99999;background:rgba(15,23,42,.92);color:#fff;padding:12px 14px;border-radius:14px;border:1px solid rgba(96,165,250,.35);box-shadow:0 16px 40px rgba(0,0,0,.28);font-family:system-ui,sans-serif;min-width:220px;backdrop-filter:blur(10px);";
 
         title.textContent = "Z-Phone Dev Preview";
         title.style.cssText = "font-size:13px;font-weight:700;margin-bottom:8px;";
 
         actions.style.cssText = "display:flex;gap:8px;";
+        scenarios.style.cssText = "display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;";
 
         resetButton.type = "button";
         resetButton.textContent = "Reset data";
@@ -1225,9 +1411,37 @@
             bootPhonePreview();
         });
 
+        incomingButton.type = "button";
+        incomingButton.textContent = "Incoming";
+        incomingButton.style.cssText = "border:0;border-radius:10px;padding:8px 10px;background:#0f766e;color:#fff;font-size:12px;font-weight:600;cursor:pointer;";
+        incomingButton.addEventListener("click", function () {
+            triggerIncomingCallScenario(DEV_CALL_CONTACTS.incoming);
+        });
+
+        outgoingButton.type = "button";
+        outgoingButton.textContent = "Outgoing";
+        outgoingButton.style.cssText = "border:0;border-radius:10px;padding:8px 10px;background:#7c3aed;color:#fff;font-size:12px;font-weight:600;cursor:pointer;";
+        outgoingButton.addEventListener("click", function () {
+            triggerOutgoingCallScenario(DEV_CALL_CONTACTS.outgoing, true);
+        });
+
+        hangupButton.type = "button";
+        hangupButton.textContent = "Hang up";
+        hangupButton.style.cssText = "border:0;border-radius:10px;padding:8px 10px;background:#b91c1c;color:#fff;font-size:12px;font-weight:600;cursor:pointer;";
+        hangupButton.addEventListener("click", function () {
+            const reason = activeMockCall && activeMockCall.CallType === "incoming"
+                ? "incoming"
+                : (activeMockCall && activeMockCall.CallType === "outgoing" ? "outgoing" : "ongoing");
+            endMockCall(reason);
+        });
+
+        scenarios.appendChild(incomingButton);
+        scenarios.appendChild(outgoingButton);
+        scenarios.appendChild(hangupButton);
         actions.appendChild(resetButton);
         actions.appendChild(reloadButton);
         badge.appendChild(title);
+        badge.appendChild(scenarios);
         badge.appendChild(actions);
         document.body.appendChild(badge);
 
@@ -1241,6 +1455,21 @@
     window.ZPhoneDev = {
         enabled: true,
         boot: bootPhonePreview,
+        incomingCall: function (contact) {
+            return triggerIncomingCallScenario(contact || DEV_CALL_CONTACTS.incoming);
+        },
+        outgoingCall: function (contact) {
+            return triggerOutgoingCallScenario(contact || DEV_CALL_CONTACTS.outgoing, true);
+        },
+        answerCall: function () {
+            return answerMockCall();
+        },
+        hangupCall: function () {
+            const reason = activeMockCall && activeMockCall.CallType === "incoming"
+                ? "incoming"
+                : (activeMockCall && activeMockCall.CallType === "outgoing" ? "outgoing" : "ongoing");
+            return endMockCall(reason);
+        },
         reset: function () {
             window.localStorage.removeItem(STORAGE_KEY);
             window.location.reload();

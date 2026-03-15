@@ -18,7 +18,10 @@ RegisterNUICallback('DenyNotification', function(data, cb)
 end)
 
 RegisterNUICallback('PlaySound', function(data, cb)
-    PlaySound(-1, data.sound, data.table, 0, 0, 1)
+    -- Respect mute / vibrate modes set in Sound & Vibration settings
+    if not (PhoneSettings and (PhoneSettings.muted or PhoneSettings.vibrate)) then
+        PlaySound(-1, data.sound, data.table, 0, 0, 1)
+    end
     cb('ok')
 end)
 

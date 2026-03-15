@@ -84,7 +84,21 @@
         <div class="container disableSelection">
             <img src="./img/phone-frame.svg" class="phone-frame">
             <div id="phone-side-button-power"></div>
+            <!-- Volume side buttons (left of phone frame) -->
+            <div id="phone-volume-up" title="Volume Up"><i class="fa-solid fa-plus"></i></div>
+            <div id="phone-volume-down" title="Volume Down"><i class="fa-solid fa-minus"></i></div>
             <div class="phone-container phone-background">
+                <!-- Volume HUD Overlay -->
+                <div id="volume-hud">
+                    <div class="volume-hud-inner">
+                        <i class="fa-solid fa-volume-high" id="volume-hud-icon"></i>
+                        <div class="volume-hud-bar-track">
+                            <div class="volume-hud-bar-fill" id="volume-hud-fill"></div>
+                        </div>
+                        <span class="volume-hud-label" id="volume-hud-label">100%</span>
+                    </div>
+                </div>
+
                 <!-- Phone Header -->
                 <div class="phone-header">
                     <div id="phone-time">08:05</div>
@@ -92,6 +106,8 @@
                         <i class="fa-solid fa-signal" id="phone-signal" data-toggle="tooltip" data-placement="left" title="5G"></i>
                         <i class="fa-solid fa-sun" id="phone-sun" data-toggle="tooltip" data-placement="left" title="Weather Unavailable"></i>
                         <i class="fa-solid fa-battery-full" id="phone-battery"></i>
+                        <i class="fa-solid fa-volume-xmark" id="phone-mute-icon" style="display:none;"></i>
+                        <i class="fa-solid fa-mobile-signal" id="phone-vibrate-icon" style="display:none;"></i>
                     </div>
                 </div>
 
@@ -455,6 +471,14 @@
                             </div>
 
                             <div class="settings-menu-group">
+                                <div class="settings-menu-item settings-app-tab" data-settingstab="sound">
+                                    <div class="settings-icon-box" style="background: linear-gradient(135deg, #FF9F0A, #FFCC00);"><i class="fa-solid fa-volume-high"></i></div>
+                                    <div class="settings-text">Sound &amp; Vibration</div>
+                                    <i class="fa-solid fa-chevron-right settings-chevron"></i>
+                                </div>
+                            </div>
+
+                            <div class="settings-menu-group">
                                 <div class="settings-menu-item settings-app-tab" data-settingstab="info">
                                     <div class="settings-icon-box" style="background: linear-gradient(135deg, #8E8E93, #98989D);"><i class="fa-solid fa-info"></i></div>
                                     <div class="settings-text">Device Info</div>
@@ -464,6 +488,70 @@
 
                             <div class="settings-version">
                                 <p>z-phone v2.0</p>
+                            </div>
+                        </div>
+
+                        <!-- Sound & Vibration sub-tab -->
+                        <div class="settings-sound-tab">
+                            <div class="settings-app-header"><p>Sound &amp; Vibration</p></div>
+
+                            <div class="sound-settings-scroll">
+
+                                <!-- Volume Section -->
+                                <div class="sound-section-label">Volume</div>
+                                <div class="sound-section-card">
+                                    <div class="sound-row">
+                                        <div class="sound-row-left">
+                                            <i class="fa-solid fa-volume-low sound-row-icon"></i>
+                                            <span class="sound-row-title">Media Volume</span>
+                                        </div>
+                                        <div class="sound-volume-controls">
+                                            <button class="sound-vol-btn" id="sound-vol-down" aria-label="Decrease volume"><i class="fa-solid fa-minus"></i></button>
+                                            <div class="sound-vol-bar-track">
+                                                <div class="sound-vol-bar-fill" id="sound-vol-bar-fill"></div>
+                                            </div>
+                                            <button class="sound-vol-btn" id="sound-vol-up" aria-label="Increase volume"><i class="fa-solid fa-plus"></i></button>
+                                            <span class="sound-vol-value" id="sound-vol-value">100%</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Mute Section -->
+                                <div class="sound-section-label">Silent Mode</div>
+                                <div class="sound-section-card">
+                                    <div class="sound-row sound-row--toggle">
+                                        <div class="sound-row-left">
+                                            <i class="fa-solid fa-volume-xmark sound-row-icon"></i>
+                                            <div>
+                                                <span class="sound-row-title">Mute</span>
+                                                <span class="sound-row-desc">Silence all phone sounds</span>
+                                            </div>
+                                        </div>
+                                        <label class="sound-toggle" id="toggle-mute-label">
+                                            <input type="checkbox" id="toggle-mute">
+                                            <span class="sound-toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                    <div class="sound-divider"></div>
+                                    <div class="sound-row sound-row--toggle">
+                                        <div class="sound-row-left">
+                                            <i class="fa-solid fa-mobile-signal sound-row-icon" style="color: #30D158;"></i>
+                                            <div>
+                                                <span class="sound-row-title">Vibrate</span>
+                                                <span class="sound-row-desc">Vibrate when receiving calls</span>
+                                            </div>
+                                        </div>
+                                        <label class="sound-toggle" id="toggle-vibrate-label">
+                                            <input type="checkbox" id="toggle-vibrate">
+                                            <span class="sound-toggle-slider"></span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="sound-back-btn-row">
+                                <div class="background-button" id="cancel-sound"><p>Back</p></div>
                             </div>
                         </div>
 

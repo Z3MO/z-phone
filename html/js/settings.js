@@ -148,7 +148,7 @@ $(document).on('click', '#accept-background', function(e){
 });
 
 QB.Phone.Functions.LoadMetaData = function(MetaData) {
-    if (MetaData.background !== null && MetaData.background !== undefined) {
+    if (MetaData.background !== null && MetaData.background !== undefined && MetaData.background !== "default") {
         QB.Phone.Settings.Background = MetaData.background;
     } else {
         QB.Phone.Settings.Background = "zphone-1";
@@ -170,6 +170,18 @@ QB.Phone.Functions.LoadMetaData = function(MetaData) {
         $("[data-settingstab='profilepicture']").find('.settings-tab-icon').html('<img src="'+MetaData.profilepicture+'">');
         $(".settings-profile-img").attr("src", MetaData.profilepicture).show();
         $(".settings-profile-avatar-placeholder").hide();
+    }
+
+    // Restore saved Sound & Vibration settings from phone metadata
+    if (MetaData.soundSettings) {
+        var ss = MetaData.soundSettings;
+        QB.Phone.Settings.Volume  = (ss.volume  != null) ? Number(ss.volume)  : 100;
+        QB.Phone.Settings.Muted   = !!ss.muted;
+        QB.Phone.Settings.Vibrate = !!ss.vibrate;
+        // Apply to UI without flashing the volume HUD
+        updateVolumeUI(true);
+        $('#toggle-mute').prop('checked',    QB.Phone.Settings.Muted);
+        $('#toggle-vibrate').prop('checked', QB.Phone.Settings.Vibrate);
     }
 }
 
@@ -344,4 +356,138 @@ $(document).on('input', '.custom-profilepicture-input', function(e){
     } else {
         $('.custom-profilepicture-preview').hide();
     }
+});
+
+// ─── Sound & Vibration ───────────────────────────────────────────────────────
+
+QB.Phone.Settings.Volume   = 100; // 0–100
+QB.Phone.Settings.Muted    = false;
+QB.Phone.Settings.Vibrate  = false;
+
+var volumeHudTimer = null;
+
+// suppressHud: pass true to skip showing the HUD (used on initial load)
+function updateVolumeUI(suppressHud) {
+    var vol   = QB.Phone.Settings.Volume;
+    var muted = QB.Phone.Settings.Muted;
+
+    // In-settings bar
+    $('#sound-vol-bar-fill').css('width', vol + '%');
+    $('#sound-vol-value').text(muted ? 'Muted' : vol + '%');
+
+    // Status bar icons
+    if (muted) {
+        $('#phone-mute-icon').show();
+        $('#phone-vibrate-icon').hide();
+    } else if (QB.Phone.Settings.Vibrate) {
+        $('#phone-mute-icon').hide();
+        $('#phone-vibrate-icon').show();
+    } else {
+        $('#phone-mute-icon').hide();
+        $('#phone-vibrate-icon').hide();
+    }
+
+    // HUD (skip on silent load)
+    var hudIcon = muted ? 'fa-volume-xmark' : (vol === 0 ? 'fa-volume-off' : (vol < 50 ? 'fa-volume-low' : 'fa-volume-high'));
+    $('#volume-hud-icon').attr('class', 'fa-solid ' + hudIcon);
+    $('#volume-hud-fill').css('width', muted ? '0%' : vol + '%');
+    $('#volume-hud-label').text(muted ? 'Muted' : vol + '%');
+
+    if (!suppressHud) showVolumeHud();
+
+    // Sync current sound settings to the Lua client side
+    $.post(`https://${GetParentResourceName()}/UpdatePhoneSoundSettings`, JSON.stringify({
+        volume:  QB.Phone.Settings.Volume,
+        muted:   QB.Phone.Settings.Muted,
+        vibrate: QB.Phone.Settings.Vibrate,
+    }));
+}
+
+function showVolumeHud() {
+    $('#volume-hud').stop(true, true).fadeIn(150);
+    clearTimeout(volumeHudTimer);
+    volumeHudTimer = setTimeout(function() {
+        $('#volume-hud').fadeOut(400);
+    }, 1800);
+}
+
+// Settings tab navigation: Sound
+$(document).on('click', '.settings-app-tab[data-settingstab="sound"]', function(e){
+    e.preventDefault();
+    QB.Phone.Settings.OpenedTab = 'sound';
+    // Sync current state into the UI
+    $('#sound-vol-bar-fill').css('width', QB.Phone.Settings.Volume + '%');
+    $('#sound-vol-value').text(QB.Phone.Settings.Muted ? 'Muted' : QB.Phone.Settings.Volume + '%');
+    $('#toggle-mute').prop('checked', QB.Phone.Settings.Muted);
+    $('#toggle-vibrate').prop('checked', QB.Phone.Settings.Vibrate);
+    $(".settings-sound-tab").css({"display":"block", "left":"100%", "top":"0"}).animate({"left":"0"}, 300);
+});
+
+$(document).on('click', '#cancel-sound', function(e){
+    e.preventDefault();
+    $(".settings-sound-tab").animate({"left":"100%"}, 300, function(){
+        $(this).css("display", "none");
+    });
+});
+
+// In-settings volume buttons
+$(document).on('click', '#sound-vol-up', function(e){
+    e.preventDefault();
+    if (QB.Phone.Settings.Muted) return;
+    QB.Phone.Settings.Volume = Math.min(100, QB.Phone.Settings.Volume + 10);
+    updateVolumeUI();
+});
+
+$(document).on('click', '#sound-vol-down', function(e){
+    e.preventDefault();
+    if (QB.Phone.Settings.Muted) return;
+    QB.Phone.Settings.Volume = Math.max(0, QB.Phone.Settings.Volume - 10);
+    updateVolumeUI();
+});
+
+// Mute toggle
+$(document).on('change', '#toggle-mute', function(){
+    QB.Phone.Settings.Muted = $(this).is(':checked');
+    if (QB.Phone.Settings.Muted && QB.Phone.Settings.Vibrate) {
+        QB.Phone.Settings.Vibrate = false;
+        $('#toggle-vibrate').prop('checked', false);
+    }
+    updateVolumeUI();
+    $('#sound-vol-value').text(QB.Phone.Settings.Muted ? 'Muted' : QB.Phone.Settings.Volume + '%');
+});
+
+// Vibrate toggle
+$(document).on('change', '#toggle-vibrate', function(){
+    QB.Phone.Settings.Vibrate = $(this).is(':checked');
+    if (QB.Phone.Settings.Vibrate && QB.Phone.Settings.Muted) {
+        QB.Phone.Settings.Muted = false;
+        $('#toggle-mute').prop('checked', false);
+    }
+    updateVolumeUI();
+});
+
+// Physical volume buttons on the left side of the phone frame
+$(document).on('click', '#phone-volume-up', function(e){
+    e.preventDefault();
+    if (QB.Phone.Settings.Muted) {
+        QB.Phone.Settings.Muted = false;
+        $('#toggle-mute').prop('checked', false);
+    }
+    QB.Phone.Settings.Volume = Math.min(100, QB.Phone.Settings.Volume + 10);
+    updateVolumeUI();
+});
+
+$(document).on('click', '#phone-volume-down', function(e){
+    e.preventDefault();
+    if (QB.Phone.Settings.Muted) {
+        QB.Phone.Settings.Volume = Math.max(0, QB.Phone.Settings.Volume - 10);
+        updateVolumeUI();
+        return;
+    }
+    QB.Phone.Settings.Volume = Math.max(0, QB.Phone.Settings.Volume - 10);
+    if (QB.Phone.Settings.Volume === 0) {
+        QB.Phone.Settings.Muted = true;
+        $('#toggle-mute').prop('checked', true);
+    }
+    updateVolumeUI();
 });

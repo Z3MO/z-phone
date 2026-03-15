@@ -33,7 +33,56 @@ PhoneData = {
 }
 
 -- Localized Variables --
-local CallVolume = 0.2
+-- Global sound settings (accessible from all client scripts)
+PhoneSettings = {
+    uiVolume = 100,   -- 0–100, displayed in UI
+    volume   = 0.2,   -- actual InteractSound volume (mapped: uiVolume/100 * 0.4)
+    muted    = false,
+    vibrate  = false,
+}
+
+-- Maps UI percentage (0-100) to game audio volume (0.0-0.4)
+local function GetRingVolume()
+    if PhoneSettings.muted or PhoneSettings.vibrate then return 0.0 end
+    return PhoneSettings.volume
+end
+
+-- Maps UI percentage (0-100) to a softer dial tone volume
+local function GetDialVolume()
+    if PhoneSettings.muted or PhoneSettings.vibrate then return 0.0 end
+    return math.max(0.04, PhoneSettings.volume * 0.5)
+end
+
+-- Play a GTA frontend sound respecting current mute state
+function PlayPhoneNotificationSound(soundName, soundSet)
+    if PhoneSettings.muted then return end
+    PlaySoundFrontend(-1, soundName, soundSet, true)
+end
+
+-- Attempt controller rumble for vibrate mode (works with gamepad; silently no-ops on keyboard)
+function DoVibrate(durationMs, intensity)
+    CreateThread(function()
+        local endTime = GetGameTimer() + (durationMs or 800)
+        while GetGameTimer() < endTime do
+            pcall(function()
+                -- SET_PAD_SHAKE native – works when a gamepad is connected
+                Citizen.InvokeNative(0x8912E4C9D78C3FEB, 0, 100, intensity or 80)
+            end)
+            Wait(100)
+        end
+    end)
+end
+
+-- Sync PhoneSettings from saved MetaData
+local function ApplySoundMetaData(PhoneMeta)
+    local ss = PhoneMeta and PhoneMeta.soundSettings
+    if ss then
+        PhoneSettings.uiVolume = tonumber(ss.volume)  or 100
+        PhoneSettings.muted    = ss.muted    == true
+        PhoneSettings.vibrate  = ss.vibrate  == true
+        PhoneSettings.volume   = (PhoneSettings.uiVolume / 100) * 0.4
+    end
+end
 
 
 -- Functions
@@ -117,6 +166,9 @@ local function LoadPhone()
         PhoneData.PlayerData = PlayerData
         local PhoneMeta = PhoneData.PlayerData.metadata["phone"]
         PhoneData.MetaData = PhoneMeta
+
+        -- Restore sound settings from saved metadata
+        ApplySoundMetaData(PhoneMeta)
 
         PhoneData.MetaData.profilepicture = PhoneMeta.profilepicture or "default"
 
@@ -336,7 +388,7 @@ local function CallContact(CallData, AnonymousCall)
             if RepeatCount + 1 ~= Config.CallRepeats + 1 then
                 if PhoneData.CallData.InCall then
                     RepeatCount += 1
-                    TriggerServerEvent("InteractSound_SV:PlayOnSource", "dial", 0.1)
+                    TriggerServerEvent("InteractSound_SV:PlayOnSource", "dial", GetDialVolume())
                 else
                     break
                 end
@@ -871,15 +923,38 @@ RegisterNetEvent('qb-phone:client:CancelCall', function()
 end)
 
 RegisterNUICallback('phone-silent-button', function(_, cb)
-    if CallVolume == tonumber("0.2") then
-        CallVolume = 0
+    PhoneSettings.muted = not PhoneSettings.muted
+    if PhoneSettings.muted then
+        PhoneSettings.vibrate = false
         QBCore.Functions.Notify("Silent Mode On", "success")
         cb(true)
     else
-        CallVolume = 0.2
         QBCore.Functions.Notify("Silent Mode Off", "error")
         cb(false)
     end
+    -- Persist to metadata
+    PhoneData.MetaData.soundSettings = {
+        volume  = PhoneSettings.uiVolume,
+        muted   = PhoneSettings.muted,
+        vibrate = PhoneSettings.vibrate,
+    }
+    TriggerServerEvent('qb-phone:server:SaveMetaData', PhoneData.MetaData)
+end)
+
+-- Called from settings.js whenever sound settings change
+RegisterNUICallback('UpdatePhoneSoundSettings', function(data, cb)
+    PhoneSettings.uiVolume = tonumber(data.volume) or PhoneSettings.uiVolume
+    PhoneSettings.volume   = (PhoneSettings.uiVolume / 100) * 0.4
+    PhoneSettings.muted    = data.muted    == true
+    PhoneSettings.vibrate  = data.vibrate  == true
+    -- Persist to metadata so the settings survive reconnects
+    PhoneData.MetaData.soundSettings = {
+        volume  = PhoneSettings.uiVolume,
+        muted   = PhoneSettings.muted,
+        vibrate = PhoneSettings.vibrate,
+    }
+    TriggerServerEvent('qb-phone:server:SaveMetaData', PhoneData.MetaData)
+    cb('ok')
 end)
 
 RegisterNetEvent('qb-phone:client:GetCalled', function(CallerNumber, CallId, AnonymousCall)
@@ -912,7 +987,12 @@ RegisterNetEvent('qb-phone:client:GetCalled', function(CallerNumber, CallId, Ano
                 if RepeatCount + 1 ~= Config.CallRepeats + 1 then
                     if PhoneData.CallData.InCall then
                         RepeatCount = RepeatCount + 1
-                        TriggerServerEvent("InteractSound_SV:PlayOnSource", "ringing", CallVolume)
+                        TriggerServerEvent("InteractSound_SV:PlayOnSource", "ringing", GetRingVolume())
+                        -- Vibrate mode: pulse controller and play a quiet buzz
+                        if PhoneSettings.vibrate then
+                            DoVibrate(Config.RepeatTimeout - 300, 85)
+                            PlaySoundFrontend(-1, "CHECKPOINT_NORMAL", "HUD_MINI_GAME_SOUNDSET", true)
+                        end
 
                         if not PhoneData.isOpen then
                             SendNUIMessage({
