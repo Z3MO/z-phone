@@ -3,101 +3,95 @@
     display: none;
     height: 100%;
     width: 100%;
-    background:
-        radial-gradient(circle at 18% 16%, rgba(70, 140, 230, 0.24), transparent 38%),
-        radial-gradient(circle at 82% 88%, rgba(36, 196, 143, 0.14), transparent 34%),
-        linear-gradient(170deg, #0b111b 0%, #101a28 56%, #0a121d 100%);
-    overflow: hidden;
 }
 
+/* Incoming */
 .phone-call-incoming {
     display: none;
     height: 100%;
     width: 100%;
 }
-.phone-call-incoming-title {
+
+.phone-call-incoming-title,
+.phone-call-outgoing-title,
+.phone-call-ongoing-title {
     position: relative;
     text-align: center;
     top: 6.8vh;
-    color: rgba(221, 235, 250, 0.82);
-    font-size: 1.55vh;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    color: rgba(221, 235, 248, 0.58);
+    font-size: 1.8vh;
+    font-weight: 500;
 }
-.phone-call-incoming-caller {
+
+.phone-call-incoming-caller,
+.phone-call-outgoing-caller,
+.phone-call-ongoing-caller {
     position: relative;
     text-align: center;
     top: 9.4vh;
     color: white;
     font-size: 3vh;
     font-weight: 700;
-    text-shadow: 0 0.3vh 0.8vh rgba(0, 0, 0, 0.36);
 }
-.phone-call-incoming-picture {
+
+.phone-call-incoming-picture,
+.phone-call-outgoing-picture,
+.phone-call-ongoing-picture {
     position: absolute;
     margin: 0 auto;
-    width: 16.2vh;
-    height: 16.2vh;
     left: 0;
     right: 0;
-    top: 18.8vh;
+    top: 15vh;
+    height: 16vh;
+    width: 16vh;
     border-radius: 50%;
-    border: 0.22vh solid rgba(255, 255, 255, 0.22);
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
-    box-shadow: 0 1.2vh 3.2vh rgba(0, 0, 0, 0.32);
-    animation: pulse 2s infinite;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background-size: cover;
+    background-position: center;
+}
+
+#incoming-answer,
+#incoming-deny,
+#outgoing-cancel,
+#ongoing-cancel {
+    appearance: none;
+    position: absolute;
+    bottom: 7.2vh;
+    width: 5.8vh;
+    height: 5.8vh;
+    line-height: 5.8vh;
+    text-align: center;
+    font-size: 1.8vh;
+    border-radius: 50%;
+    border: 0;
     color: white;
-    font-size: 5.2vh;
-    font-weight: 800;
+    cursor: pointer;
+    transition: transform .1s ease;
 }
+
 #incoming-answer {
-    appearance: none;
-    position: absolute;
-    bottom: 7.2vh;
-    left: 6.2vh;
-    color: #ecfff3;
-    background: linear-gradient(145deg, #26b862, #39d47a);
-    width: 5.8vh;
-    height: 5.8vh;
-    line-height: 5.8vh;
-    text-align: center;
-    font-size: 2vh;
-    border-radius: 50%;
-    border: 0;
-    cursor: pointer;
-    transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
-    box-shadow: 0 1vh 2.6vh rgba(23, 141, 78, 0.34);
-}
-#incoming-answer:hover {
-    transform: translateY(-0.2vh);
-    filter: saturate(1.12);
-    box-shadow: 0 1.2vh 2.8vh rgba(23, 141, 78, 0.42);
-}
-#incoming-deny {
-    appearance: none;
-    position: absolute;
-    bottom: 7.2vh;
     right: 6.2vh;
-    color: #fff3f3;
-    background: linear-gradient(145deg, #d84a4a, #ff5e5e);
-    width: 5.8vh;
-    height: 5.8vh;
-    line-height: 5.8vh;
-    text-align: center;
-    font-size: 2vh;
-    border-radius: 50%;
-    border: 0;
-    cursor: pointer;
-    transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
-    box-shadow: 0 1vh 2.6vh rgba(161, 45, 45, 0.34);
+    background: #2fbf71;
 }
-#incoming-deny:hover {
-    transform: translateY(-0.2vh);
-    filter: saturate(1.12);
-    box-shadow: 0 1.2vh 2.8vh rgba(161, 45, 45, 0.42);
+
+#incoming-deny,
+#outgoing-cancel,
+#ongoing-cancel {
+    left: 6.2vh;
+    background: #e14f4f;
+}
+
+#outgoing-cancel,
+#ongoing-cancel {
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+}
+
+#incoming-answer:hover,
+#incoming-deny:hover,
+#outgoing-cancel:hover,
+#ongoing-cancel:hover {
+    transform: translateY(-0.1vh);
 }
 
 /* Outgoing */
@@ -106,69 +100,7 @@
     height: 100%;
     width: 100%;
 }
-.phone-call-outgoing-title {
-    position: relative;
-    text-align: center;
-    top: 6.8vh;
-    color: rgba(221, 235, 250, 0.82);
-    font-size: 1.55vh;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-}
-.phone-call-outgoing-caller {
-    position: relative;
-    text-align: center;
-    top: 9.4vh;
-    color: white;
-    font-size: 3vh;
-    font-weight: 700;
-    text-shadow: 0 0.3vh 0.8vh rgba(0, 0, 0, 0.36);
-}
-.phone-call-outgoing-picture {
-    position: absolute;
-    margin: 0 auto;
-    width: 16.2vh;
-    height: 16.2vh;
-    left: 0;
-    right: 0;
-    top: 18.8vh;
-    border-radius: 50%;
-    border: 0.22vh solid rgba(255, 255, 255, 0.22);
-    background: linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
-    box-shadow: 0 1.2vh 3.2vh rgba(0, 0, 0, 0.32);
-    animation: pulse 2s infinite;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 5.2vh;
-    font-weight: 800;
-}
-#outgoing-cancel {
-    appearance: none;
-    position: absolute;
-    bottom: 7.2vh;
-    margin: 0 auto;
-    left: 0;
-    right: 0;
-    color: #fff3f3;
-    background: linear-gradient(145deg, #d84a4a, #ff5e5e);
-    width: 5.8vh;
-    height: 5.8vh;
-    line-height: 5.8vh;
-    text-align: center;
-    font-size: 2vh;
-    border-radius: 50%;
-    border: 0;
-    cursor: pointer;
-    transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
-    box-shadow: 0 1vh 2.6vh rgba(161, 45, 45, 0.34);
-}
-#outgoing-cancel:hover {
-    transform: translateY(-0.2vh);
-    filter: saturate(1.12);
-    box-shadow: 0 1.2vh 2.8vh rgba(161, 45, 45, 0.42);
-}
+
 @-webkit-keyframes pulse {
     0% {
       -webkit-box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.8);
@@ -179,8 +111,9 @@
     100% {
         -webkit-box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
     }
-  }
-  @keyframes pulse {
+}
+
+@keyframes pulse {
     0% {
       -moz-box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.8);
       box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
@@ -200,11 +133,13 @@
     50%{background-position:100% 50%}
     100%{background-position:0% 50%}
 }
+
 @-moz-keyframes AnimationName {
     0%{background-position:0% 50%}
     50%{background-position:100% 50%}
     100%{background-position:0% 50%}
 }
+
 @keyframes AnimationName {
     0%{background-position:0% 50%}
     50%{background-position:100% 50%}
@@ -547,12 +482,34 @@
     font-size: 1.4vh;
 }
 
-.phone-contact-list::-webkit-scrollbar {
-    display: none;
+.phone-contact-list::-webkit-scrollbar,
+.phone-recent-calls::-webkit-scrollbar,
+.suggested-contacts::-webkit-scrollbar,
+.phone-nearby-share-list::-webkit-scrollbar {
+    width: 0.3vh;
 }
 
-.phone-contact-list::-webkit-scrollbar-thumb {
-    background-color: transparent;
+.phone-contact-list::-webkit-scrollbar-track,
+.phone-recent-calls::-webkit-scrollbar-track,
+.suggested-contacts::-webkit-scrollbar-track,
+.phone-nearby-share-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 999px;
+}
+
+.phone-contact-list::-webkit-scrollbar-thumb,
+.phone-recent-calls::-webkit-scrollbar-thumb,
+.suggested-contacts::-webkit-scrollbar-thumb,
+.phone-nearby-share-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(126, 186, 245, 0.5), rgba(72, 133, 210, 0.64));
+    border-radius: 999px;
+}
+
+.phone-contact-list::-webkit-scrollbar-thumb:hover,
+.phone-recent-calls::-webkit-scrollbar-thumb:hover,
+.suggested-contacts::-webkit-scrollbar-thumb:hover,
+.phone-nearby-share-list::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(146, 202, 255, 0.66), rgba(85, 148, 226, 0.76));
 }
 
 .phone-contact-list {
@@ -561,11 +518,15 @@
     bottom: 10vh;
     width: 90%;
     left: 5%;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
     contain: layout paint;
-    padding-top: 0.5vh;
-    padding-bottom: 0.5vh;
+    padding: 0.5vh 0.35vh 0.7vh 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(96, 159, 233, 0.64) rgba(255, 255, 255, 0.02);
 }
 
 .phone-contact {
@@ -804,10 +765,6 @@
     color: rgba(232, 240, 248, 0.72);
 }
 
-.phone-recent-calls::-webkit-scrollbar {
-    display: none;
-}
-
 .phone-recent-calls {
     position: absolute;
     width: 90%;
@@ -815,10 +772,16 @@
     bottom: 10vh;
     left: 5%;
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
     contain: layout paint;
-    padding-top: 0.5vh;
+    padding: 0.6vh 0.35vh 1.6vh 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(96, 159, 233, 0.64) rgba(255, 255, 255, 0.02);
 }
+
 .phone-recent-call {
     position: relative;
     display: flex;
@@ -833,6 +796,7 @@
     border: 0.1vh solid rgba(255, 255, 255, 0.1);
     border-radius: 1.4vh;
     box-sizing: border-box;
+    overflow: hidden;
     cursor: pointer;
     transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
 }
@@ -946,13 +910,14 @@
     bottom: 10vh;
     left: 5%;
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
     contain: layout paint;
-    padding-top: 0.5vh;
-}
-
-.suggested-contacts::-webkit-scrollbar {
-    display: none;
+    padding: 0.5vh 0.35vh 0.8vh 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(96, 159, 233, 0.64) rgba(255, 255, 255, 0.02);
 }
 
 .suggested-contact {
@@ -1310,50 +1275,143 @@
 .phone-add-contact {
     display: none;
     position: absolute;
-    height: 100%;
-    width: 100%;
-    top: -100%;
-    background: linear-gradient(180deg, rgba(11, 15, 21, 0.99), rgba(12, 18, 25, 0.99));
-    z-index: 102;
-    backdrop-filter: blur(1vh);
+    inset: 0;
+    z-index: 120;
+    background: rgba(5, 10, 16, 0.72);
+    backdrop-filter: blur(1.2vh);
+    overflow: hidden;
+}
+
+.phone-add-contact::before,
+.phone-add-contact::after {
+    display: none;
+}
+
+.phone-add-contact::before {
+    content: none;
+}
+
+.phone-add-contact::after {
+    content: none;
+}
+
+.phone-add-contact-sheet {
+    position: absolute;
+    left: 5%;
+    bottom: 3.5%;
+    width: 90%;
+    min-height: 38%;
+    max-height: 64%;
+    padding: 1.8vh 1.4vh 1.4vh 1.4vh;
+    border-radius: 2vh;
+    background: linear-gradient(180deg, rgba(18, 27, 37, 0.98), rgba(11, 17, 24, 0.98));
+    border: 0.1vh solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 1.6vh 4vh rgba(0, 0, 0, 0.35);
+    box-sizing: border-box;
+    transform: translateY(2.8vh) scale(0.985);
+    opacity: 0;
+}
+
+.phone-add-contact.phone-add-contact-visible .phone-add-contact-sheet {
+    animation: phoneAddSheetIn 180ms ease forwards;
+}
+
+.phone-add-contact.phone-add-contact-closing .phone-add-contact-sheet {
+    animation: phoneAddSheetOut 150ms ease forwards;
+}
+
+.phone-add-contact-header-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1vh;
+    margin-bottom: 1.4vh;
 }
 
 .phone-add-contact-header {
+    flex: 1;
+}
+
+.phone-add-contact-header p {
+    margin: 0;
     color: white;
-    padding-top: 6vh;
-    padding-left: 2.5vh;
-    font-size: 2.0vh;
+    font-size: 1.8vh;
     font-weight: 700;
 }
 
-.phone-add-contact-name {
-    position: absolute;
+.phone-add-contact-subtitle {
+    display: block;
+    margin-top: 0.5vh;
+    color: rgba(220, 230, 240, 0.72);
+    font-size: 1.25vh;
+}
+
+.phone-add-contact-close {
+    appearance: none;
+    width: 3.3vh;
+    height: 3.3vh;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
     color: white;
-    top: 12vh;
-    left: 6vh;
-    background: rgba(255, 255, 255, 0.06);
-    border: 0.15vh solid rgba(255, 255, 255, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35vh;
+    cursor: pointer;
+    transition: transform 0.14s ease, background 0.14s ease, opacity 0.14s ease;
+}
+
+.phone-add-contact-close:hover {
+    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.phone-add-contact-fields {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1vh;
+    margin-bottom: 1.25vh;
+}
+
+.phone-add-contact-field {
+    position: relative;
+}
+
+.phone-add-contact-name {
+    position: relative;
+    color: white;
+    top: auto;
+    left: auto;
+    background: rgba(255, 255, 255, 0.04);
+    border: 0.1vh solid rgba(255, 255, 255, 0.06);
     outline: none;
-    height: 4vh;
-    width: 20vh;
-    text-indent: .4vh;
-    border-radius: 1vh;
-    transition: .1s;
-    font-size: 1.5vh;
+    height: 4.6vh;
+    width: 100%;
+    text-indent: 3.2vh;
+    border-radius: 1.4vh;
+    transition: border-color .16s ease, background .16s ease, box-shadow .16s ease, transform .16s ease;
+    font-size: 1.35vh;
+    box-sizing: border-box;
+    box-shadow: inset 0 0 0 0.1vh rgba(255,255,255,0.02);
 }
 
 #phone-add-contact-name-icon {
     position: absolute;
-    top: 13.2vh;
-    left: 2.2vh;
-    font-size: 1.6vh;
-    font-weight: 500;
-    color: white;
+    top: 50%;
+    left: 1.2vh;
+    transform: translateY(-50%);
+    font-size: 1.08vh;
+    font-weight: 600;
+    color: rgba(230, 239, 248, 0.76);
+    z-index: 3;
+    pointer-events: none;
 }
 
 .phone-add-contact-name:focus {
-    border-color: rgba(46, 145, 234, 0.7);
-    background: rgba(46, 145, 234, 0.08);
+    border-color: rgba(94, 170, 235, 0.3);
+    background: rgba(73, 147, 214, 0.12);
+    box-shadow: 0 0 0 0.18vh rgba(73, 147, 214, 0.08);
 }
 
 .phone-add-contact-name:valid {
@@ -1361,19 +1419,21 @@
 }
 
 .phone-add-contact-number {
-    position: absolute;
+    position: relative;
     color: white;
-    top: 19vh;
-    left: 6vh;
-    background: rgba(255, 255, 255, 0.06);
-    border: 0.15vh solid rgba(255, 255, 255, 0.12);
+    top: auto;
+    left: auto;
+    background: rgba(255, 255, 255, 0.04);
+    border: 0.1vh solid rgba(255, 255, 255, 0.06);
     outline: none;
-    height: 4vh;
-    width: 20vh;
-    text-indent: .4vh;
-    border-radius: 1vh;
-    transition: .1s;
-    font-size: 1.5vh;
+    height: 4.6vh;
+    width: 100%;
+    text-indent: 3.2vh;
+    border-radius: 1.4vh;
+    transition: border-color .16s ease, background .16s ease, box-shadow .16s ease, transform .16s ease;
+    font-size: 1.35vh;
+    box-sizing: border-box;
+    box-shadow: inset 0 0 0 0.1vh rgba(255,255,255,0.02);
 }
 
 .phone-add-contact-number::-webkit-inner-spin-button {
@@ -1381,8 +1441,9 @@
 }
 
 .phone-add-contact-number:focus {
-    border-color: rgba(46, 145, 234, 0.7);
-    background: rgba(46, 145, 234, 0.08);
+    border-color: rgba(94, 170, 235, 0.3);
+    background: rgba(73, 147, 214, 0.12);
+    box-shadow: 0 0 0 0.18vh rgba(73, 147, 214, 0.08);
 }
 
 .phone-add-contact-number:valid {
@@ -1390,20 +1451,21 @@
 }
 
 .phone-add-contact-iban {
-    position: absolute;
+    position: relative;
     color: white;
-    top: 26vh;
-    left: 6vh;
-    background: rgba(255, 255, 255, 0.06);
-    border: 0.15vh solid rgba(255, 255, 255, 0.12);
+    top: auto;
+    left: auto;
+    background: rgba(255, 255, 255, 0.04);
+    border: 0.1vh solid rgba(255, 255, 255, 0.06);
     outline: none;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-    height: 4vh;
-    width: 20vh;
-    text-indent: .4vh;
-    border-radius: 1vh;
-    transition: .1s;
-    font-size: 1.5vh;
+    height: 4.6vh;
+    width: 100%;
+    text-indent: 3.2vh;
+    border-radius: 1.4vh;
+    transition: border-color .16s ease, background .16s ease, box-shadow .16s ease, transform .16s ease;
+    font-size: 1.35vh;
+    box-sizing: border-box;
+    box-shadow: inset 0 0 0 0.1vh rgba(255,255,255,0.02);
 }
 
 .phone-add-contact-iban::-webkit-inner-spin-button {
@@ -1411,8 +1473,9 @@
 }
 
 .phone-add-contact-iban:focus {
-    border-color: rgba(46, 145, 234, 0.7);
-    background: rgba(46, 145, 234, 0.08);
+    border-color: rgba(94, 170, 235, 0.3);
+    background: rgba(73, 147, 214, 0.12);
+    box-shadow: 0 0 0 0.18vh rgba(73, 147, 214, 0.08);
 }
 
 .phone-add-contact-iban:valid {
@@ -1421,207 +1484,381 @@
 
 #phone-add-contact-number-icon {
     position: absolute;
-    top: 20.2vh;
-    left: 2.2vh;
-    font-size: 1.5vh;
+    top: 50%;
+    left: 1.2vh;
+    transform: translateY(-50%);
+    font-size: 1.08vh;
     font-weight: 600;
-    color: white;
+    color: rgba(230, 239, 248, 0.76);
+    z-index: 3;
+    pointer-events: none;
 }
 
 #phone-add-contact-iban-icon {
     position: absolute;
-    top: 27.2vh;
-    left: 2.2vh;
-    font-size: 1.4vh;
+    top: 50%;
+    left: 1.2vh;
+    transform: translateY(-50%);
+    font-size: 1.08vh;
     font-weight: 600;
-    color: white;
+    color: rgba(230, 239, 248, 0.76);
+    z-index: 3;
+    pointer-events: none;
 }
 
 .phone-add-contact-buttons {
-    position: absolute;
-    bottom: 5%;
-    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8vh;
 }
 
 .phone-add-contact-button {
-    position: relative;
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 4.5vh;
+    padding: 0 1.2vh;
+    border: 0.1vh solid transparent;
+    border-radius: 1.4vh;
     color: white;
-    float: left;
-    width: 50%;
-    height: 4vh;
-    text-align: center;
-    line-height: 4vh;
-    transition: .1s;
-    font-size: 1.4vh;
-    font-weight: 600;
+    background: rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    box-shadow: 0 0.8vh 1.6vh rgba(0, 0, 0, 0.18), inset 0 0 0 0.1vh rgba(255, 255, 255, 0.03);
+    transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, filter 0.15s ease;
 }
 
 .phone-add-contact-button:hover {
-    color: #eb4d4b;
-    font-size: 1.45vh;
-    background: rgba(204, 10, 30, 0.2);
-    border-radius: 5px;
+    transform: translateY(-0.08vh);
+    filter: saturate(1.05);
 }
 
-/* EDIT CONTACT YEEY */
+.phone-add-contact-button p {
+    margin: 0;
+    font-size: 1.3vh;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.phone-add-contact-button:active {
+    transform: translateY(0.02vh) scale(0.985);
+    box-shadow: 0 0.45vh 1vh rgba(0, 0, 0, 0.18), inset 0 0 0 0.1vh rgba(255, 255, 255, 0.03);
+}
+
+#add-contact-save {
+    color: #eff8ff;
+    background: linear-gradient(180deg, rgba(87, 170, 244, 0.95), rgba(43, 118, 208, 0.96));
+    border-color: rgba(138, 204, 255, 0.36);
+    box-shadow: 0 1vh 2.2vh rgba(26, 98, 188, 0.28), inset 0 0.08vh 0 rgba(255, 255, 255, 0.24);
+}
+
+#add-contact-save:hover {
+    background: linear-gradient(180deg, rgba(98, 178, 248, 0.98), rgba(49, 125, 214, 0.98));
+    box-shadow: 0 1.2vh 2.5vh rgba(26, 98, 188, 0.34), inset 0 0.08vh 0 rgba(255, 255, 255, 0.28);
+}
+
+#add-contact-cancel {
+    color: rgba(236, 244, 251, 0.92);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.04));
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0.8vh 1.8vh rgba(0, 0, 0, 0.16), inset 0 0.08vh 0 rgba(255, 255, 255, 0.1);
+}
+
+#add-contact-cancel:hover {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+@keyframes phoneAddGlowFloat {
+    0% {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+        transform: translate3d(1.1vh, -0.7vh, 0) scale(1.08);
+    }
+    100% {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+}
+
+@keyframes phoneAddSheetIn {
+    from {
+        transform: translateY(2.8vh) scale(0.985);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes phoneAddSheetOut {
+    from {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(2vh) scale(0.985);
+        opacity: 0;
+    }
+}
+
+/* EDIT CONTACT */
 
 .phone-edit-contact {
     display: none;
     position: absolute;
-    height: 100%;
-    width: 100%;
-    top: -100%;
-    background: linear-gradient(180deg, rgba(11, 15, 21, 0.99), rgba(12, 18, 25, 0.99));
-    z-index: 102;
-    backdrop-filter: blur(1vh);
+    inset: 0;
+    z-index: 120;
+    background: rgba(5, 10, 16, 0.72);
+    backdrop-filter: blur(1.2vh);
+    overflow: hidden;
 }
 
-
-.phone-edit-contact-header {
-    color: white;
-    padding-top: 6vh;
-    padding-left: 2.5vh;
-    font-size: 2.0vh;
-    font-weight: 700;
-}
-
-.phone-edit-contact-name {
-    position: absolute;
-    color: white;
-    top: 12vh;
-    left: 6vh;
-    background: rgba(255, 255, 255, 0.06);
-    border: 0.15vh solid rgba(255, 255, 255, 0.12);
-    outline: none;
-    height: 4vh;
-    width: 20vh;
-    text-indent: .4vh;
-    border-radius: 1vh;
-    transition: .1s;
-    font-size: 1.5vh;
-    font-weight: 500;
-}
-
-#phone-edit-contact-name-icon {
-    position: absolute;
-    top: 13.2vh;
-    left: 2.2vh;
-    font-size: 1.6vh;
-    font-weight: 500;
-    color: white;
-}
-
-.phone-edit-contact-name:focus {
-    border-color: rgba(46, 145, 234, 0.7);
-    background: rgba(46, 145, 234, 0.08);
-}
-
-.phone-edit-contact-name:valid {
-    border-color: rgba(106, 176, 76, 0.6);
-}
-
-.phone-edit-contact-number {
-    position: absolute;
-    top: 19vh;
-    color: white;
-    left: 6vh;
-    background: rgba(255, 255, 255, 0.06);
-    border: 0.15vh solid rgba(255, 255, 255, 0.12);
-    outline: none;
-    height: 4vh;
-    width: 20vh;
-    text-indent: .4vh;
-    border-radius: 1vh;
-    transition: .1s;
-    font-size: 1.5vh;
-    font-weight: 500;
-}
-
-.phone-edit-contact-number::-webkit-inner-spin-button {
+.phone-edit-contact::before,
+.phone-edit-contact::after {
     display: none;
 }
 
-.phone-edit-contact-number:focus {
-    border-color: rgba(46, 145, 234, 0.7);
-    background: rgba(46, 145, 234, 0.08);
+.phone-edit-contact::before {
+    content: none;
 }
 
-.phone-edit-contact-number:valid {
-    border-color: rgba(106, 176, 76, 0.6);
+.phone-edit-contact::after {
+    content: none;
 }
 
-.phone-edit-contact-iban {
+.phone-edit-contact-sheet {
     position: absolute;
-    color: white;
-    top: 26vh;
-    left: 6vh;
-    background: rgba(255, 255, 255, 0.06);
-    border: 0.15vh solid rgba(255, 255, 255, 0.12);
-    outline: none;
-    height: 4vh;
-    width: 20vh;
-    text-indent: .4vh;
-    border-radius: 1vh;
-    transition: .1s;
-    font-size: 1.5vh;
-    font-weight: 500;
+    left: 5%;
+    bottom: 3.5%;
+    width: 90%;
+    min-height: 38%;
+    max-height: 64%;
+    padding: 1.8vh 1.4vh 1.4vh 1.4vh;
+    border-radius: 2vh;
+    background: linear-gradient(180deg, rgba(18, 27, 37, 0.98), rgba(11, 17, 24, 0.98));
+    border: 0.1vh solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 1.6vh 4vh rgba(0, 0, 0, 0.35);
+    box-sizing: border-box;
+    transform: translateY(2.8vh) scale(0.985);
+    opacity: 0;
 }
 
+.phone-edit-contact.phone-edit-contact-visible .phone-edit-contact-sheet {
+    animation: phoneEditSheetIn 180ms ease forwards;
+}
+
+.phone-edit-contact.phone-edit-contact-closing .phone-edit-contact-sheet {
+    animation: phoneEditSheetOut 150ms ease forwards;
+}
+
+.phone-edit-contact-header-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1vh;
+    margin-bottom: 1.4vh;
+}
+
+.phone-edit-contact-header {
+    flex: 1;
+}
+
+.phone-edit-contact-header p {
+    margin: 0;
+    color: white;
+    font-size: 1.8vh;
+    font-weight: 700;
+}
+
+.phone-edit-contact-subtitle {
+    display: block;
+    margin-top: 0.5vh;
+    color: rgba(220, 230, 240, 0.72);
+    font-size: 1.25vh;
+}
+
+.phone-edit-contact-close {
+    appearance: none;
+    width: 3.3vh;
+    height: 3.3vh;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35vh;
+    cursor: pointer;
+    transition: transform 0.14s ease, background 0.14s ease, opacity 0.14s ease;
+}
+
+.phone-edit-contact-close:hover {
+    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.phone-edit-contact-fields {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1vh;
+    margin-bottom: 1.25vh;
+}
+
+.phone-edit-contact-field {
+    position: relative;
+}
+
+.phone-edit-contact-name,
+.phone-edit-contact-number,
+.phone-edit-contact-iban {
+    position: relative;
+    top: auto;
+    left: auto;
+    color: white;
+    background: rgba(255, 255, 255, 0.04);
+    border: 0.1vh solid rgba(255, 255, 255, 0.06);
+    outline: none;
+    height: 4.6vh;
+    width: 100%;
+    text-indent: 3.2vh;
+    border-radius: 1.4vh;
+    transition: border-color .16s ease, background .16s ease, box-shadow .16s ease, transform .16s ease;
+    font-size: 1.35vh;
+    box-sizing: border-box;
+    box-shadow: inset 0 0 0 0.1vh rgba(255,255,255,0.02);
+}
+
+.phone-edit-contact-name::placeholder,
+.phone-edit-contact-number::placeholder,
+.phone-edit-contact-iban::placeholder {
+    color: rgba(219, 228, 238, 0.44);
+}
+
+.phone-edit-contact-name:focus,
+.phone-edit-contact-number:focus,
+.phone-edit-contact-iban:focus {
+    border-color: rgba(94, 170, 235, 0.3);
+    background: rgba(73, 147, 214, 0.12);
+    box-shadow: 0 0 0 0.18vh rgba(73, 147, 214, 0.08);
+}
+
+.phone-edit-contact-number::-webkit-inner-spin-button,
 .phone-edit-contact-iban::-webkit-inner-spin-button {
     display: none;
 }
 
-.phone-edit-contact-iban:focus {
-    border-color: rgba(46, 145, 234, 0.7);
-    background: rgba(46, 145, 234, 0.08);
-}
-
-.phone-edit-contact-iban:valid {
-    border-color: rgba(106, 176, 76, 0.6);
-}
-
-#phone-edit-contact-number-icon {
-    position: absolute;
-    top: 20.2vh;
-    left: 2.2vh;
-    font-size: 1.5vh;
-    font-weight: 600;
-    color: white;
-}
-
+#phone-edit-contact-name-icon,
+#phone-edit-contact-number-icon,
 #phone-edit-contact-iban-icon {
     position: absolute;
-    top: 27.2vh;
-    left: 2.2vh;
-    font-size: 1.4vh;
+    top: 50%;
+    left: 1.2vh;
+    transform: translateY(-50%);
+    font-size: 1.08vh;
     font-weight: 600;
-    color: white;
+    color: rgba(230, 239, 248, 0.76);
+    z-index: 3;
+    pointer-events: none;
 }
 
 .phone-edit-contact-buttons {
-    position: absolute;
-    bottom: 5%;
-    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8vh;
 }
 
 .phone-edit-contact-button {
-    position: relative;
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 4.5vh;
+    padding: 0 1.2vh;
+    border-radius: 1.4vh;
+    border: 0.1vh solid transparent;
     color: white;
-    float: left;
-    width: 33.33%;
-    height: 4vh;
-    text-align: center;
-    line-height: 4vh;
-    transition: .1s;
-    font-size: 1.4vh;
-    font-weight: 600;
+    background: rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    box-shadow: 0 0.8vh 1.6vh rgba(0, 0, 0, 0.18), inset 0 0 0 0.1vh rgba(255, 255, 255, 0.03);
+    transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, filter 0.15s ease;
+}
+
+.phone-edit-contact-button p {
+    margin: 0;
+    font-size: 1.3vh;
+    font-weight: 700;
+    letter-spacing: 0.02em;
 }
 
 .phone-edit-contact-button:hover {
-    color: #eb4d4b;
-    font-size: 1.45vh;
-    background: rgba(204, 10, 30, 0.2);
-    border-radius: 5px;
+    transform: translateY(-0.08vh);
+    filter: saturate(1.05);
+}
+
+.phone-edit-contact-button:active {
+    transform: translateY(0.02vh) scale(0.985);
+    box-shadow: 0 0.45vh 1vh rgba(0, 0, 0, 0.18), inset 0 0 0 0.1vh rgba(255, 255, 255, 0.03);
+}
+
+#edit-contact-save {
+    color: #eff8ff;
+    background: linear-gradient(180deg, rgba(87, 170, 244, 0.95), rgba(43, 118, 208, 0.96));
+    border-color: rgba(138, 204, 255, 0.36);
+    box-shadow: 0 1vh 2.2vh rgba(26, 98, 188, 0.28), inset 0 0.08vh 0 rgba(255, 255, 255, 0.24);
+}
+
+#edit-contact-save:hover {
+    background: linear-gradient(180deg, rgba(98, 178, 248, 0.98), rgba(49, 125, 214, 0.98));
+    box-shadow: 0 1.2vh 2.5vh rgba(26, 98, 188, 0.34), inset 0 0.08vh 0 rgba(255, 255, 255, 0.28);
+}
+
+#edit-contact-delete {
+    color: #fff4f4;
+    background: linear-gradient(180deg, rgba(239, 102, 102, 0.96), rgba(186, 56, 71, 0.96));
+    border-color: rgba(255, 150, 150, 0.34);
+    box-shadow: 0 1vh 2.2vh rgba(154, 42, 55, 0.28), inset 0 0.08vh 0 rgba(255, 255, 255, 0.18);
+}
+
+#edit-contact-delete:hover {
+    background: linear-gradient(180deg, rgba(244, 113, 113, 0.98), rgba(196, 62, 78, 0.98));
+    box-shadow: 0 1.2vh 2.5vh rgba(154, 42, 55, 0.34), inset 0 0.08vh 0 rgba(255, 255, 255, 0.22);
+}
+
+@keyframes phoneEditGlowFloat {
+    0% {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+        transform: translate3d(1.2vh, -0.8vh, 0) scale(1.08);
+    }
+    100% {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+}
+
+@keyframes phoneEditSheetIn {
+    from {
+        transform: translateY(2.8vh) scale(0.985);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes phoneEditSheetOut {
+    from {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(2vh) scale(0.985);
+        opacity: 0;
+    }
 }
 
 /* App Footer */
@@ -1709,10 +1946,14 @@
     width: 90%;
     max-height: 64%;
     padding: 1.8vh 1.4vh 1.4vh 1.4vh;
+    display: flex;
+    flex-direction: column;
     border-radius: 2vh;
     background: linear-gradient(180deg, rgba(18, 27, 37, 0.98), rgba(11, 17, 24, 0.98));
     border: 0.1vh solid rgba(255, 255, 255, 0.06);
     box-shadow: 0 1.6vh 4vh rgba(0, 0, 0, 0.35);
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .phone-nearby-share-header {
@@ -1740,11 +1981,23 @@
     appearance: none;
     height: 3vh;
     width: 3vh;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
     border: 0;
     border-radius: 50%;
     color: white;
     background: rgba(255, 255, 255, 0.08);
     cursor: pointer;
+    font-size: 1.25vh;
+    line-height: 1;
+    transition: transform 0.14s ease, background 0.14s ease;
+}
+
+.phone-nearby-share-close:hover {
+    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.14);
 }
 
 .phone-nearby-share-searchbox {
@@ -1775,12 +2028,20 @@
     margin-top: 1.2vh;
     color: rgba(220, 230, 240, 0.75);
     font-size: 1.3vh;
+    flex-shrink: 0;
 }
 
 .phone-nearby-share-list {
     margin-top: 1.2vh;
-    max-height: 26vh;
+    flex: 1;
+    min-height: 0;
     overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 0.25vh;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(96, 159, 233, 0.64) rgba(255, 255, 255, 0.02);
 }
 
 .phone-nearby-share-player {
@@ -1796,6 +2057,7 @@
     border-radius: 1.4vh;
     background: rgba(255, 255, 255, 0.04);
     color: white;
+    box-sizing: border-box;
     cursor: pointer;
     transition: transform 0.15s ease, background 0.15s ease;
 }
@@ -1809,6 +2071,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    min-width: 0;
 }
 
 .phone-nearby-share-player-name {
@@ -1820,12 +2083,17 @@
     margin-top: 0.4vh;
     color: rgba(220, 230, 240, 0.7);
     font-size: 1.2vh;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .phone-nearby-share-player-send {
     display: inline-flex;
     align-items: center;
     gap: 0.6vh;
+    flex-shrink: 0;
     color: #8fd9ff;
     font-size: 1.3vh;
     font-weight: 700;

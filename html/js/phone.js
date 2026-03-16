@@ -650,7 +650,7 @@ function openEditContactForm(contactData) {
     CurrentEditContactData.name = sanitizePhoneText(contactData.name, 'Unknown Contact', 48);
     CurrentEditContactData.number = sanitizePhoneNumber(contactData.number);
 
-    $(".phone-edit-contact-header").text(CurrentEditContactData.name + " Edit")
+    $(".phone-edit-contact-header p").text(CurrentEditContactData.name + " Edit")
     $(".phone-edit-contact-name").val(CurrentEditContactData.name);
     $(".phone-edit-contact-number").val(CurrentEditContactData.number);
     if (contactData.iban != null && contactData.iban != undefined) {
@@ -661,7 +661,27 @@ function openEditContactForm(contactData) {
         CurrentEditContactData.iban = "";
     }
 
-    QB.Phone.Animations.TopSlideDown(".phone-edit-contact", 200, 0);
+    var editModal = $('.phone-edit-contact');
+    editModal.stop(true, true).removeClass('phone-edit-contact-closing').fadeIn(150, function() {
+        editModal.attr('aria-hidden', 'false').addClass('phone-edit-contact-visible');
+    });
+}
+
+function closeEditContactForm(resetValues) {
+    var editModal = $('.phone-edit-contact');
+
+    editModal.removeClass('phone-edit-contact-visible').addClass('phone-edit-contact-closing').attr('aria-hidden', 'true');
+
+    setTimeout(function() {
+        editModal.stop(true, true).fadeOut(120, function() {
+            editModal.removeClass('phone-edit-contact-closing');
+        });
+
+        if (resetValues) {
+            $('.phone-edit-contact-number').val('');
+            $('.phone-edit-contact-name').val('');
+        }
+    }, 150);
 }
 
 function setKeypadValue(nextValue) {
@@ -890,11 +910,7 @@ $(document).on('click', '#edit-contact-save', function(e){
         }), function(PhoneContacts){
             QB.Phone.Functions.LoadContacts(PhoneContacts);
         });
-        QB.Phone.Animations.TopSlideUp(".phone-edit-contact", 250, -100);
-        setTimeout(function(){
-            $(".phone-edit-contact-number").val("");
-            $(".phone-edit-contact-name").val("");
-        }, 250)
+        closeEditContactForm(true);
     } else {
         QB.Phone.Notifications.Add("fas fa-exclamation-circle", "Edit Contact", "Fill out all fields!");
     }
@@ -914,21 +930,19 @@ $(document).on('click', '#edit-contact-delete', function(e){
     }), function(PhoneContacts){
         QB.Phone.Functions.LoadContacts(PhoneContacts);
     });
-    QB.Phone.Animations.TopSlideUp(".phone-edit-contact", 250, -100);
-    setTimeout(function(){
-        $(".phone-edit-contact-number").val("");
-        $(".phone-edit-contact-name").val("");
-    }, 250);
+    closeEditContactForm(true);
 });
 
 $(document).on('click', '#edit-contact-cancel', function(e){
     e.preventDefault();
 
-    QB.Phone.Animations.TopSlideUp(".phone-edit-contact", 250, -100);
-    setTimeout(function(){
-        $(".phone-edit-contact-number").val("");
-        $(".phone-edit-contact-name").val("");
-    }, 250)
+    closeEditContactForm(true);
+});
+
+$(document).on('click', '.phone-edit-contact', function(e){
+    if ($(e.target).is('.phone-edit-contact')) {
+        closeEditContactForm(true);
+    }
 });
 
 $(document).on('click', '.phone-keypad-key', function(e){
@@ -1013,11 +1027,36 @@ $(document).on('click', function(e) {
     }
 });
 
+function openAddContactForm() {
+    var addModal = $('.phone-add-contact');
+    addModal.stop(true, true).removeClass('phone-add-contact-closing').fadeIn(150, function() {
+        addModal.attr('aria-hidden', 'false').addClass('phone-add-contact-visible');
+    });
+}
+
+function closeAddContactForm(resetValues) {
+    var addModal = $('.phone-add-contact');
+
+    addModal.removeClass('phone-add-contact-visible').addClass('phone-add-contact-closing').attr('aria-hidden', 'true');
+
+    setTimeout(function() {
+        addModal.stop(true, true).fadeOut(120, function() {
+            addModal.removeClass('phone-add-contact-closing');
+        });
+
+        if (resetValues) {
+            $('.phone-add-contact-number').val('');
+            $('.phone-add-contact-name').val('');
+            $('.phone-add-contact-iban').val('');
+        }
+    }, 150);
+}
+
 
 $(document).on('click', '#phone-plus-icon', function(e){
     e.preventDefault();
 
-    QB.Phone.Animations.TopSlideDown(".phone-add-contact", 200, 0);
+    openAddContactForm();
 });
 
 $(document).on('click', '#add-contact-save', function(e){
@@ -1040,12 +1079,7 @@ $(document).on('click', '#add-contact-save', function(e){
         }), function(PhoneContacts){
             QB.Phone.Functions.LoadContacts(PhoneContacts);
 
-            QB.Phone.Animations.TopSlideUp(".phone-add-contact", 250, -100);
-            setTimeout(function(){
-                $(".phone-add-contact-number").val("");
-                $(".phone-add-contact-name").val("");
-                $(".phone-add-contact-iban").val("");
-            }, 250);
+            closeAddContactForm(true);
             removeSelectedSuggestion();
         });
     } else {
@@ -1056,11 +1090,19 @@ $(document).on('click', '#add-contact-save', function(e){
 $(document).on('click', '#add-contact-cancel', function(e){
     e.preventDefault();
 
-    QB.Phone.Animations.TopSlideUp(".phone-add-contact", 250, -100);
-    setTimeout(function(){
-        $(".phone-add-contact-number").val("");
-        $(".phone-add-contact-name").val("");
-    }, 250)
+    closeAddContactForm(true);
+});
+
+$(document).on('click', '#add-contact-close', function(e){
+    e.preventDefault();
+
+    closeAddContactForm(true);
+});
+
+$(document).on('click', '.phone-add-contact', function(e){
+    if ($(e.target).is('.phone-add-contact')) {
+        closeAddContactForm(true);
+    }
 });
 
 $(document).on('click', '#phone-start-call', function(e){
@@ -1223,7 +1265,7 @@ $(document).on('click', '.suggested-contact-add', function(e){
     var SuggestionData = parentContact.data('SuggestionData');
     SelectedSuggestion = parentContact.get(0);
 
-    QB.Phone.Animations.TopSlideDown(".phone-add-contact", 200, 0);
+    openAddContactForm();
 
     $(".phone-add-contact-name").val(sanitizePhoneText(SuggestionData.name[0] + " " + SuggestionData.name[1], '', 48));
     $(".phone-add-contact-number").val(sanitizePhoneNumber(SuggestionData.number));

@@ -306,40 +306,75 @@
                             </button>
                         </div>
 
-                        <div class="phone-add-contact">
-                            <div class="phone-add-contact-header"><p>Add Contact</p></div>
+                        <div class="phone-add-contact" aria-hidden="true">
+                            <div class="phone-add-contact-sheet">
+                                <div class="phone-add-contact-header-row">
+                                    <div class="phone-add-contact-header">
+                                        <p>Add Contact</p>
+                                        <span class="phone-add-contact-subtitle">Create a new contact with the same quick-sheet style as nearby share.</span>
+                                    </div>
+                                    <button type="button" class="phone-add-contact-close" id="add-contact-close" aria-label="Close add contact">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
 
-                            <i id="phone-add-contact-name-icon" class="fa-solid fa-user"></i>
-                            <input type="text" class="phone-add-contact-name" placeholder="Contact Name" required spellcheck="false">
+                                <div class="phone-add-contact-fields">
+                                    <div class="phone-add-contact-field">
+                                        <i id="phone-add-contact-name-icon" class="fa-solid fa-user"></i>
+                                        <input type="text" class="phone-add-contact-name" placeholder="Contact Name" required spellcheck="false">
+                                    </div>
 
-                            <i id="phone-add-contact-number-icon" class="fa-solid fa-phone"></i>
-                            <input type="tel" inputmode="numeric" class="phone-add-contact-number" placeholder="Phone number" required spellcheck="false">
+                                    <div class="phone-add-contact-field">
+                                        <i id="phone-add-contact-number-icon" class="fa-solid fa-phone"></i>
+                                        <input type="tel" inputmode="numeric" class="phone-add-contact-number" placeholder="Phone number" required spellcheck="false">
+                                    </div>
 
-                            <i id="phone-add-contact-iban-icon" class="fa-solid fa-money-check-dollar"></i>
-                            <input type="text" class="phone-add-contact-iban" placeholder="Bank nr. (Not required)" required spellcheck="false">
+                                    <div class="phone-add-contact-field">
+                                        <i id="phone-add-contact-iban-icon" class="fa-solid fa-money-check-dollar"></i>
+                                        <input type="text" class="phone-add-contact-iban" placeholder="Bank nr. (Not required)" required spellcheck="false">
+                                    </div>
+                                </div>
 
-                            <div class="phone-add-contact-buttons">
-                                <div class="phone-add-contact-button" id="add-contact-save"><p>Save</p></div>
-                                <div class="phone-add-contact-button" id="add-contact-cancel"><p>Cancel</p></div>
+                                <div class="phone-add-contact-buttons">
+                                    <button type="button" class="phone-add-contact-button" id="add-contact-save"><p>Save</p></button>
+                                    <button type="button" class="phone-add-contact-button" id="add-contact-cancel"><p>Cancel</p></button>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="phone-edit-contact">
-                            <div class="phone-edit-contact-header"><p>Add Contact</p></div>
+                        <div class="phone-edit-contact" aria-hidden="true">
+                            <div class="phone-edit-contact-sheet">
+                                <div class="phone-edit-contact-header-row">
+                                    <div class="phone-edit-contact-header">
+                                        <p>Edit Contact</p>
+                                        <span class="phone-edit-contact-subtitle">Update details or remove this contact from your phonebook.</span>
+                                    </div>
+                                    <button type="button" class="phone-edit-contact-close" id="edit-contact-cancel" aria-label="Close edit contact">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
 
-                            <i id="phone-edit-contact-name-icon" class="fa-solid fa-user"></i>
-                            <input type="text" class="phone-edit-contact-name" placeholder="Contact Name" required spellcheck="false">
+                                <div class="phone-edit-contact-fields">
+                                    <div class="phone-edit-contact-field">
+                                        <i id="phone-edit-contact-name-icon" class="fa-solid fa-user"></i>
+                                        <input type="text" class="phone-edit-contact-name" placeholder="Contact Name" required spellcheck="false">
+                                    </div>
 
-                            <i id="phone-edit-contact-number-icon" class="fa-solid fa-phone"></i>
-                            <input type="tel" inputmode="numeric" class="phone-edit-contact-number" placeholder="Phone number" required spellcheck="false">
+                                    <div class="phone-edit-contact-field">
+                                        <i id="phone-edit-contact-number-icon" class="fa-solid fa-phone"></i>
+                                        <input type="tel" inputmode="numeric" class="phone-edit-contact-number" placeholder="Phone number" required spellcheck="false">
+                                    </div>
 
-                            <i id="phone-edit-contact-iban-icon" class="fa-solid fa-money-check-dollar"></i>
-                            <input type="text" class="phone-edit-contact-iban" placeholder="Bank nr. (Not required)" required spellcheck="false">
+                                    <div class="phone-edit-contact-field">
+                                        <i id="phone-edit-contact-iban-icon" class="fa-solid fa-money-check-dollar"></i>
+                                        <input type="text" class="phone-edit-contact-iban" placeholder="Bank nr. (Not required)" required spellcheck="false">
+                                    </div>
+                                </div>
 
-                            <div class="phone-edit-contact-buttons">
-                                <div class="phone-edit-contact-button" id="edit-contact-save"><p>Save</p></div>
-                                <div class="phone-edit-contact-button" id="edit-contact-delete"><p>Delete</p></div>
-                                <div class="phone-edit-contact-button" id="edit-contact-cancel"><p>Cancel</p></div>
+                                <div class="phone-edit-contact-buttons">
+                                    <button type="button" class="phone-edit-contact-button" id="edit-contact-save"><p>Save</p></button>
+                                    <button type="button" class="phone-edit-contact-button" id="edit-contact-delete"><p>Delete</p></button>
+                                </div>
                             </div>
                         </div>
 
