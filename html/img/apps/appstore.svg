@@ -1,0 +1,43 @@
+<svg class="app-icon-store" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="storeBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#db2777" />
+    </linearGradient>
+
+    <filter id="bagShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="14" flood-color="#1e1b4b" flood-opacity="0.5" />
+    </filter>
+
+    <pattern id="dotGrid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <circle cx="16" cy="16" r="2.5" fill="#ffffff" fill-opacity="0.08" />
+    </pattern>
+  </defs>
+
+  <rect x="0" y="0" width="512" height="512" rx="115" fill="url(#storeBg)" />
+  <rect x="0" y="0" width="512" height="512" rx="115" fill="url(#dotGrid)" />
+
+  <g transform="translate(256, 256) scale(1.15) translate(-256, -256)">
+    
+    <g class="store-bag" filter="url(#bagShadow)">
+      
+      <path d="M 186 190 V 130 C 186 70, 326 70, 326 130 V 190" fill="none" stroke="#ffffff" stroke-width="28" stroke-linecap="round" />
+      
+      <rect x="136" y="190" width="240" height="230" rx="36" fill="#ffffff" />
+      
+      <path d="M 136 290 Q 256 315 376 290" fill="none" stroke="#f1f5f9" stroke-width="6" stroke-linecap="round" />
+
+      <g class="app-modules">
+        <rect class="mod-square" x="182" y="222" width="48" height="48" rx="14" fill="#0ea5e9" />
+        
+        <polygon class="mod-play" points="290,226 326,246 290,266" fill="#ec4899" stroke="#ec4899" stroke-width="8" stroke-linejoin="round" />
+        
+        <circle class="mod-circle" cx="206" cy="342" r="24" fill="#facc15" />
+        
+        <polygon class="mod-diamond" points="306,314 334,342 306,370 278,342" fill="#10b981" stroke="#10b981" stroke-width="6" stroke-linejoin="round" />
+      </g>
+      
+    </g>
+
+  </g>
+</svg>

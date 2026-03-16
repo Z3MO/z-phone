@@ -1,11 +1,16 @@
 // Proxi JS
 
+let ProxiSearchDebounce = null;
 $(document).ready(function(){
-    $("#proxi-search").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $(".proxi").filter(function() {
-          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-        });
+        $("#proxi-search").on("input", function() {
+                var inputElement = $(this);
+                clearTimeout(ProxiSearchDebounce);
+                ProxiSearchDebounce = setTimeout(function() {
+                        var value = inputElement.val().toLowerCase();
+                        $(".proxi").filter(function() {
+                            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                        });
+                }, 120);
     });
 });
 

@@ -269,8 +269,12 @@
     }
 
     function attachEvents() {
+        let garageSearchDebounce;
         refs.search?.addEventListener('input', () => {
-            renderVehicles(state.vehicles);
+            clearTimeout(garageSearchDebounce);
+            garageSearchDebounce = setTimeout(() => {
+                renderVehicles(state.vehicles);
+            }, 120);
         });
 
         refs.list?.addEventListener('click', onVehicleListClick);

@@ -1,0 +1,71 @@
+<svg class="app-icon-notes" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="notesBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#9f1239" />
+    </linearGradient>
+
+    <filter id="padShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="14" flood-color="#4c0519" flood-opacity="0.5" />
+    </filter>
+
+    <filter id="stylusShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="-8" dy="12" stdDeviation="6" flood-color="#4c0519" flood-opacity="0.6" />
+    </filter>
+
+    <filter id="neonWrite" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <pattern id="journalGrid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <circle cx="16" cy="16" r="2.5" fill="#ffffff" fill-opacity="0.08" />
+    </pattern>
+  </defs>
+
+  <rect x="0" y="0" width="512" height="512" rx="115" fill="url(#notesBg)" />
+  <rect x="0" y="0" width="512" height="512" rx="115" fill="url(#journalGrid)" />
+
+  <g transform="translate(256, 256) scale(1.15) translate(-256, -256)">
+    
+    <g class="notepad-body" filter="url(#padShadow)">
+      
+      <rect x="146" y="106" width="220" height="280" rx="16" fill="#ffffff" />
+      
+      <path d="M 366 336 L 316 386 L 162 386 A 16 16 0 0 1 146 370 L 146 122 A 16 16 0 0 1 162 106 L 350 106 A 16 16 0 0 1 366 122 Z" fill="#f8fafc" />
+      <path d="M 366 336 L 332 336 A 16 16 0 0 0 316 352 L 316 386 Z" fill="#e2e8f0" />
+
+      <rect x="146" y="106" width="220" height="40" rx="16" fill="#f1f5f9" />
+      <circle cx="176" cy="126" r="6" fill="#cbd5e1" />
+      <circle cx="196" cy="126" r="6" fill="#cbd5e1" />
+
+      <g stroke-linecap="round">
+        <circle cx="186" cy="196" r="8" fill="#10b981" />
+        <path d="M 182 196 L 185 200 L 191 192" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" />
+        <line x1="216" y1="196" x2="316" y2="196" stroke="#e2e8f0" stroke-width="12" />
+
+        <circle cx="186" cy="246" r="8" fill="none" stroke="#cbd5e1" stroke-width="3" />
+        <line x1="216" y1="246" x2="286" y2="246" stroke="#e2e8f0" stroke-width="12" />
+
+        <circle class="active-bullet" cx="186" cy="296" r="8" fill="none" stroke="#f59e0b" stroke-width="3" />
+        
+        <line class="writing-line" x1="216" y1="296" x2="296" y2="296" stroke="#f59e0b" stroke-width="12" filter="url(#neonWrite)" />
+      </g>
+    </g>
+
+    <g class="stylus-pen" transform="translate(216, 296)">
+      <g transform="rotate(35)" filter="url(#stylusShadow)">
+        
+        <polygon points="0,0 -8,-24 8,-24" fill="#94a3b8" />
+        <rect x="-8" y="-30" width="16" height="6" fill="#f59e0b" />
+        <path d="M -8 -30 V -120 A 8 8 0 0 1 8 -120 V -30 Z" fill="#1e293b" />
+        <rect x="2" y="-115" width="3" height="80" rx="1.5" fill="#334155" />
+        
+      </g>
+    </g>
+
+  </g>
+</svg>

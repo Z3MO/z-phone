@@ -1,0 +1,73 @@
+<svg class="app-icon-dynasty-card" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="cardBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2e1065" /> <stop offset="100%" stop-color="#020617" /> </linearGradient>
+
+    <linearGradient id="goldFoil" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="50%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+
+    <filter id="cardDropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="20" stdDeviation="16" flood-color="#000000" flood-opacity="0.8" />
+    </filter>
+
+    <filter id="ledGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="512" height="512" rx="115" fill="url(#cardBg)" />
+
+  <g stroke="#ffffff" stroke-width="2" stroke-opacity="0.06" fill="none">
+    <path d="M -50 100 Q 150 50 300 200 T 600 300" />
+    <path d="M -50 150 Q 150 100 300 250 T 600 350" />
+    <path d="M -50 200 Q 150 150 300 300 T 600 400" />
+    <path d="M -50 250 Q 150 200 300 350 T 600 450" />
+    <path d="M -50 300 Q 150 250 300 400 T 600 500" />
+  </g>
+
+  <g transform="translate(256, 256) scale(1.15) translate(-256, -256)">
+    
+    <g class="nfc-signals" fill="none" stroke="#22c55e" stroke-width="6" stroke-linecap="round" filter="url(#ledGlow)">
+      <path class="nfc-1" d="M 236 80 Q 256 60 276 80" />
+      <path class="nfc-2" d="M 216 60 Q 256 20 296 60" />
+      <path class="nfc-3" d="M 196 40 Q 256 -20 316 40" />
+    </g>
+
+    <g class="smart-card" filter="url(#cardDropShadow)">
+      
+      <rect x="146" y="96" width="220" height="320" rx="16" fill="#18181b" stroke="#3f3f46" stroke-width="3" />
+      
+      <g transform="translate(176, 126)">
+        <rect x="0" y="0" width="40" height="30" rx="4" fill="url(#goldFoil)" />
+        <line x1="12" y1="0" x2="12" y2="30" stroke="#18181b" stroke-width="2" />
+        <line x1="28" y1="0" x2="28" y2="30" stroke="#18181b" stroke-width="2" />
+        <line x1="0" y1="15" x2="40" y2="15" stroke="#18181b" stroke-width="2" />
+      </g>
+
+      <circle class="status-led" cx="330" cy="141" r="6" fill="#ef4444" />
+
+      <g stroke="url(#goldFoil)" stroke-width="12" stroke-linejoin="round" fill="none">
+        <path d="M 256 196 L 290 230 L 256 264 L 222 230 Z" />
+        <path d="M 256 252 L 300 296 L 256 340 L 212 296 Z" />
+      </g>
+
+      <line x1="176" y1="366" x2="270" y2="366" stroke="#52525b" stroke-width="6" stroke-linecap="round" />
+      <line x1="176" y1="386" x2="230" y2="386" stroke="#52525b" stroke-width="6" stroke-linecap="round" />
+
+      <clipPath id="cardClip">
+        <rect x="146" y="96" width="220" height="320" rx="16" />
+      </clipPath>
+      <g clip-path="url(#cardClip)">
+        <polygon class="card-shine" points="-100,0 -50,0 -150,500 -200,500" fill="#ffffff" opacity="0.1" />
+      </g>
+    </g>
+
+  </g>
+</svg>

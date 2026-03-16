@@ -9,16 +9,10 @@ Config.BillingCommissions = { -- This is a percentage (0.10) == 10%
 }
 
 -- Web hook for camera ( NOT GO PRO )
-Config.Webhook = 'https://discord.com/api/webhooks/1477199176595931146/w2QPB1g3Q15row5ZOR1_T_Inx5TRTQidvHiI0Bc1yT9Fn_MG7XfTijDnjj-jrRoNdGkT'
-
--- Item name for pings app ( Having a VPN sends an anonymous ping, else sends the players name)
-Config.VPNItem = 'vpn'
-
--- The garage the vehicle goes to when you sell a car to a player
-Config.SellGarage = 'altastreet'
-
--- How Long Does The Player Have To Accept The Ping - This Is In Seconds
-Config.Timeout = 30
+Config.Webhook = ''
+Config.VPNItem = 'vpn' -- create a item named 'vpn' in your qb-core shared items for this to work, if you want to use the vpn for anonymous pings
+Config.SellGarage = 'altastreet' -- set this to a garage that is not used for anything else, this is where vehicles will be sent when sold to players
+Config.Timeout = 30 -- Set this to how long you want the player to have to accept the ping, after they accept it the blip will appear on their map for the duration of Config.BlipDuration
 
 -- How Long Does The Blip Remain On The Map - This Is In Seconds
 Config.BlipDuration = 30

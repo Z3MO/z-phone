@@ -149,9 +149,14 @@ $(document).on('click', '.mail-delete-button', function(e) {
     $('#mail-back').click();
 });
 
-$(document).on("keyup", "#mail-search", function() {
-    var value = $(this).val().toLowerCase();
-    $(".mail-item").filter(function() {
-        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-    });
+let MailSearchDebounce = null;
+$(document).on("input", "#mail-search", function() {
+    var inputElement = $(this);
+    clearTimeout(MailSearchDebounce);
+    MailSearchDebounce = setTimeout(function() {
+        var value = inputElement.val().toLowerCase();
+        $(".mail-item").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+        });
+    }, 120);
 });

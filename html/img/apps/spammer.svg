@@ -1,0 +1,52 @@
+<svg class="app-icon-spammer" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="spammerBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d946ef" />
+      <stop offset="60%" stop-color="#18181b" />
+      <stop offset="100%" stop-color="#09090b" />
+    </linearGradient>
+
+    <filter id="spammerShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="14" flood-color="#000000" flood-opacity="0.7" />
+    </filter>
+
+    <filter id="neonPink" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="512" height="512" rx="115" fill="url(#spammerBg)" />
+
+  <g class="radar-rings" stroke="#fdf4ff" stroke-opacity="0.06" stroke-width="6" fill="none">
+    <circle cx="210" cy="250" r="120" />
+    <circle cx="210" cy="250" r="220" stroke-dasharray="12 24" />
+    <circle cx="210" cy="250" r="320" />
+  </g>
+
+  <g transform="translate(256, 256) scale(1.15) translate(-256, -256)">
+    
+    <g class="megaphone-body" filter="url(#spammerShadow)">
+      
+      <path d="M 190 280 V 360 A 24 24 0 0 0 238 360 V 300" fill="none" stroke="#71717a" stroke-width="26" stroke-linecap="round" />
+      
+      <rect x="130" y="195" width="46" height="110" rx="18" fill="#a1a1aa" />
+      <rect x="120" y="215" width="10" height="70" rx="4" fill="#3f3f46" />
+
+      <path d="M 170 210 L 300 155 C 320 145 340 160 340 185 L 340 315 C 340 340 320 355 300 345 L 170 290 Z" fill="#ffffff" />
+
+      <polygon points="255,195 225,255 245,255 235,305 285,240 260,240 270,195" fill="#09090b" />
+      
+    </g>
+
+    <g class="spam-waves" fill="none" stroke="#f0abfc" stroke-width="16" stroke-linecap="round" filter="url(#neonPink)">
+      <path class="wave-1" d="M 370 190 Q 400 250 370 310" />
+      <path class="wave-2" d="M 410 150 Q 450 250 410 350" />
+      <path class="wave-3" d="M 450 110 Q 500 250 450 390" />
+    </g>
+
+  </g>
+</svg>

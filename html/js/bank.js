@@ -669,7 +669,11 @@
             await submitTransfer();
         });
 
-        refs.contactSearch?.addEventListener('input', renderContacts);
+        let contactSearchDebounce;
+        refs.contactSearch?.addEventListener('input', () => {
+            clearTimeout(contactSearchDebounce);
+            contactSearchDebounce = setTimeout(renderContacts, 120);
+        });
 
         refs.contactsList?.addEventListener('click', (event) => {
             const button = event.target instanceof Element ? event.target.closest('.bank-app-my-contact') : null;
