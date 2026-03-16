@@ -495,14 +495,6 @@ $(document).on('click', '.phone-silent-button', function(event){
     })
 });
 
-$(document).on('click', '.phone-tab-button', function(event){
-    event.preventDefault();
-
-    if (QB.Phone.Data.currentApplication === null) {
-        QB.Phone.Functions.Close();
-    }
-});
-
 QB.Phone.Functions.Open = function(data) {
     QB.Phone.Animations.BottomSlideUp('.container', 800, 0);
     QB.Phone.Animations.BottomSlideUp('.container', 500, 0);
@@ -850,7 +842,7 @@ QB.Phone.Notifications.Custom.Add = function(icon, title, text, color, timeout, 
                     QB.Phone.Animations.TopSlideUp(".phone-notification-container-new", 400, -10);
                     QB.Phone.Notifications.Timeout = setTimeout(function(){
                         if (!QB.Phone.Data.IsOpen == true) {
-                        QB.Phone.Animations.BottomSlideUp('.container', 250, -70);
+                        QB.Phone.Animations.BottomSlideDown('.container', 250, -70);
                         }
                     }, 500)
                     QB.Phone.Notifications.Timeout = null;
@@ -927,7 +919,7 @@ QB.Phone.Notifications.Add = function(icon, title, text, color, timeout) {
                     QB.Phone.Animations.TopSlideUp(".phone-notification-container", 400, -10);
                     QB.Phone.Notifications.Timeout = setTimeout(function(){
                         if (!QB.Phone.Data.IsOpen == true) {
-                        QB.Phone.Animations.BottomSlideUp('.container', 250, -70);
+                        QB.Phone.Animations.BottomSlideDown('.container', 250, -70);
                         }
                     }, 500)
                     QB.Phone.Notifications.Timeout = null;
@@ -942,7 +934,7 @@ $(document).on('click', ".phone-notification-container", function() {
     QB.Phone.Notifications.Timeout = null
 
     if (!QB.Phone.Data.IsOpen == true) {
-    QB.Phone.Animations.BottomSlideUp('.container', 250, -70);
+    QB.Phone.Animations.BottomSlideDown('.container', 250, -70);
     }
 })
 
@@ -954,7 +946,7 @@ $(document).on('click', ".notification-accept", function() {
     QB.Phone.Notifications.Timeout = null
 
     if (!QB.Phone.Data.IsOpen == true) {
-    QB.Phone.Animations.BottomSlideUp('.container', 250, -70);
+    QB.Phone.Animations.BottomSlideDown('.container', 250, -70);
     }
 })
 
@@ -966,7 +958,7 @@ $(document).on('click', ".notification-deny", function() {
     QB.Phone.Animations.TopSlideUp(".phone-notification-container-new", 500, -10);
 
     if (!QB.Phone.Data.IsOpen == true) {
-    QB.Phone.Animations.BottomSlideUp('.container', 250, -70);
+    QB.Phone.Animations.BottomSlideDown('.container', 250, -70);
     }
 })
 
@@ -1149,7 +1141,7 @@ $(document).ready(function(){
                 var date = new Date(null);
                 date.setSeconds(CallTime);
                 var timeString = date.toISOString().substr(11, 8);
-                if (!QB.Phone.Data.IsOpen) {
+                if (!QB.Phone.Data.IsOpen && $('.container').css('display') === 'none') {
                     QB.Phone.Animations.BottomSlideUp('.container', 250, -50);
                 }
                 $(".phone-call-ongoing-time").text(timeString);
@@ -1157,13 +1149,20 @@ $(document).ready(function(){
                 $(".phone-currentcall-contact").text(timeString);
                 break;
             case "CancelOngoingCall":
-                QB.Phone.Animations.TopSlideUp('.phone-application-container', 250, -50);
-                setTimeout(function(){
-                    QB.Phone.Functions.ToggleApp("phone-call", "none");
-                    $(".phone-application-container").css({"display":"none"});
-                }, 400)
-                QB.Phone.Data.CallActive = false;
-                QB.Phone.Data.currentApplication = null;
+                if (typeof resetPhoneCallScreen === 'function') {
+                    QB.Phone.Animations.TopSlideUp('.phone-application-container', 320, -120);
+                    setTimeout(function() {
+                        resetPhoneCallScreen();
+                    }, 320);
+                } else {
+                    QB.Phone.Animations.TopSlideUp('.phone-application-container', 250, -50);
+                    setTimeout(function(){
+                        QB.Phone.Functions.ToggleApp("phone-call", "none");
+                        $(".phone-application-container").css({"display":"none"});
+                    }, 400)
+                    QB.Phone.Data.CallActive = false;
+                    QB.Phone.Data.currentApplication = null;
+                }
                 break;
             case "RefreshContacts":
                 QB.Phone.Functions.LoadContacts(event.data.Contacts);

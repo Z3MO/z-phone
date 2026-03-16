@@ -1,0 +1,47 @@
+<svg class="app-icon-chopshop" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="chopBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f97316" />
+      <stop offset="100%" stop-color="#881337" />
+    </linearGradient>
+
+    <filter id="iconShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="17" stdDeviation="13" flood-color="#4c0519" flood-opacity="0.4" />
+    </filter>
+
+    <pattern id="warningStripes" width="68" height="68" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line x1="0" y1="0" x2="0" y2="68" stroke="#ffffff" stroke-width="34" stroke-opacity="0.03" />
+    </pattern>
+  </defs>
+
+  <rect x="0" y="0" width="512" height="512" rx="115" fill="url(#chopBg)" />
+  <rect x="0" y="0" width="512" height="512" rx="115" fill="url(#warningStripes)" />
+
+  <g transform="translate(256, 256) scale(1.15) translate(-256, -256)">
+    <circle class="saw-blade" cx="256" cy="256" r="162" fill="none" stroke="#ffffff" stroke-width="13" stroke-opacity="0.2" stroke-dasharray="42 25" />
+    <circle cx="256" cy="256" r="136" fill="none" stroke="#ffffff" stroke-width="4.5" stroke-opacity="0.1" />
+
+    <g filter="url(#iconShadow)">
+      <path d="M 68 273 L 111 273 A 42 42 0 0 1 196 273 L 315 273 A 42 42 0 0 1 401 273 L 444 273" fill="none" stroke="#ffffff" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <path d="M 68 273 L 102 230 L 170 196 L 205 162 L 290 162 L 350 196 L 410 230 L 444 273" fill="none" stroke="#ffffff" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <path d="M 183 205 L 209 175 L 281 175 L 333 205 Z" fill="none" stroke="#ffffff" stroke-width="11" stroke-linejoin="round"/>
+      
+      <line x1="239" y1="175" x2="239" y2="205" stroke="#ffffff" stroke-width="11" />
+      <line x1="239" y1="205" x2="239" y2="273" stroke="#ffffff" stroke-width="11" stroke-linecap="round"/>
+      <line x1="256" y1="222" x2="273" y2="222" stroke="#ffffff" stroke-width="11" stroke-linecap="round"/>
+
+      <rect x="205" y="281" width="43" height="43" rx="4" fill="none" stroke="#ffffff" stroke-width="8.5"/>
+      <line x1="226" y1="281" x2="226" y2="324" stroke="#ffffff" stroke-width="8.5"/>
+
+      <rect x="264" y="281" width="43" height="43" rx="4" fill="none" stroke="#ffffff" stroke-width="8.5"/>
+      <line x1="286" y1="281" x2="286" y2="324" stroke="#ffffff" stroke-width="8.5"/>
+    </g>
+
+    <g class="grind-sparks" transform="translate(136, 213)">
+      <circle cx="0" cy="0" r="6.5" fill="#fde047" />
+      <path d="M -13 -17 L -26 -34 M 13 -13 L 30 -34 M -26 0 L -43 -4 M 26 4 L 43 13" stroke="#fde047" stroke-width="8.5" stroke-linecap="round"/>
+    </g>
+  </g>
+</svg>

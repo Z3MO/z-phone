@@ -1,0 +1,56 @@
+<svg class="app-icon-redline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="redlineBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#18181b" />
+      <stop offset="70%" stop-color="#09090b" />
+      <stop offset="100%" stop-color="#450a0a" />
+    </linearGradient>
+
+    <filter id="neonRed" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <filter id="gaugeShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="15" stdDeviation="10" flood-color="#000000" flood-opacity="0.8" />
+    </filter>
+
+    <pattern id="racingStripes" width="80" height="80" patternUnits="userSpaceOnUse" patternTransform="rotate(25)">
+      <rect x="0" y="0" width="15" height="80" fill="#ffffff" fill-opacity="0.02" />
+      <rect x="25" y="0" width="4" height="80" fill="#ffffff" fill-opacity="0.02" />
+    </pattern>
+  </defs>
+
+  <rect x="0" y="0" width="512" height="512" rx="115" fill="url(#redlineBg)" />
+  <rect x="0" y="0" width="512" height="512" rx="115" fill="url(#racingStripes)" />
+
+  <g transform="translate(256, 256) scale(1.15) translate(-256, -256)" filter="url(#gaugeShadow)">
+    
+    <circle cx="256" cy="256" r="180" fill="#121214" stroke="#27272a" stroke-width="8" />
+
+    <circle cx="256" cy="256" r="110" fill="none" stroke="#52525b" stroke-width="4" stroke-dasharray="4 22" />
+
+    <path d="M 150 362 A 150 150 0 1 1 406 256" fill="none" stroke="#3f3f46" stroke-width="18" stroke-linecap="round" />
+
+    <path d="M 406 256 A 150 150 0 0 1 362 362" fill="none" stroke="#ef4444" stroke-width="18" stroke-linecap="round" filter="url(#neonRed)" />
+
+    <path d="M 374 256 L 394 256 M 360 295 L 378 305 M 334 334 L 348 348" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+
+    <g class="rpm-needle">
+      <polygon points="248,256 256,110 264,256 256,290" fill="#ef4444" filter="url(#neonRed)" />
+      <polygon points="253,256 256,118 259,256" fill="#ffffff" />
+    </g>
+
+    <circle cx="256" cy="256" r="28" fill="#18181b" stroke="#3f3f46" stroke-width="6" />
+    <circle cx="256" cy="256" r="10" fill="#ef4444" />
+    
+    <rect x="216" y="320" width="80" height="36" rx="6" fill="#09090b" stroke="#27272a" stroke-width="3" />
+    <line x1="236" y1="338" x2="256" y2="338" stroke="#ef4444" stroke-width="6" stroke-linecap="round" filter="url(#neonRed)"/>
+    <line x1="264" y1="338" x2="276" y2="338" stroke="#ef4444" stroke-width="6" stroke-linecap="round" filter="url(#neonRed)"/>
+
+  </g>
+</svg>

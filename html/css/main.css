@@ -211,23 +211,6 @@ body {
     transform-style: preserve-3d;
 }
 
-.phone-footer {
-    position: absolute;
-    bottom: 1.5vh;
-    width: 100%;
-    z-index: 140;
-    pointer-events: none;
-}
-
-.phone-home-button-class {
-    display: none;
-}
-
-.phone-home-button-class:hover{
-    background-color: white;
-    width: 7vw;
-}
-
 .phone-applications {
     position: relative;
     height: 100%;
@@ -1027,38 +1010,68 @@ body {
 .phone-currentcall-container {
     display: none;
     position: absolute;
-    height: 4.3vh;
-    width: 24.5vh;
-    background-color: #2a2a2aee;
+    height: 5.4vh;
+    width: auto;
+    min-width: 22vh;
+    max-width: 82%;
+    background: linear-gradient(135deg, rgba(14, 22, 17, 0.97) 0%, rgba(8, 18, 12, 0.97) 100%);
+    backdrop-filter: blur(20px) saturate(1.8);
+    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    border: 1px solid rgba(52, 199, 89, 0.38);
+    border-top: 1px solid rgba(52, 199, 89, 0.55);
     margin: 0 auto;
     left: 0;
     right: 0;
     top: 4vh;
-    border-radius: 0.9vh;
-    overflow: hidden;
-    box-shadow: inset 0px 0px 10px 0px rgba(0, 0, 0, 0.11);
+    border-radius: 1.8vh;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 0 0 rgba(52, 199, 89, 0.2);
     z-index: 140;
-    transition: background-color .1s linear;
-    animation: pulse 2s infinite;
+    overflow: hidden;
+    cursor: pointer;
+    transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.12s ease;
+    animation: currentcall-pulse 2.4s ease-in-out infinite;
+    flex-direction: row;
+    align-items: center;
+    padding: 0 1.6vh 0 0.9vh;
+    gap: 0.8vh;
+}
+
+.phone-currentcall-container:active {
+    transform: scale(0.97);
+}
+
+@keyframes currentcall-pulse {
+    0%, 100% {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 0 0 rgba(52, 199, 89, 0.25);
+    }
+    50% {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 0 5px rgba(52, 199, 89, 0.0);
+    }
 }
 
 .phone-currentcall-icon-square {
-    position: absolute;
-    width: 3.0vh;
-    text-align: center;
-    border-radius: 1.5vh;
-    color: #ffffff;
-    font-size: 1.6vh;
+    display: none;
 }
 
 .phone-currentcall-icon {
-    position: absolute;
-    width: 3.0vh;
-    text-align: center;
-    border-radius: 1.5vh;
-    color: #0b7468;
-    font-size: 1.9vh;
+    flex-shrink: 0;
+    width: 3.4vh;
+    height: 3.4vh;
+    border-radius: 50%;
+    background: rgba(52, 199, 89, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #34c759;
+    font-size: 1.5vh;
+    animation: currentcall-icon-blink 1.6s ease-in-out infinite;
 }
+
+@keyframes currentcall-icon-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
+}
+
 @-webkit-keyframes pulse {
     0% {
       -webkit-box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5);
@@ -1086,24 +1099,34 @@ body {
 }
 
 .phone-currentcall-title {
-    position: absolute;
-    top: 0.75vh;
-    left: 2.8vh;
-    font-size: 0.9vh;
-    font-family: 'Arial', sans-serif;
-    color: #ffffff;
-    text-transform: capitalize;
+    font-size: 1.25vh;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    color: #34c759;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    line-height: 1.2;
 }
 
 .phone-currentcall-contact {
-    position: absolute;
-    top: 2.4vh;
-    left: 0.8vh;
-    font-size: 1vh;
-    font-family: 'Poppins', sans-serif;
-    color: rgb(255, 255, 255);
-    width: 22vh;
+    font-size: 1.15vh;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.75);
+    white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 16vh;
+    line-height: 1.2;
+}
+
+.phone-currentcall-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+    flex: 1;
 }
 
 @keyframes fadeIn {
