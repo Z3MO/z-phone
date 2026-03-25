@@ -178,6 +178,30 @@ function incrementalUpdatePulseList(target, Pulses, counts) {
         }
     });
 
+    // Refresh like/comment state for existing pulses
+    sortedPulses.forEach(function(pulse) {
+        var pulseId = String(pulse.pulseId);
+        var existingPulse = target.find('#pulse-' + pulseId);
+        if (!existingPulse.length) {
+            return;
+        }
+
+        var likes = Array.isArray(pulse.likes) ? pulse.likes : [];
+        var isLiked = likes.includes(QB.Phone.Data.PlayerData.citizenid);
+        var likeCount = likes.length;
+        var likeIcon = existingPulse.find('.pulse-like i');
+        var likeText = existingPulse.find('.pulse-like span');
+
+        likeIcon
+            .removeClass('fa-solid fa-regular fa-heart')
+            .addClass(isLiked ? 'fa-solid fa-heart' : 'fa-regular fa-heart');
+        existingPulse.find('.pulse-like').css('color', isLiked ? '#e0245e' : '#8899a6');
+        likeText.text(likeCount > 0 ? likeCount : '');
+
+        var commentCount = counts && counts[pulse.pulseId] ? Number(counts[pulse.pulseId]) : 0;
+        existingPulse.find('.pulse-comment-count').text(commentCount > 0 ? commentCount : '');
+    });
+
     // Prepend only truly new pulses to avoid full list rebuilds on updates
     for (var i = sortedPulses.length - 1; i >= 0; i--) {
         var pulse = sortedPulses[i];
