@@ -1,6 +1,6 @@
 const SERVICES_SELECTORS = {
     filters: ".services-filters",
-    servicesList: ".taxis-list.services-list",
+    servicesList: ".services-list-container.services-list",
     onlineCount: "#services-online-count",
     categoryCount: "#services-category-count",
     highlightTag: "#services-highlight-tag",
@@ -17,11 +17,11 @@ const PHONE_SELECTORS = {
     incomingAnswer: "#incoming-answer"
 };
 
-const WHATSAPP_SELECTORS = {
-    openedChat: ".whatsapp-openedchat",
-    chats: ".whatsapp-chats",
-    openedChatMessages: ".whatsapp-openedchat-messages",
-    composer: "#whatsapp-openedchat-message"
+const MESSAGE_SELECTORS = {
+    openedChat: ".message-openedchat",
+    chats: ".message-chats",
+    openedChatMessages: ".message-openedchat-messages",
+    composer: "#message-openedchat-message"
 };
 
 let CurrentServicesFilter = "all";
@@ -476,29 +476,29 @@ function scrollActiveServicesFilterIntoView() {
     });
 }
 
-function getWhatsappDraftValue() {
+function getMessageDraftValue() {
     // html/js/message.js loads before this file and may expose composer helpers globally.
     // If those helpers are unavailable, this falls back to the raw textarea value instead.
-    if (typeof getWhatsappComposerValue === "function") {
-        return String(getWhatsappComposerValue() ?? "").trim();
+    if (typeof getMessageComposerValue === "function") {
+        return String(getMessageComposerValue() ?? "").trim();
     }
 
-    const composer = getElement(WHATSAPP_SELECTORS.composer);
+    const composer = getElement(MESSAGE_SELECTORS.composer);
     return composer ? String(composer.value ?? "").trim() : "";
 }
 
-function setWhatsappDraftValue(value) {
+function setMessageDraftValue(value) {
     // html/js/message.js loads before this file and may expose composer helpers globally.
     // If those helpers are unavailable, this writes directly into the textarea.
-    if (typeof getWhatsappComposerInstance === "function") {
-        const composerInstance = getWhatsappComposerInstance();
+    if (typeof getMessageComposerInstance === "function") {
+        const composerInstance = getMessageComposerInstance();
         if (composerInstance && typeof composerInstance.setText === "function") {
             composerInstance.setText(value);
             return;
         }
     }
 
-    const composer = getElement(WHATSAPP_SELECTORS.composer);
+    const composer = getElement(MESSAGE_SELECTORS.composer);
     if (composer) {
         composer.value = value;
         composer.dispatchEvent(new Event("input", { bubbles: true }));
@@ -506,10 +506,10 @@ function setWhatsappDraftValue(value) {
     }
 }
 
-function revealWhatsappThread() {
-    const openedChat = getElement(WHATSAPP_SELECTORS.openedChat);
-    const chats = getElement(WHATSAPP_SELECTORS.chats);
-    const messages = getElement(WHATSAPP_SELECTORS.openedChatMessages);
+function revealMessageThread() {
+    const openedChat = getElement(MESSAGE_SELECTORS.openedChat);
+    const chats = getElement(MESSAGE_SELECTORS.chats);
+    const messages = getElement(MESSAGE_SELECTORS.openedChatMessages);
 
     if (messages) {
         messages.scrollTo({
@@ -543,8 +543,8 @@ function revealWhatsappThread() {
 
 async function openServiceMessageThread(contactData) {
     try {
-        const chats = await postServiceRequest("GetWhatsappChats", {});
-        QB.Phone.Functions.LoadWhatsappChats(chats);
+        const chats = await postServiceRequest("GetMessageChats", {});
+        QB.Phone.Functions.LoadMessageChats(chats);
 
         QB.Phone.Animations.TopSlideUp(PHONE_SELECTORS.appContainer, 400, -160);
         QB.Phone.Functions.HeaderTextColor("white", 400);
@@ -552,21 +552,21 @@ async function openServiceMessageThread(contactData) {
         await waitForDuration(400);
 
         QB.Phone.Animations.TopSlideDown(PHONE_SELECTORS.appContainer, 400, 0);
-        QB.Phone.Functions.ToggleApp("taxi", "none");
-        QB.Phone.Functions.ToggleApp("whatsapp", "block");
-        QB.Phone.Data.currentApplication = "whatsapp";
+        QB.Phone.Functions.ToggleApp("services", "none");
+        QB.Phone.Functions.ToggleApp("message", "block");
+        QB.Phone.Data.currentApplication = "message";
 
-        const chat = await postServiceRequest("GetWhatsappChat", { phone: contactData.number });
+        const chat = await postServiceRequest("GetMessageChat", { phone: contactData.number });
         QB.Phone.Functions.SetupChatMessages(chat, {
             name: contactData.name,
             number: contactData.number
         });
 
-        if (contactData.template && getWhatsappDraftValue() === "") {
-            setWhatsappDraftValue(contactData.template);
+        if (contactData.template && getMessageDraftValue() === "") {
+            setMessageDraftValue(contactData.template);
         }
 
-        revealWhatsappThread();
+        revealMessageThread();
     } catch (error) {
         console.error(`Failed to open the service message thread for ${contactData.name} (${contactData.number}).`, error);
     }
@@ -638,7 +638,7 @@ async function startServiceCall(number, name) {
     }
 }
 
-SetupTaxiDrivers = function(data) {
+SetupServicesDirectory = function(data) {
     CurrentServicesData = normalizeServicesPayload(data).sort((a, b) => {
         if (b.Players.length !== a.Players.length) {
             return b.Players.length - a.Players.length;

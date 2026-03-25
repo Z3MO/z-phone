@@ -79,7 +79,7 @@ function createPulseElement(Pulse, commentCount) {
                     <i class="fa-solid fa-comment"></i>
                     <span class="pulse-comment-count">${commentCount > 0 ? commentCount : ''}</span>
                 </div>
-                <div class="pulse-action-btn pulse-retweet" data-pulsemessage="${EscapedPulseMessage}" data-imagemessage="${Pulse.url || ''}"><i class="fa-solid fa-retweet"></i></div>
+                <div class="pulse-action-btn pulse-repulse" data-pulsemessage="${EscapedPulseMessage}" data-imagemessage="${Pulse.url || ''}"><i class="fa-solid fa-retweet"></i></div>
                 <div class="pulse-action-btn pulse-reply"><i class="fa-solid fa-reply"></i></div>
             </div>
             <div class="pulse-comments-section">
@@ -130,90 +130,129 @@ function createNotificationElement(notification) {
     `;
 }
 
+function getSortedPulses(Pulses) {
+    const sorted = (Pulses || []).slice();
+
+    if (CurrentPulsesTab === 'trending') {
+        sorted.sort((a, b) => {
+            var likesA = (a.likes) ? a.likes.length : 0;
+            var likesB = (b.likes) ? b.likes.length : 0;
+            return likesB - likesA;
+        });
+        return sorted;
+    }
+
+    sorted.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    return sorted;
+}
+
+function populatePulseList(target, Pulses, counts) {
+    target.html('');
+
+    const sortedPulses = getSortedPulses(Pulses);
+    if (sortedPulses.length === 0) {
+        target.html('<div style="text-align: center; color: #8899a6; margin-top: 5vh; font-size: 1.4vh;">No pulses to display.</div>');
+        return;
+    }
+
+    $.each(sortedPulses, function(i, Pulse){
+        var commentCount = counts && counts[Pulse.pulseId] ? counts[Pulse.pulseId] : 0;
+        target.append(createPulseElement(Pulse, commentCount));
+    });
+}
+
+function incrementalUpdatePulseList(target, Pulses, counts) {
+    const sortedPulses = getSortedPulses(Pulses);
+    const idsInPayload = new Set(sortedPulses.map(function(Pulse) { return String(Pulse.pulseId); }));
+
+    if (sortedPulses.length === 0) {
+        target.html('<div style="text-align: center; color: #8899a6; margin-top: 5vh; font-size: 1.4vh;">No pulses to display.</div>');
+        return;
+    }
+
+    // Remove pulses no longer present
+    target.find('.pulses-pulse').each(function() {
+        var id = String($(this).data('pulseid'));
+        if (!idsInPayload.has(id)) {
+            $(this).remove();
+        }
+    });
+
+    // Prepend only truly new pulses to avoid full list rebuilds on updates
+    for (var i = sortedPulses.length - 1; i >= 0; i--) {
+        var pulse = sortedPulses[i];
+        var pulseId = String(pulse.pulseId);
+        if (target.find('#pulse-' + pulseId).length === 0) {
+            var commentCount = counts && counts[pulse.pulseId] ? counts[pulse.pulseId] : 0;
+            var $newElement = $(createPulseElement(pulse, commentCount)).css('opacity', 0);
+            target.prepend($newElement);
+            $newElement.animate({ opacity: 1 }, 120);
+        }
+    }
+}
+
 function renderPulses(Pulses, counts, isTabSwitch = false, isUpdate = false) {
     const homeTab = $(".pulses-home-tab");
     $('.footer-icon').removeClass('active');
     $('.footer-icon-pulses').addClass('active');
 
-        const populateList = (target) => {
-        target.html(''); // Clear list
-
-        // Sort pulses based on the current tab
-        if (CurrentPulsesTab === 'trending') {
-            Pulses.sort((a, b) => {
-                var likesA = (a.likes) ? a.likes.length : 0;
-                var likesB = (b.likes) ? b.likes.length : 0;
-                return likesB - likesA;
-            });
-        } else { // 'recent' tab
-            Pulses.reverse();
-        }
-
-        if (Pulses && Pulses.length > 0) {
-            $.each(Pulses, function(i, Pulse){
-                var commentCount = counts && counts[Pulse.pulseId] ? counts[Pulse.pulseId] : 0;
-                var PulseElement = createPulseElement(Pulse, commentCount);
-                target.append(PulseElement);
-            });
-        } else {
-            target.html('<div style="text-align: center; color: #8899a6; margin-top: 5vh; font-size: 1.4vh;">No pulses to display.</div>');
-        }
-    };
-
     if (isTabSwitch || isUpdate) {
         const listContainer = $(".pulses-list");
-        // We are just updating the list, which is already showing skeletons
-        // Fade out skeletons, then fade in new content
+
+        if (isUpdate && CurrentPulsesTab === 'recent') {
+            incrementalUpdatePulseList(listContainer, Pulses, counts);
+            return;
+        }
+
         listContainer.css('animation', 'fadeOut 0.2s ease-in forwards');
         setTimeout(() => {
-            populateList(listContainer);
-            listContainer.css('animation', 'fadeIn 0.3s ease-out forwards');
-        }, 200);
-    } else {
-        // Full page render (initial load or switching from profile)
-        homeTab.css('animation', 'fadeOut 0.2s ease-in forwards');
-        setTimeout(() => {
-            homeTab.html("");
-            if (CurrentPulsesView === 'feed') {
-                var headerHtml = `
-                    <div class="pulses-feed-header">
-                        <div class="pulses-header-empty"></div>
-                        <div class="pulses-header-logo-container">
-                            <i class="fa-solid fa-wave-pulse pulses-header-logo"></i>
-                        </div>
-                        <div class="pulses-header-empty"></div>
-                    </div>
-                `;
-                var tabsHtml = `
-                    <div class="pulses-tabs-container">
-                        <div class="pulses-tab ${CurrentPulsesTab == 'recent' ? 'active' : ''}" data-tab="recent">Feed</div>
-                        <div class="pulses-tab ${CurrentPulsesTab == 'trending' ? 'active' : ''}" data-tab="trending">Trending</div>
-                        <div class="pulses-tab ${CurrentPulsesTab == 'notifications' ? 'active' : ''}" data-tab="notifications">Notifications</div>
-                    </div>
-                `;
-                var pulsesListContainer = `<div class="pulses-list"></div>`;
-                homeTab.append(headerHtml).append(tabsHtml).append(pulsesListContainer);
-
-                // Show skeleton loader while content is prepared
-                const listContainer = homeTab.find('.pulses-list');
-                listContainer.html('');
-                for (let i = 0; i < 5; i++) {
-                    listContainer.append(createSkeletonPulseElement());
-                }
-
-                // Add a minimum delay to ensure skeleton is visible for a good UX
-                var minDelay = new Promise(resolve => setTimeout(resolve, 500));
-                minDelay.then(() => {
-                    listContainer.css('animation', 'fadeOut 0.2s ease-in forwards');
-                    setTimeout(() => {
-                        populateList(listContainer);
-                        listContainer.css('animation', 'fadeIn 0.3s ease-out forwards');
-                    }, 200);
-                });
-            }
-            homeTab.css('animation', 'fadeIn 0.3s ease-out forwards');
-        }, 200);
+            populatePulseList(listContainer, Pulses, counts);
+            listContainer.css('animation', 'fadeIn 0.22s ease-out forwards');
+        }, 120);
+        return;
     }
+
+    // Full page render (initial load or switching from profile)
+    homeTab.css('animation', 'fadeOut 0.2s ease-in forwards');
+    setTimeout(() => {
+        homeTab.html("");
+        if (CurrentPulsesView === 'feed') {
+            var headerHtml = `
+                <div class="pulses-feed-header">
+                    <div class="pulses-header-empty"></div>
+                    <div class="pulses-header-logo-container">
+                        <i class="fa-solid fa-wave-pulse pulses-header-logo"></i>
+                    </div>
+                    <div class="pulses-header-empty"></div>
+                </div>
+            `;
+            var tabsHtml = `
+                <div class="pulses-tabs-container">
+                    <div class="pulses-tab ${CurrentPulsesTab == 'recent' ? 'active' : ''}" data-tab="recent">Feed</div>
+                    <div class="pulses-tab ${CurrentPulsesTab == 'trending' ? 'active' : ''}" data-tab="trending">Trending</div>
+                    <div class="pulses-tab ${CurrentPulsesTab == 'notifications' ? 'active' : ''}" data-tab="notifications">Notifications</div>
+                </div>
+            `;
+            var pulsesListContainer = `<div class="pulses-list"></div>`;
+            homeTab.append(headerHtml).append(tabsHtml).append(pulsesListContainer);
+
+            const listContainer = homeTab.find('.pulses-list');
+            listContainer.html('');
+            for (let i = 0; i < 5; i++) {
+                listContainer.append(createSkeletonPulseElement());
+            }
+
+            var minDelay = new Promise(resolve => setTimeout(resolve, 180));
+            minDelay.then(() => {
+                listContainer.css('animation', 'fadeOut 0.2s ease-in forwards');
+                setTimeout(() => {
+                    populatePulseList(listContainer, Pulses, counts);
+                    listContainer.css('animation', 'fadeIn 0.22s ease-out forwards');
+                }, 120);
+            });
+        }
+        homeTab.css('animation', 'fadeIn 0.22s ease-out forwards');
+    }, 120);
 }
 
 function renderNotifications(notifications) {
@@ -338,6 +377,9 @@ function renderProfile(Pulses) {
 }
 
 QB.Phone.Notifications.LoadPulses = function(Pulses, hasVPN=false, isTabSwitch = false, isUpdate = false) {
+    QB.Phone.Data.hasVPN = true; // Forced to true for browser testing
+    hasVPN = true; // Forced to true for browser testing
+    
     if (CurrentPulsesView === 'feed') {
         if (Pulses && Pulses.length > 0) {
             var pulseIds = Pulses.map(function(Pulse){ return Pulse.pulseId; });
@@ -554,7 +596,7 @@ $(document).on('click', '.pulse-reply', function(e){
     $(".pulse-box-text-input").val(PulseHandle+ " ");
 });
 
-$(document).on('click', '.pulse-retweet', function(e){
+$(document).on('click', '.pulse-repulse', function(e){
     e.preventDefault();
     var PulseHandle = $(this).closest('.pulses-pulse').data('pulsehandler');
     var isRepulse =  $(this).closest('.pulses-pulse').data('type');

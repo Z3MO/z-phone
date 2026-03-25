@@ -1,3 +1,5 @@
+local QBCore = exports['qb-core']:GetCoreObject()
+
 -- NUI Callback
 
 RegisterNUICallback('AcceptMailButton', function(data, cb)
@@ -14,7 +16,10 @@ RegisterNUICallback('AcceptMailButton', function(data, cb)
 end)
 
 RegisterNUICallback('GetMails', function(_, cb)
-    cb(PhoneData.Mails)
+    QBCore.Functions.TriggerCallback('qb-phone:server:GetPlayerMails', function(mails)
+        PhoneData.Mails = mails or {}
+        cb(PhoneData.Mails)
+    end)
 end)
 
 RegisterNUICallback('RemoveMail', function(data, cb)

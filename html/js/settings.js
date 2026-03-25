@@ -183,6 +183,14 @@ QB.Phone.Functions.LoadMetaData = function(MetaData) {
         $('#toggle-mute').prop('checked',    QB.Phone.Settings.Muted);
         $('#toggle-vibrate').prop('checked', QB.Phone.Settings.Vibrate);
     }
+
+    // Restore saved Scale settings from phone metadata
+    if (MetaData.scale !== undefined && MetaData.scale !== null) {
+        QB.Phone.Settings.Scale = Number(MetaData.scale);
+    } else {
+        QB.Phone.Settings.Scale = 100;
+    }
+    updateDisplayScaleUI(true);
 }
 
 $(document).on('click', '#cancel-background', function(e){
@@ -464,6 +472,60 @@ $(document).on('change', '#toggle-vibrate', function(){
         $('#toggle-mute').prop('checked', false);
     }
     updateVolumeUI();
+});
+
+// ─── Display & Scale ───────────────────────────────────────────────────────
+
+QB.Phone.Settings.Scale = 100; // Default 100%
+
+function updateDisplayScaleUI(isInitialLoad) {
+    var scale = QB.Phone.Settings.Scale;
+    // Calculate percentage fill based on a range from 70% to 130%
+    var percentage = ((scale - 70) / (130 - 70)) * 100;
+    
+    $('#display-scale-fill').css('width', percentage + '%');
+    $('#display-scale-value').text(scale + '%');
+    
+    // Apply CSS zoom to dynamically resize the entire phone interface safely
+    $('.container').css('zoom', scale / 100);
+
+    if (!isInitialLoad) {
+        $.post(`https://${GetParentResourceName()}/UpdatePhoneScale`, JSON.stringify({
+            scale: scale
+        }));
+    }
+}
+
+$(document).on('click', '.settings-app-tab[data-settingstab="display"]', function(e){
+    e.preventDefault();
+    QB.Phone.Settings.OpenedTab = 'display';
+    updateDisplayScaleUI(true); // Sync UI before showing
+    $(".settings-display-tab").css({"display":"block", "left":"100%", "top":"0"}).animate({"left":"0"}, 300);
+});
+
+$(document).on('click', '#cancel-display', function(e){
+    e.preventDefault();
+    $(".settings-display-tab").animate({"left":"100%"}, 300, function(){
+        $(this).css("display", "none");
+    });
+});
+
+$(document).on('click', '#display-scale-up', function(e){
+    e.preventDefault();
+    QB.Phone.Settings.Scale = Math.min(130, QB.Phone.Settings.Scale + 5);
+    updateDisplayScaleUI(false);
+});
+
+$(document).on('click', '#display-scale-down', function(e){
+    e.preventDefault();
+    QB.Phone.Settings.Scale = Math.max(70, QB.Phone.Settings.Scale - 5);
+    updateDisplayScaleUI(false);
+});
+
+$(document).on('click', '#display-scale-reset', function(e){
+    e.preventDefault();
+    QB.Phone.Settings.Scale = 100;
+    updateDisplayScaleUI(false);
 });
 
 // Physical volume buttons on the left side of the phone frame

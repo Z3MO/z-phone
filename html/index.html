@@ -9,42 +9,9 @@
     <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1/moment.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Font File's -->
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Grand+Hotel&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Yellowtail&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;500;600;700&family=Bebas+Neue&family=Grand+Hotel&family=Inter:wght@400;500;600;700&family=Josefin+Sans:wght@300;400&family=Poppins:wght@400;500;600&family=Teko:wght@300;400;500;600;700&family=Yellowtail&display=swap" rel="stylesheet">
     <!-- Font Awesome File's -->
     <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/all.css"/>
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/sharp-solid.css"/>
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/sharp-regular.css"/>
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/sharp-light.css"/>
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/duotone.css"/>
-
-    <!-- Additional Fontawesome Pro+ Icons for v7.2.0 -->
-
-    <!-- Sharp Duotone -->
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/sharp-duotone-solid.css"/>
-    <!-- Chisel -->
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/chisel-regular.css"/>
-    <!-- Etch -->
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/etch-solid.css"/>
-    <!-- Graphite -->
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/graphite-thin.css"/>
-    <!-- Jelly -->
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/jelly-regular.css"/>
-    <!-- Notdog -->
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/notdog-solid.css"/>
-    <!-- Slab -->
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/slab-regular.css"/>
-    <!-- Thumb Print -->
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/thumbprint-light.css"/>
-    <!-- Utility -->
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/utility-semibold.css"/>
-    <!-- Whiteboard -->
-    <link rel="stylesheet" href="https://site-assets.fontawesome.com/releases/v7.2.0/css/whiteboard-semibold.css"/>
     <title>z-phone</title>
 
     <!-- CSS File's -->
@@ -55,9 +22,9 @@
     <link rel="stylesheet" href="./css/bank.css">
     <link rel="stylesheet" href="./css/message.css">
     <link rel="stylesheet" href="./css/garage.css">
-    <link rel="stylesheet" href="./css/yellowpages.css">
+    <link rel="stylesheet" href="./css/proxi.css">
     <link rel="stylesheet" href="./css/mail.css">
-    <link rel="stylesheet" href="./css/taxi.css">
+    <link rel="stylesheet" href="./css/services.css">
     <link rel="stylesheet" href="./css/gallery.css">
     <link rel="stylesheet" href="./css/camera.css">
     <link rel="stylesheet" href="./css/ping.css">
@@ -124,12 +91,6 @@
                     <div class="notification-text-new"></div>
                     <div class="notification-accept"></div>
                     <div class="notification-deny"></div>
-                </div>
-
-                <div class="screen-notifications-container">
-                    <div class="screen-notification-icon"><i class="fa-brands fa-twitter"></i></div>
-                    <div class="screen-notification-title"><p>New Tweet!</p></div>
-                    <div class="screen-notification-content"><p>This is a test notification </p></div>
                 </div>
 
                 <div class="phone-currentcall-container">
@@ -423,46 +384,46 @@
                     </div>
 
                     <!-- Start Messages app-->
-                    <div class="whatsapp-app">
-                        <div class="whatsapp-header">
-                            <div class="whatsapp-header-copy">
-                                <span id="whatsapp-search-text">Messages</span>
-                                <span class="whatsapp-header-subtitle">Recent conversations</span>
+                    <div class="message-app">
+                        <div class="message-header">
+                            <div class="message-header-copy">
+                                <span id="message-search-text">Messages</span>
+                                <span class="message-header-subtitle">Recent conversations</span>
                             </div>
-                            <button type="button" class="whatsapp-icon-button" id="whatsapp-newconvo-icon" aria-label="Start new message">
+                            <button type="button" class="message-icon-button" id="message-newconvo-icon" aria-label="Start new message">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                         </div>
 
-                        <div class="phone-menu-body" id="whatsapp-box-new-add-new">
+                        <div class="phone-menu-body" id="message-box-new-add-new">
                             <div class="phone-menu-main">
-                                <input placeholder="Number" class="phone-menu-text whatsapp-input-number" type="tel" inputmode="numeric" maxlength="6" autocomplete="off" aria-label="Phone number" aria-describedby="whatsapp-number-hint">
-                                <span id="whatsapp-number-hint" class="whatsapp-visually-hidden">Enter up to 6 digits for the phone number.</span>
-                                <textarea class="phone-menu-big-text whatsapp-input-message" placeholder="Message" type="text" maxlength="200"></textarea>
+                                <input placeholder="Number" class="phone-menu-text message-input-number" type="tel" inputmode="numeric" maxlength="6" autocomplete="off" aria-label="Phone number" aria-describedby="message-number-hint">
+                                <span id="message-number-hint" class="message-visually-hidden">Enter up to 6 digits for the phone number.</span>
+                                <textarea class="phone-menu-big-text message-input-message" placeholder="Message" type="text" maxlength="200"></textarea>
                                 <div class="phone-menu-footer">
                                     <div class="phone-menu-button phone-menu-cancel" id="box-new-cancel">Cancel</div>
-                                    <div class="phone-menu-button phone-menu-accept" id="whatsapp-save-note-for-doc">Send</div>
+                                    <div class="phone-menu-button phone-menu-accept" id="message-save-note-for-doc">Send</div>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="whatsapp-chats"></div>
-                        <div class="whatsapp-openedchat">
-                            <div class="whatsapp-header-footer-openedchat">
-                                <div class="whatsapp-openedchat-picture"></div>
-                                <div class="whatsapp-openedchat-name"><p></p></div>
-                                <div class="whatsapp-openedchat-number"><p></p></div>
-                                <button type="button" class="whatsapp-icon-button whatsapp-openedchat-button" id="whatsapp-openedchat-back" aria-label="Back to messages">
+                        <div class="message-chats"></div>
+                        <div class="message-openedchat">
+                            <div class="message-header-footer-openedchat">
+                                <div class="message-openedchat-picture"></div>
+                                <div class="message-openedchat-name"><p></p></div>
+                                <div class="message-openedchat-number"><p></p></div>
+                                <button type="button" class="message-icon-button message-openedchat-button" id="message-openedchat-back" aria-label="Back to messages">
                                     <i class="fa-solid fa-chevron-left"></i>
                                 </button>
-                                <button type="button" class="whatsapp-icon-button whatsapp-openedchat-button" id="whatsapp-openedchat-call" aria-label="Call contact">
+                                <button type="button" class="message-icon-button message-openedchat-button" id="message-openedchat-call" aria-label="Call contact">
                                     <i class="fa-solid fa-phone"></i>
                                 </button>
                             </div>
-                            <div class="whatsapp-openedchat-messages"></div>
-                            <div class="whatsapp-openedchat-input">
-                                <input type="text" id="whatsapp-openedchat-message" placeholder="Send message" spellcheck="false">
-                                <button type="button" class="whatsapp-icon-button whatsapp-send-button" id="whatsapp-openedchat-send" aria-label="Send message">
+                            <div class="message-openedchat-messages"></div>
+                            <div class="message-openedchat-input">
+                                <input type="text" id="message-openedchat-message" placeholder="Send message" spellcheck="false">
+                                <button type="button" class="message-icon-button message-send-button" id="message-openedchat-send" aria-label="Send message">
                                     <i class="fa-solid fa-paper-plane"></i>
                                 </button>
                             </div>
@@ -511,6 +472,14 @@
                                 <div class="settings-menu-item settings-app-tab" data-settingstab="sound">
                                     <div class="settings-icon-box" style="background: linear-gradient(135deg, #FF9F0A, #FFCC00);"><i class="fa-solid fa-volume-high"></i></div>
                                     <div class="settings-text">Sound &amp; Vibration</div>
+                                    <i class="fa-solid fa-chevron-right settings-chevron"></i>
+                                </div>
+                            </div>
+
+                            <div class="settings-menu-group">
+                                <div class="settings-menu-item settings-app-tab" data-settingstab="display">
+                                    <div class="settings-icon-box" style="background: linear-gradient(135deg, #32D74B, #28CD41);"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+                                    <div class="settings-text">Display &amp; Scale</div>
                                     <i class="fa-solid fa-chevron-right settings-chevron"></i>
                                 </div>
                             </div>
@@ -589,6 +558,40 @@
 
                             <div class="sound-back-btn-row">
                                 <div class="background-button" id="cancel-sound"><p>Back</p></div>
+                            </div>
+                        </div>
+
+                        <!-- Display & Scale sub-tab -->
+                        <div class="settings-display-tab" style="display: none; position: absolute; width: 100%; height: 100%; top: 0; left: 100%; background: #000000; z-index: 10;">
+                            <div class="settings-app-header"><p>Display &amp; Scale</p></div>
+
+                            <div class="sound-settings-scroll">
+                                <!-- Scale Section -->
+                                <div class="sound-section-label">Phone Size</div>
+                                <div class="sound-section-card">
+                                    <div class="sound-row">
+                                        <div class="sound-row-left">
+                                            <i class="fa-solid fa-mobile-screen sound-row-icon"></i>
+                                            <span class="sound-row-title">Scale</span>
+                                        </div>
+                                        <div class="sound-volume-controls">
+                                            <button class="sound-vol-btn" id="display-scale-down" aria-label="Decrease size"><i class="fa-solid fa-minus"></i></button>
+                                            <div class="sound-vol-bar-track">
+                                                <div class="sound-vol-bar-fill" id="display-scale-fill"></div>
+                                            </div>
+                                            <button class="sound-vol-btn" id="display-scale-up" aria-label="Increase size"><i class="fa-solid fa-plus"></i></button>
+                                            <span class="sound-vol-value" id="display-scale-value">100%</span>
+                                        </div>
+                                    </div>
+                                    <div class="sound-divider"></div>
+                                    <div class="sound-row" id="display-scale-reset" style="justify-content: center; cursor: pointer;">
+                                        <span class="sound-row-title" style="color: #1DA1F2; font-weight: 600;">Reset to Default</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="sound-back-btn-row">
+                                <div class="background-button" id="cancel-display"><p>Back</p></div>
                             </div>
                         </div>
 
@@ -758,7 +761,9 @@
                         </div>
                         <div class="mail-details-view">
                             <div class="mail-details-header">
-                                <i class="fa-solid fa-chevron-left" id="mail-back"></i>
+                                <button type="button" id="mail-back" class="mail-back-button" aria-label="Back to inbox">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </button>
                                 <span id="mail-details-sender"></span>
                             </div>
                             <div class="mail-details-content"></div>
@@ -814,7 +819,7 @@
                         <div class="pulses-footer">
                             <div class="footer-icon footer-icon-pulses active">
                                 <i class="fas fa-wave-pulse"></i>
-                                <span class="footer-icon-text" style="color: #1DA1F2; text-shadow: 0 0 5px #1DA1F2, 0 0 10px #1DA1F2;">Pulses</span>
+                                <span class="footer-icon-text">Pulses</span>
                             </div>
                             <div class="footer-icon footer-icon-new-pulse">
                                 <i class="fa-solid fa-plus"></i>
@@ -1067,8 +1072,8 @@
                     </div>
                     <!-- END Garages app-->
 
-                    <!-- Start Taxi app-->
-                    <div class="taxi-app">
+                    <!-- Start Services app-->
+                    <div class="services-app">
                         <div class="services-shell">
                             <div class="services-header">
                                 <span class="services-overline">City directory</span>
@@ -1098,10 +1103,10 @@
                                     <i class="fa-solid fa-chevron-right"></i>
                                 </button>
                             </div>
-                            <div class="taxis-list services-list"></div>
+                            <div class="services-list-container services-list"></div>
                         </div>
                     </div>
-                    <!-- END Taxi app-->
+                    <!-- END Services app-->
 
                     <div class="bank-app">
                         <div class="bank-app-loading">
@@ -1594,22 +1599,38 @@
         </div>
 
         <!-- JavaScript File's -->
-        <script src="./js/config.js"></script>
-        <script src="./js/dev.js"></script>
-        <script src="./js/app.js"></script>
-        <script src="./js/phone.js"></script>
-        <script src="./js/settings.js"></script>
-        <script src="./js/pulses.js"></script>
-        <script src="./js/bank.js"></script>
-        <script src="./js/message.js"></script>
-        <script src="./js/garage.js"></script>
-        <script src="./js/yellowpages.js"></script>
-        <script src="./js/mail.js"></script>
-        <script src="./js/taxi.js"></script>
-        <script src="./js/gallery.js"></script>
-        <script src="./js/camera.js"></script>
-        <script src="./js/ping.js"></script>
-        <script src="./js/calculator.js"></script>
-        <script src="./js/party.js"></script>
+        <script>
+            (function () {
+                const shouldEnableDevMode = typeof window.GetParentResourceName !== "function" && (
+                    window.location.search.includes("dev=1") ||
+                    window.location.protocol === "file:" ||
+                    window.location.hostname === "127.0.0.1" ||
+                    window.location.hostname === "localhost"
+                );
+
+                if (shouldEnableDevMode) {
+                    const devScript = document.createElement('script');
+                    devScript.src = './js/dev.js';
+                    devScript.defer = true;
+                    document.body.appendChild(devScript);
+                }
+            })();
+        </script>
+        <script defer src="./js/config.js"></script>
+        <script defer src="./js/app.js"></script>
+        <script defer src="./js/phone.js"></script>
+        <script defer src="./js/settings.js"></script>
+        <script defer src="./js/pulses.js"></script>
+        <script defer src="./js/bank.js"></script>
+        <script defer src="./js/message.js"></script>
+        <script defer src="./js/garage.js"></script>
+        <script defer src="./js/proxi.js"></script>
+        <script defer src="./js/mail.js"></script>
+        <script defer src="./js/services.js"></script>
+        <script defer src="./js/gallery.js"></script>
+        <script defer src="./js/camera.js"></script>
+        <script defer src="./js/ping.js"></script>
+        <script defer src="./js/calculator.js"></script>
+        <script defer src="./js/party.js"></script>
     </body>
 </html>

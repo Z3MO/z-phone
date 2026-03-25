@@ -1,6 +1,6 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
-QBCore.Functions.CreateCallback('qb-phone:server:GetAvailableTaxiDrivers', function(_, cb)
+local function buildAvailableServices()
     local Services = {}
     local serviceJobs = Config.ServiceJobs or {}
     local serviceLookup = {}
@@ -57,5 +57,9 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetAvailableTaxiDrivers', funct
         end
     end
 
-    cb(payload)
+    return payload
+end
+
+QBCore.Functions.CreateCallback('qb-phone:server:GetAvailableServices', function(_, cb)
+    cb(buildAvailableServices())
 end)

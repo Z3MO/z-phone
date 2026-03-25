@@ -12,15 +12,13 @@ PhoneData = {
     isOpen = false,
     PlayerData = nil,
     Contacts = {},
-    Tweets = {},
-    Hashtags = {},
     Chats = {},
     CallData = {},
     RecentCalls = {},
     Invoices = {},
     Garage = {},
     Mails = {},
-    Adverts = {},
+    Proxis = {},
     Documents = {},
     GarageVehicles = {},
     AnimationData = {
@@ -176,22 +174,6 @@ local function LoadPhone()
             PhoneData.Contacts = pData.PlayerContacts
         end
 
-        if pData.Chats and next(pData.Chats) then
-            local Chats = {}
-            for _, v in pairs(pData.Chats) do
-                Chats[v.number] = {
-                    name = IsNumberInContacts(v.number),
-                    number = v.number,
-                    messages = json.decode(v.messages)
-                }
-            end
-
-            PhoneData.Chats = Chats
-        end
-
-        if pData.Hashtags and next(pData.Hashtags) then
-            PhoneData.Hashtags = pData.Hashtags
-        end
 
         if pData.Invoices and next(pData.Invoices) then
             for _, v in pairs(pData.Invoices) do
@@ -208,41 +190,21 @@ local function LoadPhone()
             end
         end
 
-        if pData.Tweets and next(pData.Tweets) then
-            PhoneData.Tweets = pData.Tweets
-        end
-
         if pData.Documents and next(pData.Documents) then
             PhoneData.Documents = pData.Documents
         end
 
-        if pData.Mails and next(pData.Mails) then
-            for _, v in pairs(pData.Mails) do
-                PhoneData.Mails[#PhoneData.Mails+1] = {
-                    citizenid = v.citizenid,
-                    sender = v.sender,
-                    subject = v.subject,
-                    message = v.message,
-                    read = v.read,
-                    mailid = v.mailId,
-                    date = v.date,
-                    button = type(v.button) == "string" and json.decode(v.button) or v.button
-                }
-            end
-        end
 
-        if pData.Adverts and next(pData.Adverts) then
-            PhoneData.Adverts = pData.Adverts
+        if pData.Proxis and next(pData.Proxis) then
+            PhoneData.Proxis = pData.Proxis
         end
 
 
-        if pData.Images and next(pData.Images) then
-            PhoneData.Images = pData.Images
-        end
-
-        if pData.ChatRooms ~= nil and next(pData.ChatRooms) ~= nil then
-            PhoneData.ChatRooms = pData.ChatRooms
-        end
+        -- Heavy datasets are loaded on-demand per app to reduce first-open time.
+        PhoneData.Chats = {}
+        PhoneData.Mails = {}
+        PhoneData.Images = {}
+        PhoneData.ChatRooms = {}
 
         SendNUIMessage({
             action = "LoadPhoneData",
@@ -288,7 +250,6 @@ local function OpenPhone()
 
         SendNUIMessage({
             action = "open",
-            Tweets = PhoneData.Tweets,
             AppData = Config.PhoneApplications,
             CallData = PhoneData.CallData,
             PlayerData = PhoneData.PlayerData,
@@ -957,6 +918,12 @@ RegisterNUICallback('UpdatePhoneSoundSettings', function(data, cb)
     cb('ok')
 end)
 
+RegisterNUICallback('UpdatePhoneScale', function(data, cb)
+    PhoneData.MetaData.scale = tonumber(data.scale) or 100
+    TriggerServerEvent('qb-phone:server:SaveMetaData', PhoneData.MetaData)
+    cb('ok')
+end)
+
 RegisterNetEvent('qb-phone:client:GetCalled', function(CallerNumber, CallId, AnonymousCall)
     local RepeatCount = 0
     local CallData = {
@@ -1097,24 +1064,26 @@ RegisterNetEvent('QBCore:Client:OnPlayerUnload', function()
     FullyLoaded = false
     PlayerData = {}
     PhoneData = {
-        Documents = {},
         MetaData = {},
         isOpen = false,
         PlayerData = nil,
         Contacts = {},
-        Tweets = {},
-        Hashtags = {},
         Chats = {},
         CallData = {},
         RecentCalls = {},
+        Invoices = {},
         Garage = {},
         Mails = {},
-        Adverts = {},
+        Proxis = {},
+        Documents = {},
         GarageVehicles = {},
         AnimationData = {
             lib = nil,
             anim = nil,
         },
+        Images = {},
+        SuggestedContacts = {},
+        ChatRooms = {},
     }
 end)
 

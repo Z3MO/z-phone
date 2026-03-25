@@ -329,7 +329,11 @@
             return;
         }
 
-        refs.grid.textContent = '';
+        refs.grid.innerHTML = '';
+        refs.grid.style.display = 'grid';
+        refs.grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+        refs.grid.style.gap = '1vh';
+        refs.grid.style.alignContent = 'start';
 
         const safeImages = Array.isArray(images)
             ? images
@@ -352,12 +356,28 @@
             item.className = 'gallery-item';
             item.dataset.image = row.image;
             item.setAttribute('aria-label', 'Open gallery image');
+            item.style.border = 'none';
+            item.style.padding = '0';
+            item.style.paddingBottom = '100%';
+            item.style.background = 'transparent';
+            item.style.cursor = 'pointer';
+            item.style.position = 'relative';
+            item.style.display = 'block';
+            item.style.overflow = 'hidden';
 
             const image = document.createElement('img');
             image.src = row.image;
             image.alt = 'Gallery image';
             image.loading = 'lazy';
             image.decoding = 'async';
+            image.style.position = 'absolute';
+            image.style.top = '0';
+            image.style.left = '0';
+            image.style.width = '100%';
+            image.style.height = '100%';
+            image.style.objectFit = 'cover';
+            image.style.display = 'block';
+            image.style.borderRadius = '0.5vh';
 
             item.appendChild(image);
             fragment.appendChild(item);
@@ -459,10 +479,10 @@
         if (refs.container && refs.imageViewer) {
             refs.container.appendChild(refs.imageViewer);
         }
+
         attachEvents();
     }
 
     window.setUpGalleryData = renderGallery;
     init();
 })();
-

@@ -1,4 +1,4 @@
-.taxi-app {
+.services-app {
     --services-surface-rgb: 7, 16, 26;
     --filter-bar-gradient: linear-gradient(180deg, rgba(var(--services-surface-rgb), 0.98) 0%, rgba(var(--services-surface-rgb), 0.96) 72%, rgba(var(--services-surface-rgb), 0) 100%);
     display: none;

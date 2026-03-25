@@ -475,10 +475,6 @@
     color: #fff;
 }
 
-.gallery-post-btn--twitter {
-    background: linear-gradient(135deg, #1d9bf0 0%, #0ea5e9 100%);
-}
-
 .gallery-post-btn--pulse {
     background: linear-gradient(135deg, #1d9bf0 0%, #2563eb 100%);
 }

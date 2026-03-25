@@ -1,0 +1,329 @@
+.proxi-app {
+    display: none;
+    height: 100%;
+    width: 100%;
+    background: radial-gradient(circle at 50% 50%, #232526 0%, #0a0e11 100%);
+    overflow: hidden;
+    font-family: 'Teko', sans-serif;
+}
+
+#proxi-feed-text {
+    position: absolute;
+    z-index:1;
+    top: 4.5vh;
+    left: 1.5vw;
+    text-shadow: 0 1px 0 #ccc, 0 3px 3px rgba(0,0,0,.2), 0 20px 15px rgba(0,0,0,0.20);
+    font-size: 1.3vw;
+    color: #fbda03;
+    font-family: 'Grand Hotel', cursive;
+}
+
+/*Search Area */
+#proxi-search {
+    display: block;
+    position: absolute;
+    border: none;
+    background: #1f2124;
+    top: 9vh;
+    width: 90%;
+    left: 0;
+    right:0;
+    margin: 0 auto;
+    opacity: 1;
+    height: 4vh;
+    border-radius: 1vh;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    outline: none;
+    text-indent: 3.5vh;
+    z-index: 100;
+    font-size: 0.8vw;
+    color: whitesmoke;
+}
+
+#proxi-search-icon {
+    position: absolute;
+    top: 10.5vh;
+    left: 1.5vw;
+    font-size: 0.7vw;
+    color: #FFFFFF;
+    z-index: 101;
+}
+
+
+.proxi-home {
+    position: relative;
+    left: 0;
+}
+
+.proxi-header {
+    position: absolute;
+    width: 100%;
+    height: 15vh;
+    background: rgba(20, 20, 20, 0.8);
+    border-radius: 2.5vh;
+    top: 0;
+}
+
+.proxi-list {
+    position: absolute;
+    width: 100%;
+    height: 38vh;
+    top: 16vh;
+    overflow-x: hidden !important;
+    overflow-y: scroll;
+}
+
+.proxi-list::-webkit-scrollbar {
+    display: none;
+}
+
+/*Proxi Postings */
+.proxi {
+    position: relative;
+    height: auto;
+    width: 90%;
+    margin: 0 auto 1vh;
+    background-color: #252a30;
+    border-radius: 1vh;
+    color: #fbda03;
+}
+
+.proxi-message {
+    padding-top: 1.5vh;
+    font-size: 1vw;
+    width: 95%;
+    padding-left: 5%;
+    text-align: left;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    color: white;
+}
+
+.proxi-contact-info {
+    margin-top: .5vh;
+    width: 95%;
+    padding-left: 5%;
+    padding-bottom: 1vh;
+    top: .4vh;
+    font-size: 0.9vw;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    cursor: pointer;
+}
+
+.proxi-image-attached {
+    margin-top: .5vh;
+    width: 95%;
+    padding-left: 5%;
+    font-size: 1.4vh;
+    bottom: 40vh;
+    padding-bottom: 2.5vh;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    cursor: pointer;
+}
+
+.proxi-trash {
+    position: absolute;
+    right: 1vw;
+    bottom: 1vh;
+    color: rgb(224, 72, 34);
+    transition: .05 linear;
+    font-size: 0.6vw;
+}
+
+.create-proxi {
+    position: absolute;
+    width: 2.2vw;
+    height: 3.8vh;
+    top: 5.5vh;
+    right: 1vw;
+    transition: .1s ease-in-out;
+    text-align: center;
+    font-size: 0.7vw;
+    color: ghostwhite;
+}
+
+.create-proxi:hover {
+    transition: .1s ease-in-out;
+    color: #fbda03;
+}
+
+/* Proxi Image Block */
+.proxi-block {
+    display: block;
+    position: relative;
+    width: 13vw;
+    height: 12vh;
+    bottom: 4.0vh;
+    margin: 0 auto;
+    border-radius: 1vh;
+    background-color: #f7e95f;
+}
+
+.proxi-eye {
+    position: absolute;
+    margin: 1vh 5.5vw 0vh 5.7vw;
+    color: rgb(0, 0, 0);
+    font-size: 1.2vw;
+    cursor: pointer;
+}
+
+.proxi-image-text {
+    position: absolute;
+    left: 4.5vw;
+    margin: 3.5vh 0vw 0vh 0.1vw;
+    color: rgb(0, 0, 0);
+    font-size: 0.9vw;
+}
+
+.proxi-image-text-other {
+    position: absolute;
+    top: 5.5vh;
+    margin: 0 2vw 0 2.3vw;
+    color: rgb(0, 0, 0);
+    font-size: 0.9vw;
+    text-align: center;
+    font-weight:lighter;
+}
+
+/* Proxi Input Modal */
+#proxi-box-textt {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 150;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+/* Reset the inner container to fit the full-screen modal style */
+#proxi-box-textt .phone-menu-main {
+    position: relative;
+    width: 85%;
+    height: auto;
+    background: #1f2124;
+    border: 1px solid #333;
+    border-radius: 2vh;
+    padding: 2vh;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vh;
+    animation: modalPopIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    bottom: auto;
+    left: auto;
+    top: auto;
+}
+
+.proxi-box-textt-input {
+    width: 100%;
+    box-sizing: border-box;
+    height: 20vh;
+    background: #2C2C2C;
+    border: 1px solid #333;
+    border-radius: 2vh;
+    padding: 1.5vh;
+    color: white;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.6vh;
+    resize: none;
+    outline: none;
+    margin-bottom: 1.5vh;
+    box-shadow: none;
+    transition: all 0.3s ease;
+}
+
+.proxi-box-textt-input:focus {
+    background: #25282c;
+    box-shadow: 0 4px 15px rgba(251, 218, 3, 0.1);
+}
+.proxi-box-image-input {
+    width: 100%;
+    box-sizing: border-box;
+    height: 4.5vh;
+    background: #2C2C2C;
+    border: 1px solid #333;
+    border-radius: 2vh;
+    padding: 0 1.5vh;
+    color: white;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.5vh;
+    outline: none;
+    margin-bottom: 2vh;
+    transition: all 0.3s ease;
+}
+
+.proxi-box-image-input:focus {
+    border-color: #fbda03;
+    background: #25282c;
+}
+
+#proxi-sendmessage-chat {
+    width: 100%;
+    height: 4.5vh;
+    border: none;
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    order: 2;
+    border-radius: 2.5vh;
+    color: #1e272e;
+    font-weight: 600;
+    font-size: 1.6vh;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
+    box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4);
+}
+
+#proxi-sendmessage-chat:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(243, 156, 18, 0.5);
+}
+
+#proxi-box-textt .phone-menu-cancel, #proxi-cancel {
+    width: 100%;
+    height: 4.5vh;
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    order: 2;
+    margin-bottom: 1vh;
+    border: 1px solid #333;
+    border-radius: 2.5vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #8899a6;
+    background: transparent;
+}
+
+#proxi-box-textt .phone-menu-cancel:hover, #proxi-cancel:hover {
+    background: rgba(244, 33, 46, 0.1);
+    color: #f4212e;
+    border-color: rgba(244, 33, 46, 0.1);
+    transform: scale(1.02);
+}
+
+@keyframes modalPopIn {
+    0% { transform: scale(0.95); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}

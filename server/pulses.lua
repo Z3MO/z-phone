@@ -82,7 +82,7 @@ RegisterNetEvent('qb-phone:server:UpdatePulses', function(PulseData)
     end)
 end)
 
--- Use this tweet function in different resources I used it in Renewed Fishing script to make the ped tweet close to start of tournaments --
+-- Exported helper for other resources to post a pulse (used by external scripts).
 local function AddNewPulse(PulseData)
     local pulseID = PulseData and PulseData.pulseId or "PULSE-"..math.random(11111111, 99999999)
 
@@ -191,7 +191,7 @@ RegisterNetEvent('qb-phone:server:EditPulse', function(pulseId, message, url)
     if not Player then return end
     local cid = Player.PlayerData.citizenid
 
-    -- Update the tweet in the database
+    -- Update the pulse in the database
     MySQL.query.await('UPDATE phone_pulses SET message = ?, url = ? WHERE pulseId = ? AND citizenid = ?', {
         message:gsub("[%<>\"()\'$]",""),
         url,
@@ -199,7 +199,7 @@ RegisterNetEvent('qb-phone:server:EditPulse', function(pulseId, message, url)
         cid
     })
 
-    -- Update the tweet in the in-memory table
+    -- Update the pulse in the in-memory table
     for i = 1, #Pulses do
         if Pulses[i].pulseId == pulseId and Pulses[i].citizenid == cid then
             Pulses[i].message = message:gsub("[%<>\"()\'$]","")
@@ -208,7 +208,7 @@ RegisterNetEvent('qb-phone:server:EditPulse', function(pulseId, message, url)
         end
     end
 
-    -- Broadcast the updated tweets to all clients
+    -- Broadcast the updated pulses to all clients
     TriggerClientEvent('qb-phone:client:UpdatePulses', -1, 0, Pulses, false)
 end)
 

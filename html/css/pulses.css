@@ -189,7 +189,7 @@
     color: #8899a6;
 }
 
-.pulse-retweet {
+.pulse-repulse {
     color: #8899a6;
 }
 
@@ -200,7 +200,7 @@
 }
 
 .pulse-reply i,
-.pulse-retweet i,
+.pulse-repulse i,
 .pulse-comment i,
 .pulse-like i,
 .pulse-trash i {
@@ -213,7 +213,7 @@
     transform: rotate(-30deg) scale(1.05);
 }
 
-.pulse-retweet:hover i {
+.pulse-repulse:hover i {
     color: #2f855a; /* darker green */
     transform: rotate(0deg) scale(1.05);
 }

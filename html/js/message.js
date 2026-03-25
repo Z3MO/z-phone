@@ -3,9 +3,8 @@
 
 // State management
 const MessageState = {
-    whatsappSearchActive: false,
+    messageSearchActive: false,
     openedChatPicture: null,
-    extraButtonsOpen: false,
     emojiPickerOpen: false,
     currentChatNumber: null
 };
@@ -91,7 +90,7 @@ function setupInputFocusHandlers() {
     const inputSelectors = 'input[type=text], textarea, input[type=number], input[type=tel]';
     
     document.addEventListener('focusin', function(e) {
-        if (e.target.matches(inputSelectors) || e.target.closest('.whatsapp-openedchat')) {
+        if (e.target.matches(inputSelectors) || e.target.closest('.message-openedchat')) {
             e.preventDefault();
             postNUI('DissalowMoving');
         }
@@ -107,19 +106,19 @@ function setupInputFocusHandlers() {
 
 // Initialize modern emoji picker
 function setupEmojiPicker() {
-    const messageInput = document.getElementById('whatsapp-openedchat-message');
+    const messageInput = document.getElementById('message-openedchat-message');
     if (!messageInput) return;
     
     // Create emoji button
     const emojiBtn = document.createElement('button');
     emojiBtn.type = 'button';
-    emojiBtn.className = 'whatsapp-emoji-trigger';
+    emojiBtn.className = 'message-emoji-trigger';
     emojiBtn.innerHTML = '<i class="fa-regular fa-face-smile"></i>';
     emojiBtn.setAttribute('aria-label', 'Add emoji');
     
     // Create emoji picker container
     const emojiPicker = document.createElement('div');
-    emojiPicker.className = 'whatsapp-emoji-picker';
+    emojiPicker.className = 'message-emoji-picker';
     emojiPicker.innerHTML = `
         <div class="emoji-picker-header">
             <input type="text" class="emoji-search" placeholder="Search emoji..." />
@@ -138,7 +137,7 @@ function setupEmojiPicker() {
     `;
     
     // Insert before send button
-    const sendBtn = document.getElementById('whatsapp-openedchat-send');
+    const sendBtn = document.getElementById('message-openedchat-send');
     if (sendBtn && messageInput.parentElement) {
         messageInput.parentElement.insertBefore(emojiBtn, sendBtn);
         messageInput.parentElement.insertBefore(emojiPicker, sendBtn);
@@ -272,7 +271,7 @@ function searchEmojis(query, picker) {
 
 // Insert emoji at cursor position
 function insertEmoji(emoji) {
-    const input = document.getElementById('whatsapp-openedchat-message');
+    const input = document.getElementById('message-openedchat-message');
     if (!input) return;
     
     const start = input.selectionStart;
@@ -285,27 +284,27 @@ function insertEmoji(emoji) {
 }
 
 // Get composer value (replaces jQuery version)
-function getWhatsappComposerValue() {
-    const input = document.getElementById('whatsapp-openedchat-message');
+function getMessageComposerValue() {
+    const input = document.getElementById('message-openedchat-message');
     return input ? String(input.value || '') : '';
 }
 
 // Clear composer (replaces jQuery version)
-function clearWhatsappComposer() {
-    const input = document.getElementById('whatsapp-openedchat-message');
+function clearMessageComposer() {
+    const input = document.getElementById('message-openedchat-message');
     if (input) {
         input.value = '';
     }
 }
 
 // Handle enter key in composer
-function handleWhatsappComposerEnter(event) {
+function handleMessageComposerEnter(event) {
     if (event.key !== "Enter" || event.shiftKey) {
         return;
     }
 
     event.preventDefault();
-    const sendBtn = document.getElementById('whatsapp-openedchat-send');
+    const sendBtn = document.getElementById('message-openedchat-send');
     if (sendBtn) {
         sendBtn.click();
     }
@@ -410,23 +409,23 @@ function getMessagePreview(messageData) {
 
 // Set opened chat header - Vanilla JS
 function setOpenedChatHeader(name, number) {
-    const nameEl = document.querySelector(".whatsapp-openedchat-name");
-    const numberEl = document.querySelector(".whatsapp-openedchat-number");
+    const nameEl = document.querySelector(".message-openedchat-name");
+    const numberEl = document.querySelector(".message-openedchat-number");
     if (nameEl) nameEl.textContent = name || "";
     if (numberEl) numberEl.textContent = number || "";
 }
 
-function createWhatsappEmptyState() {
+function createMessageEmptyState() {
     const emptyState = document.createElement("div");
     const icon = document.createElement("i");
     const title = document.createElement("div");
     const description = document.createElement("div");
 
-    emptyState.className = "whatsapp-empty-state";
+    emptyState.className = "message-empty-state";
     icon.className = "fa-regular fa-comments";
-    title.className = "whatsapp-empty-state-title";
+    title.className = "message-empty-state-title";
     title.textContent = "No conversations yet";
-    description.className = "whatsapp-empty-state-text";
+    description.className = "message-empty-state-text";
     description.textContent = "Start a new message to see your chats here.";
 
     emptyState.appendChild(icon);
@@ -440,12 +439,12 @@ function createChatThreadEmptyState() {
     const title = document.createElement("div");
     const description = document.createElement("div");
 
-    emptyState.className = "whatsapp-thread-empty-state";
+    emptyState.className = "message-thread-empty-state";
 
-    title.className = "whatsapp-thread-empty-title";
+    title.className = "message-thread-empty-title";
     title.textContent = "No messages yet";
 
-    description.className = "whatsapp-thread-empty-text";
+    description.className = "message-thread-empty-text";
     description.textContent = "Send a message below to start this conversation.";
 
     emptyState.appendChild(title);
@@ -509,28 +508,28 @@ function createChatElement(chat, index) {
     const chatLabel = sanitizeText(chat.name);
     const displayName = chatLabel !== "" && chatLabel !== String(chat.number) ? chatLabel : formatPhoneNumber(chat.number);
 
-    chatElement.className = "whatsapp-chat";
-    chatElement.id = `whatsapp-chat-${index}`;
+    chatElement.className = "message-chat";
+    chatElement.id = `message-chat-${index}`;
 
-    pictureElement.className = "whatsapp-chat-picture";
+    pictureElement.className = "message-chat-picture";
     applyAvatarStyles(pictureElement, displayName, chat.number);
 
-    nameElement.className = "whatsapp-chat-name";
+    nameElement.className = "message-chat-name";
     nameParagraph.textContent = displayName;
     nameElement.appendChild(nameParagraph);
 
-    metaElement.className = "whatsapp-chat-meta";
+    metaElement.className = "message-chat-meta";
     metaElement.textContent = formatPhoneNumber(chat.number);
 
-    lastMessageElement.className = "whatsapp-chat-lastmessage";
+    lastMessageElement.className = "message-chat-lastmessage";
     lastMessageParagraph.textContent = getMessagePreview(lastMessage);
     lastMessageElement.appendChild(lastMessageParagraph);
 
-    lastMessageTimeElement.className = "whatsapp-chat-lastmessagetime";
+    lastMessageTimeElement.className = "message-chat-lastmessagetime";
     lastMessageTimeParagraph.textContent = lastMessage.time;
     lastMessageTimeElement.appendChild(lastMessageTimeParagraph);
 
-    unreadElement.className = `whatsapp-chat-unreadmessages unread-chat-id-${index}`;
+    unreadElement.className = `message-chat-unreadmessages unread-chat-id-${index}`;
     if (chat.Unread > 0 && chat.Unread !== undefined && chat.Unread !== null) {
         unreadElement.textContent = chat.Unread;
         unreadElement.style.display = "block";
@@ -558,11 +557,11 @@ function createMessageElement(message, sender) {
 
     if (message.type === "message") {
         messageElement = document.createElement("div");
-        messageElement.className = `whatsapp-openedchat-message whatsapp-openedchat-message-${sender}`;
+        messageElement.className = `message-openedchat-message message-openedchat-message-${sender}`;
         messageElement.textContent = sanitizeText(message.message);
 
         timeElement = document.createElement("div");
-        timeElement.className = "whatsapp-openedchat-message-time";
+        timeElement.className = "message-openedchat-message-time";
         timeElement.textContent = message.time || "";
         messageElement.appendChild(timeElement);
     } else if (message.type === "location") {
@@ -570,7 +569,7 @@ function createMessageElement(message, sender) {
         const label = document.createElement("span");
         const markerIcon = document.createElement("i");
 
-        messageElement.className = `whatsapp-openedchat-message whatsapp-openedchat-message-${sender} whatsapp-shared-location`;
+        messageElement.className = `message-openedchat-message message-openedchat-message-${sender} message-shared-location`;
         messageElement.dataset.x = message.data.x;
         messageElement.dataset.y = message.data.y;
 
@@ -581,7 +580,7 @@ function createMessageElement(message, sender) {
         label.appendChild(document.createTextNode(" Location"));
 
         timeElement = document.createElement("div");
-        timeElement.className = "whatsapp-openedchat-message-time";
+        timeElement.className = "message-openedchat-message-time";
         timeElement.textContent = message.time;
 
         messageElement.appendChild(label);
@@ -593,7 +592,7 @@ function createMessageElement(message, sender) {
         }
 
         messageElement = document.createElement("div");
-        messageElement.className = `whatsapp-openedchat-message-test whatsapp-openedchat-message-test-${sender}`;
+        messageElement.className = `message-openedchat-message-test message-openedchat-message-test-${sender}`;
         messageElement.dataset.id = sanitizePhoneNumber(OpenedChatData.number);
 
         const image = document.createElement("img");
@@ -606,7 +605,7 @@ function createMessageElement(message, sender) {
         messageElement.appendChild(image);
 
         timeElement = document.createElement("div");
-        timeElement.className = "whatsapp-openedchat-message-time whatsapp-openedchat-message-time-image";
+        timeElement.className = "message-openedchat-message-time message-openedchat-message-time-image";
         timeElement.textContent = message.time || "";
         messageElement.appendChild(timeElement);
     }
@@ -665,8 +664,8 @@ GetCurrentDateKey = function() {
     return `${currentDOM}-${currentMonth}-${currentYear}`;
 }
 
-QB.Phone.Functions.LoadWhatsappChats = function(chats) {
-    const chatContainer = document.querySelector(".whatsapp-chats");
+QB.Phone.Functions.LoadMessageChats = function(chats) {
+    const chatContainer = document.querySelector(".message-chats");
     if (!chatContainer) return;
     
     const fragment = document.createDocumentFragment();
@@ -675,7 +674,7 @@ QB.Phone.Functions.LoadWhatsappChats = function(chats) {
     const chatArray = Array.isArray(chats) ? chats : (chats && typeof chats === 'object' ? Object.values(chats) : []);
 
     if (chatArray.length === 0) {
-        chatContainer.appendChild(createWhatsappEmptyState());
+        chatContainer.appendChild(createMessageEmptyState());
         return;
     }
 
@@ -686,7 +685,7 @@ QB.Phone.Functions.LoadWhatsappChats = function(chats) {
     chatContainer.appendChild(fragment);
 }
 
-QB.Phone.Functions.ReloadWhatsappAlerts = function(chats) {
+QB.Phone.Functions.ReloadMessageAlerts = function(chats) {
     if (!chats) return;
     
     const chatArray = Array.isArray(chats) ? chats : Object.values(chats);
@@ -742,10 +741,10 @@ function detectURLs(message) {
 function setupEventListeners() {
     // New conversation button
     document.addEventListener('click', function(e) {
-        if (e.target.matches('#whatsapp-newconvo-icon') || e.target.closest('#whatsapp-newconvo-icon')) {
+        if (e.target.matches('#message-newconvo-icon') || e.target.closest('#message-newconvo-icon')) {
             e.preventDefault();
             ClearInputNew();
-            const newBox = document.getElementById('whatsapp-box-new-add-new');
+            const newBox = document.getElementById('message-box-new-add-new');
             if (newBox) {
                 newBox.style.display = 'block';
                 newBox.style.opacity = '0';
@@ -756,7 +755,7 @@ function setupEventListeners() {
     
     // Chat click handler
     document.addEventListener('click', function(e) {
-        const chatElement = e.target.closest('.whatsapp-chat');
+        const chatElement = e.target.closest('.message-chat');
         if (chatElement) {
             e.preventDefault();
             
@@ -767,8 +766,8 @@ function setupEventListeners() {
                 postNUI('ClearAlerts', { number: chatData.number });
                 
                 // Show opened chat with animation
-                const openedChat = document.querySelector('.whatsapp-openedchat');
-                const chatsList = document.querySelector('.whatsapp-chats');
+                const openedChat = document.querySelector('.message-openedchat');
+                const chatsList = document.querySelector('.message-chats');
                 
                 if (openedChat && chatsList) {
                     openedChat.style.display = 'block';
@@ -779,7 +778,7 @@ function setupEventListeners() {
                 }
                 
                 // Scroll to bottom
-                const messagesContainer = document.querySelector('.whatsapp-openedchat-messages');
+                const messagesContainer = document.querySelector('.message-openedchat-messages');
                 if (messagesContainer) {
                     setTimeout(() => {
                         messagesContainer.scrollTop = messagesContainer.scrollHeight;
@@ -793,14 +792,14 @@ function setupEventListeners() {
     
     // Back button handler
     document.addEventListener('click', function(e) {
-        if (e.target.matches('#whatsapp-openedchat-back') || e.target.closest('#whatsapp-openedchat-back')) {
+        if (e.target.matches('#message-openedchat-back') || e.target.closest('#message-openedchat-back')) {
             e.preventDefault();
             
-            postNUI('GetWhatsappChats', {})
+            postNUI('GetMessageChats', {})
                 .then(readNuiJson)
                 .then(chats => {
                     if (chats) {
-                        QB.Phone.Functions.LoadWhatsappChats(chats);
+                        QB.Phone.Functions.LoadMessageChats(chats);
                     }
                 })
                 .catch(err => console.error('Error loading chats:', err));
@@ -810,8 +809,8 @@ function setupEventListeners() {
                 OpenedChatData.number = null;
             }
             
-            const openedChat = document.querySelector('.whatsapp-openedchat');
-            const chatsList = document.querySelector('.whatsapp-chats');
+            const openedChat = document.querySelector('.message-openedchat');
+            const chatsList = document.querySelector('.message-chats');
             
             if (openedChat && chatsList) {
                 chatsList.style.display = 'block';
@@ -827,17 +826,17 @@ function setupEventListeners() {
     
     // Message input keydown handler
     document.addEventListener('keydown', function(e) {
-        if (e.target.matches('#whatsapp-openedchat-message')) {
-            handleWhatsappComposerEnter(e);
+        if (e.target.matches('#message-openedchat-message')) {
+            handleMessageComposerEnter(e);
         }
     });
     
     // Send message button
     document.addEventListener('click', function(e) {
-        if (e.target.matches('#whatsapp-openedchat-send') || e.target.closest('#whatsapp-openedchat-send')) {
+        if (e.target.matches('#message-openedchat-send') || e.target.closest('#message-openedchat-send')) {
             e.preventDefault();
             
-            const message = getWhatsappComposerValue();
+            const message = getMessageComposerValue();
             const imageUrl = getDetectedImageUrl(message);
             const newMessage = sanitizeText(imageUrl ? message.replace(/(?:https?|ftp):\/\/[\n\S]+/g, '') : message).slice(0, MAX_MESSAGE_LENGTH);
             
@@ -870,17 +869,17 @@ function setupEventListeners() {
                 });
             }
             
-            clearWhatsappComposer();
+            clearMessageComposer();
         }
     });
     
     // Save new message button
     document.addEventListener('click', function(e) {
-        if (e.target.matches('#whatsapp-save-note-for-doc') || e.target.closest('#whatsapp-save-note-for-doc')) {
+        if (e.target.matches('#message-save-note-for-doc') || e.target.closest('#message-save-note-for-doc')) {
             e.preventDefault();
             
-            const messageInput = document.querySelector(".whatsapp-input-message");
-            const numberInput = document.querySelector(".whatsapp-input-number");
+            const messageInput = document.querySelector(".message-input-message");
+            const numberInput = document.querySelector(".message-input-number");
             
             if (!messageInput || !numberInput) return;
             
@@ -900,17 +899,17 @@ function setupEventListeners() {
                 messageInput.value = "";
                 numberInput.value = "";
                 
-                const newBox = document.getElementById('whatsapp-box-new-add-new');
+                const newBox = document.getElementById('message-box-new-add-new');
                 if (newBox) {
                     newBox.style.opacity = '0';
                     setTimeout(() => newBox.style.display = 'none', 350);
                 }
                 
-                postNUI('GetWhatsappChats', {})
+                postNUI('GetMessageChats', {})
                     .then(readNuiJson)
                     .then(chats => {
                         if (chats) {
-                            QB.Phone.Functions.LoadWhatsappChats(chats);
+                            QB.Phone.Functions.LoadMessageChats(chats);
                         }
                     })
                     .catch(err => console.error('Error loading chats:', err));
@@ -924,7 +923,7 @@ function setupEventListeners() {
     
     // Call button handler
     document.addEventListener('click', function(e) {
-        if (e.target.matches('#whatsapp-openedchat-call') || e.target.closest('#whatsapp-openedchat-call')) {
+        if (e.target.matches('#message-openedchat-call') || e.target.closest('#message-openedchat-call')) {
             e.preventDefault();
             
             const inputNum = OpenedChatData.number;
@@ -1062,7 +1061,7 @@ QB.Phone.Functions.SetupChatMessages = function(cData, NewChatData) {
         }
         MessageState.currentChatNumber = cData.number;
 
-        const openedChatPicture = document.querySelector(".whatsapp-openedchat-picture");
+        const openedChatPicture = document.querySelector(".message-openedchat-picture");
         applyAvatarStyles(openedChatPicture, safeChatName || formattedNumber, cData.number);
 
         if (safeChatName !== "" && safeChatName !== String(cData.number)) {
@@ -1071,7 +1070,7 @@ QB.Phone.Functions.SetupChatMessages = function(cData, NewChatData) {
             setOpenedChatHeader(formattedNumber, "");
         }
 
-        const messageContainer = document.querySelector(".whatsapp-openedchat-messages");
+        const messageContainer = document.querySelector(".message-openedchat-messages");
         if (!messageContainer) return;
         
         const messageFragment = document.createDocumentFragment();
@@ -1085,8 +1084,8 @@ QB.Phone.Functions.SetupChatMessages = function(cData, NewChatData) {
                 const chatGroup = document.createElement("div");
                 const chatDateEl = document.createElement("div");
                 
-                chatGroup.className = `whatsapp-openedchat-messages-${i} unique-chat`;
-                chatDateEl.className = "whatsapp-openedchat-date";
+                chatGroup.className = `message-openedchat-messages-${i} unique-chat`;
+                chatDateEl.className = "message-openedchat-date";
                 chatDateEl.textContent = chatDate;
                 chatGroup.appendChild(chatDateEl);
 
@@ -1122,7 +1121,7 @@ QB.Phone.Functions.SetupChatMessages = function(cData, NewChatData) {
         const safeChatName = sanitizeText(NewChatData.name);
         const formattedNumber = NewChatData.number ? formatPhoneNumber(NewChatData.number) : "";
 
-        const openedChatPicture = document.querySelector(".whatsapp-openedchat-picture");
+        const openedChatPicture = document.querySelector(".message-openedchat-picture");
         applyAvatarStyles(openedChatPicture, safeChatName || formattedNumber, NewChatData.number);
 
         if (isNaN(NewChatData.name)) {
@@ -1131,17 +1130,17 @@ QB.Phone.Functions.SetupChatMessages = function(cData, NewChatData) {
             setOpenedChatHeader(formattedNumber || sanitizeText(NewChatData.name), "");
         }
         
-        const messageContainer = document.querySelector(".whatsapp-openedchat-messages");
+        const messageContainer = document.querySelector(".message-openedchat-messages");
         if (messageContainer) {
             messageContainer.innerHTML = "";
             const dateString = GetCurrentDateKey();
             const emptyState = document.createElement('div');
-            emptyState.className = `whatsapp-openedchat-messages-${dateString} unique-chat`;
+            emptyState.className = `message-openedchat-messages-${dateString} unique-chat`;
             emptyState.innerHTML = `
-                <div class="whatsapp-openedchat-date">TODAY</div>
-                <div class="whatsapp-thread-empty-state">
-                    <div class="whatsapp-thread-empty-title">No messages yet</div>
-                    <div class="whatsapp-thread-empty-text">Send a message below to start this conversation.</div>
+                <div class="message-openedchat-date">TODAY</div>
+                <div class="message-thread-empty-state">
+                    <div class="message-thread-empty-title">No messages yet</div>
+                    <div class="message-thread-empty-text">Send a message below to start this conversation.</div>
                 </div>
             `;
             messageContainer.appendChild(emptyState);
@@ -1149,7 +1148,7 @@ QB.Phone.Functions.SetupChatMessages = function(cData, NewChatData) {
     }
 
     // Scroll to bottom
-    const messageContainer = document.querySelector('.whatsapp-openedchat-messages');
+    const messageContainer = document.querySelector('.message-openedchat-messages');
     if (messageContainer) {
         setTimeout(() => {
             messageContainer.scrollTop = messageContainer.scrollHeight;

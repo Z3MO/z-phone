@@ -1,3 +1,5 @@
+local QBCore = exports['qb-core']:GetCoreObject()
+
 -- Functions
 
 local function IsNumberInContacts(num)
@@ -18,9 +20,23 @@ local function GetKeyByDate(Number, Date)
     end
 end
 
+local function HydrateChats(rawChats)
+    local hydrated = {}
+
+    for _, v in pairs(rawChats or {}) do
+        hydrated[v.number] = {
+            name = IsNumberInContacts(v.number) or v.number,
+            number = v.number,
+            messages = type(v.messages) == "string" and json.decode(v.messages) or (v.messages or {})
+        }
+    end
+
+    return hydrated
+end
+
 -- NUI Callback
 
-RegisterNUICallback('GetWhatsappChat', function(data, cb)
+RegisterNUICallback('GetMessageChat', function(data, cb)
     if PhoneData.Chats[data.phone] then
         cb(PhoneData.Chats[data.phone])
     else
@@ -28,8 +44,11 @@ RegisterNUICallback('GetWhatsappChat', function(data, cb)
     end
 end)
 
-RegisterNUICallback('GetWhatsappChats', function(_, cb)
-    cb(PhoneData.Chats)
+RegisterNUICallback('GetMessageChats', function(_, cb)
+    QBCore.Functions.TriggerCallback('qb-phone:server:GetPlayerChats', function(chats)
+        PhoneData.Chats = HydrateChats(chats)
+        cb(PhoneData.Chats)
+    end)
 end)
 
 RegisterNUICallback('SendMessage', function(data, cb)
@@ -144,7 +163,7 @@ RegisterNetEvent('qb-phone:client:UpdateMessages', function(ChatMessages, Sender
             chatNumber = NumberKey,
         })
     else
-        Config.PhoneApplications['whatsapp'].Alerts = Config.PhoneApplications['whatsapp'].Alerts + 1
+        Config.PhoneApplications['message'].Alerts = Config.PhoneApplications['message'].Alerts + 1
     end
 
     if not PhoneData.Chats[NumberKey].Unread then PhoneData.Chats[NumberKey].Unread = 1 else PhoneData.Chats[NumberKey].Unread += 1 end

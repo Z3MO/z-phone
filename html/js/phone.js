@@ -1,4 +1,3 @@
-var ContactSearchActive = false;
 var CurrentFooterTab = "contacts";
 var CallData = {};
 var ClearNumberTimer = null;
@@ -613,14 +612,14 @@ function openContactContextMenu($contact) {
     });
 }
 
-function openWhatsappChatWithContact(contactData) {
+function openMessageChatWithContact(contactData) {
     if (!contactData) {
         return;
     }
 
     if (contactData.number !== QB.Phone.Data.PlayerData.charinfo.phone) {
-        $.post(`https://${GetParentResourceName()}/GetWhatsappChats`, JSON.stringify({}), function(chats){
-            QB.Phone.Functions.LoadWhatsappChats(chats);
+        $.post(`https://${GetParentResourceName()}/GetMessageChats`, JSON.stringify({}), function(chats){
+            QB.Phone.Functions.LoadMessageChats(chats);
         });
 
         $('.phone-application-container').animate({
@@ -633,25 +632,25 @@ function openWhatsappChatWithContact(contactData) {
             });
 
             QB.Phone.Functions.ToggleApp("phone", "none");
-            QB.Phone.Functions.ToggleApp("whatsapp", "block");
-            QB.Phone.Data.currentApplication = "whatsapp";
+            QB.Phone.Functions.ToggleApp("message", "block");
+            QB.Phone.Data.currentApplication = "message";
 
-            $.post(`https://${GetParentResourceName()}/GetWhatsappChat`, JSON.stringify({phone: contactData.number}), function(chat){
+            $.post(`https://${GetParentResourceName()}/GetMessageChat`, JSON.stringify({phone: contactData.number}), function(chat){
                 QB.Phone.Functions.SetupChatMessages(chat, {
                     name: contactData.name,
                     number: contactData.number
                 });
             });
 
-            $('.whatsapp-openedchat-messages').animate({scrollTop: 9999}, 150);
-            $(".whatsapp-openedchat").css({"display":"block"});
-            $(".whatsapp-openedchat").css({left: 0+"vh"});
-            $(".whatsapp-chats").animate({left: 30+"vh"},100, function(){
-                $(".whatsapp-chats").css({"display":"none"});
+            $('.message-openedchat-messages').animate({scrollTop: 9999}, 150);
+            $(".message-openedchat").css({"display":"block"});
+            $(".message-openedchat").css({left: 0+"vh"});
+            $(".message-chats").animate({left: 30+"vh"},100, function(){
+                $(".message-chats").css({"display":"none"});
             });
         }, 400)
     } else {
-        QB.Phone.Notifications.Add("fa fa-phone-alt", "Phone", "You can't whatsapp yourself..", "default", 3500);
+        QB.Phone.Notifications.Add("fa fa-phone-alt", "Phone", "You can't message yourself..", "default", 3500);
     }
 }
 
@@ -891,7 +890,7 @@ $(document).on('click', '#new-chat-phone', function(e){
         return;
     }
 
-    openWhatsappChatWithContact(ContactData);
+    openMessageChatWithContact(ContactData);
 });
 
 $(document).on('click', '#edit-contact', function(e){
@@ -1028,7 +1027,7 @@ $(document).on('click', '.phone-contact-context-item', function(e) {
     if (action === 'call') {
         SetupCall(contactData);
     } else if (action === 'message') {
-        openWhatsappChatWithContact(contactData);
+        openMessageChatWithContact(contactData);
     } else if (action === 'edit') {
         openEditContactForm(contactData);
     }

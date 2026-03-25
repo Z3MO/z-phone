@@ -20,12 +20,12 @@
 
     const applicationConfig = {
         phone: { app: "phone", tooltipText: "Phone", icon: "dialer.svg", tooltipPos: "top", style: "font-size: 3.3vh", job: false, blockedjobs: [], slot: 1, Alerts: 0 },
-        whatsapp: { app: "whatsapp", tooltipText: "Messages", icon: "messages.svg", tooltipPos: "top", style: "font-size: 3.3vh", job: false, blockedjobs: [], slot: 2, Alerts: 2 },
+        message: { app: "message", tooltipText: "Messages", icon: "messages.svg", tooltipPos: "top", style: "font-size: 3.3vh", job: false, blockedjobs: [], slot: 2, Alerts: 2 },
         camera: { app: "camera", tooltipText: "Camera", icon: "camera.svg", job: false, blockedjobs: [], slot: 3, Alerts: 0 },
         settings: { app: "settings", tooltipText: "Settings", icon: "settings.svg", job: false, blockedjobs: [], slot: 4, Alerts: 0 },
         ping: { app: "ping", tooltipText: "Ping", icon: "map.svg", tooltipPos: "top", style: "font-size: 3.3vh", job: false, blockedjobs: [], slot: 5, Alerts: 0 },
         mail: { app: "mail", tooltipText: "Mail", icon: "mail.svg", style: "font-size: 3vh", job: false, blockedjobs: [], slot: 6, Alerts: 1 },
-        proxi: { app: "proxi", tooltipText: "Proxi", icon: "yellowpages.svg", style: "font-size: 2vh", job: false, blockedjobs: [], slot: 7, Alerts: 0 },
+        proxi: { app: "proxi", tooltipText: "Proxi", icon: "proxi.svg", style: "font-size: 2vh", job: false, blockedjobs: [], slot: 7, Alerts: 0 },
         pulses: { app: "pulses", tooltipText: "Pulses", icon: "pulses.svg", tooltipPos: "top", job: false, blockedjobs: [], slot: 8, Alerts: 0 },
         party: { app: "party", tooltipText: "Party App", icon: "party.svg", style: "color: #78bdfd; font-size: 2.7vh", job: false, blockedjobs: [], slot: 9, Alerts: 0 },
         calculator: { app: "calculator", tooltipText: "Calculator", icon: "calculator.svg", tooltipPos: "bottom", style: "font-size: 2.5vh", job: false, blockedjobs: [], slot: 10, Alerts: 0 },
@@ -367,7 +367,7 @@
                 { name: ["Riley", "Morgan"], number: "555116", bank: "" },
                 { name: ["Casey", "Reed"], number: "555117", bank: "DEV-555666" }
             ],
-            whatsappChats: [
+            messageChats: [
                 {
                     name: "Alex Johnson",
                     number: "555002",
@@ -575,7 +575,7 @@
                     MetaData: { ...defaultState.phoneData.MetaData, ...((parsed.phoneData && parsed.phoneData.MetaData) || {}) },
                     Contacts: Array.isArray(parsed.phoneData && parsed.phoneData.Contacts) ? parsed.phoneData.Contacts : defaultState.phoneData.Contacts
                 },
-                whatsappChats: Array.isArray(parsed.whatsappChats) ? parsed.whatsappChats : defaultState.whatsappChats,
+                messageChats: Array.isArray(parsed.messageChats) ? parsed.messageChats : defaultState.messageChats,
                 servicesDirectory: Array.isArray(parsed.servicesDirectory)
                     ? parsed.servicesDirectory
                     : (parsed.taxiDrivers ? parsed.taxiDrivers : defaultState.servicesDirectory)
@@ -765,7 +765,7 @@
     }
 
     function getChatByNumber(number) {
-        return mockState.whatsappChats.find((chat) => String(chat.number) === String(number));
+        return mockState.messageChats.find((chat) => String(chat.number) === String(number));
     }
 
     function getContactName(number) {
@@ -782,7 +782,7 @@
                 Unread: 0,
                 messages: []
             };
-            mockState.whatsappChats.unshift(chat);
+            mockState.messageChats.unshift(chat);
         }
         return chat;
     }
@@ -906,9 +906,9 @@
                 return endMockCall("incoming");
             case "CancelOngoingCall":
                 return endMockCall("ongoing");
-            case "GetWhatsappChats":
-                return clone(sortChatsByLatest([...mockState.whatsappChats]));
-            case "GetWhatsappChat":
+            case "GetMessageChats":
+                return clone(sortChatsByLatest([...mockState.messageChats]));
+            case "GetMessageChat":
                 return clone(getChatByNumber(payload.phone) || false);
             case "SendMessage": {
                 const chatNumber = String(payload.ChatNumber || "");
@@ -928,15 +928,15 @@
 
                 chat.name = getContactName(chatNumber);
                 chat.Unread = 0;
-                const remainingChats = mockState.whatsappChats.filter((entry) => String(entry.number) !== chatNumber);
+                const remainingChats = mockState.messageChats.filter((entry) => String(entry.number) !== chatNumber);
                 remainingChats.push(chat);
-                mockState.whatsappChats = sortChatsByLatest(remainingChats);
+                mockState.messageChats = sortChatsByLatest(remainingChats);
                 saveState();
 
                 dispatchPhoneEvent("UpdateChat", {
                     chatData: clone(chat),
                     chatNumber,
-                    Chats: clone(mockState.whatsappChats)
+                    Chats: clone(mockState.messageChats)
                 });
 
                 return "ok";
@@ -1234,7 +1234,7 @@
                 return true;
             case "CasinoPhoneJobCenter":
                 return true;
-            case "GetAvailableTaxiDrivers":
+            case "GetAvailableServices":
                 return clone(mockState.servicesDirectory || mockState.taxiDrivers || []);
             case "GetGalleryData":
                 return clone(mockState.gallery);

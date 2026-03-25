@@ -1,5 +1,4 @@
 local QBCore = exports['qb-core']:GetCoreObject()
-local Hashtags = {} -- Located in the Twitter File as well ??
 local Calls = {}
 local WebHook = Config.Webhook
 local ContactsHasIban = false
@@ -57,7 +56,7 @@ local function isOnCooldown(cache, key, durationMs)
     return false
 end
 
-local function hasStoredContactConflict(citizenId, name, number, ignoreName, ignoreNumber)
+local function hasStoredContactConflict(citizenId, number, ignoreName, ignoreNumber)
     local storedContacts = exports.oxmysql:executeSync('SELECT name, number FROM player_contacts WHERE citizenid = ?', {citizenId})
 
     for _, contact in pairs(storedContacts or {}) do
@@ -166,7 +165,6 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPhoneData', function(source,
     if not Player or not src then return end
     local CID = Player.PlayerData.citizenid
 
-
     local PhoneData = {
         PlayerContacts = {},
         Chats = {},
@@ -176,7 +174,6 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPhoneData', function(source,
         Mails = {},
         Documents = {},
         Proxis = Proxis,
-        Tweets = Tweets,
         Images = {},
         ChatRooms = {},
     }
@@ -196,31 +193,45 @@ QBCore.Functions.CreateCallback('qb-phone:server:GetPhoneData', function(source,
         PhoneData.Documents = Note
     end
 
-    local messages = exports.oxmysql:executeSync('SELECT * FROM phone_messages WHERE citizenid = ?', {CID})
-    if messages and next(messages) then
-        PhoneData.Chats = messages
-    end
-
-    if Hashtags and next(Hashtags) then
-        PhoneData.Hashtags = Hashtags
-    end
-
-    local mails = exports.oxmysql:executeSync('SELECT * FROM player_mails WHERE citizenid = ? ORDER BY `date` ASC', {CID})
-    if mails[1] then
-        PhoneData.Mails = mails
-    end
-
-    local images = exports.oxmysql:executeSync('SELECT * FROM phone_gallery WHERE citizenid = ? ORDER BY `date` DESC',{CID})
-    if images and next(images) then
-        PhoneData.Images = images
-    end
-
-    local chat_rooms = MySQL.query.await("SELECT id, room_code, room_name, room_owner_id, room_owner_name, room_members, is_pinned, IF(room_pin = '' or room_pin IS NULL, false, true) AS protected FROM phone_chatrooms")
-    if chat_rooms[1] then
-        PhoneData.ChatRooms = chat_rooms
-        ChatRooms = chat_rooms
-    end
     cb(PhoneData)
+end)
+
+QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerChats', function(source, cb)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    if not Player then
+        cb({})
+        return
+    end
+
+    local CID = Player.PlayerData.citizenid
+    local messages = exports.oxmysql:executeSync('SELECT * FROM phone_messages WHERE citizenid = ?', {CID})
+    cb(messages or {})
+end)
+
+QBCore.Functions.CreateCallback('qb-phone:server:GetPlayerMails', function(source, cb)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    if not Player then
+        cb({})
+        return
+    end
+
+    local CID = Player.PlayerData.citizenid
+    local mails = exports.oxmysql:executeSync('SELECT * FROM player_mails WHERE citizenid = ? ORDER BY `date` ASC', {CID}) or {}
+
+    for _, mail in pairs(mails) do
+        if type(mail.button) == 'string' and mail.button ~= '' then
+            mail.button = json.decode(mail.button)
+        end
+    end
+
+    cb(mails)
+end)
+
+QBCore.Functions.CreateCallback('qb-phone:server:GetChatRoomList', function(source, cb)
+    local chat_rooms = MySQL.query.await("SELECT id, room_code, room_name, room_owner_id, room_owner_name, room_members, is_pinned, IF(room_pin = '' or room_pin IS NULL, false, true) AS protected FROM phone_chatrooms") or {}
+    cb(chat_rooms)
 end)
 
 
@@ -348,7 +359,7 @@ RegisterNetEvent('qb-phone:server:CallContact', function(TargetData, CallId, Ano
     TriggerClientEvent('qb-phone:client:GetCalled', Target.PlayerData.source, Ply.PlayerData.charinfo.phone, CallId, AnonymousCall)
 end)
 
-RegisterNetEvent('qb-phone:server:EditContact', function(newName, newNumber, NewIban, oldName, oldNumber, oldIban)
+RegisterNetEvent('qb-phone:server:EditContact', function(newName, newNumber, NewIban, oldName, oldNumber)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
 
@@ -359,7 +370,6 @@ RegisterNetEvent('qb-phone:server:EditContact', function(newName, newNumber, New
     NewIban = sanitizeIban(NewIban)
     oldName = sanitizeText(oldName, 48)
     oldNumber = sanitizePhoneNumber(oldNumber)
-    oldIban = sanitizeIban(oldIban)
 
     if newName == '' or #newNumber < 3 or oldName == '' or #oldNumber < 3 then
         return
@@ -369,7 +379,7 @@ RegisterNetEvent('qb-phone:server:EditContact', function(newName, newNumber, New
         return TriggerClientEvent('qb-phone:client:CustomNotification', src, 'Phone', "You can't save your own number.", 'fas fa-user-pen', '#e84118', 2500)
     end
 
-    if hasStoredContactConflict(Player.PlayerData.citizenid, newName, newNumber, oldName, oldNumber) then
+    if hasStoredContactConflict(Player.PlayerData.citizenid, newNumber, oldName, oldNumber) then
         return TriggerClientEvent('qb-phone:client:CustomNotification', src, 'Phone', 'Another contact already uses that number.', 'fas fa-user-pen', '#e84118', 2500)
     end
 
@@ -408,7 +418,7 @@ RegisterNetEvent('qb-phone:server:AddNewContact', function(name, number, iban)
     if number == sanitizePhoneNumber(Player.PlayerData.charinfo.phone) then
         return TriggerClientEvent('qb-phone:client:CustomNotification', src, 'Phone', "You can't save your own number.", 'fas fa-address-book', '#e84118', 2500)
     end
-    if hasStoredContactConflict(Player.PlayerData.citizenid, name, number) then
+    if hasStoredContactConflict(Player.PlayerData.citizenid, number) then
         return TriggerClientEvent('qb-phone:client:CustomNotification', src, 'Phone', 'That contact already exists.', 'fas fa-address-book', '#e84118', 2500)
     end
 

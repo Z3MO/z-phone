@@ -43,8 +43,8 @@ Config.PhoneApplications = {
         slot = 1,
         Alerts = 0,
     },
-    ["whatsapp"] = {
-        app = "whatsapp",
+    ["message"] = {
+        app = "message",
         tooltipText = "Messages",
         icon = "messages.svg",
         tooltipPos = "top",
@@ -96,7 +96,7 @@ Config.PhoneApplications = {
     ["proxi"] = {
         app = "proxi",
         tooltipText = "Proxi",
-        icon = "yellowpages.svg",
+        icon = "proxi.svg",
         style = "font-size: 2vh";
         job = false,
         blockedjobs = {},
@@ -165,8 +165,8 @@ Config.PhoneApplications = {
         slot = 13,
         Alerts = 0,
     },
-    ["taxi"] = {
-        app = "taxi",
+    ["services"] = {
+        app = "services",
         tooltipText = "Services",
         icon = "services.svg",
         tooltipPos = "bottom",
@@ -249,8 +249,6 @@ Config.PhoneApplications = {
         Alerts = 0,
     },
 }
-
-Config.MaxSlots = 22
 
 Config.JobCenter = {
     [1] = {

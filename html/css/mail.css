@@ -28,9 +28,9 @@
 
 .mail-header {
     padding: 6vh 2vh 1.5vh 2vh;
-    background: rgba(17, 19, 34, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: rgba(17, 19, 34, 0.9);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     position: sticky;
     top: 0;
     z-index: 5;
@@ -213,9 +213,9 @@
 /* Mail Details */
 .mail-details-header {
     padding: 6vh 2vh 1.5vh 2vh;
-    background: rgba(14, 14, 17, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: rgba(14, 14, 17, 0.9);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     align-items: center;
@@ -228,14 +228,54 @@
 
 #mail-back {
     color: #3b82f6;
-    font-size: 2vh;
+    font-size: 1.6vh;
     cursor: pointer;
-    padding: 1vh;
-    border-radius: 50%;
-    transition: background 0.2s;
-    display: flex;
+    padding: 0;
+    border: none;
+    border-radius: 0.8vh;
+    width: 2.4vh;
+    height: 2.4vh;
+    background: #1e3a4c;
+    color: #dbeafe;
+    transition: all 0.15s ease;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+}
+
+.mail-back-button {
+    color: #3b82f6;
+    font-size: 1.6vh;
+    cursor: pointer;
+    padding: 0;
+    border: none;
+    border-radius: 0.8vh;
+    width: 2.4vh;
+    height: 2.4vh;
+    background: #1e3a4c;
+    color: #dbeafe;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.mail-back-button:hover {
+    background: #275572;
+    transform: translateY(-0.08vh);
+    box-shadow: 0 0.4vh 0.8vh rgba(59, 130, 246, 0.15);
+}
+
+.mail-back-button:active {
+    transform: translateY(0.04vh);
+    box-shadow: 0 0.2vh 0.4vh rgba(59, 130, 246, 0.1);
+}
+
+.mail-back-button:focus-visible {
+    outline: 0.1vh solid rgba(59, 130, 246, 0.9);
+    outline-offset: 0.15vh;
 }
 
 #mail-back:hover {

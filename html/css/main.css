@@ -228,7 +228,7 @@ body {
     justify-content: center;
     border-radius: 1.5vh;
     opacity: 1.0;
-    transition: all 0.3s ease;
+    transition: transform 0.2s ease, opacity 0.2s ease;
     cursor: pointer;
     padding: 0;
     box-sizing: border-box;
@@ -1015,8 +1015,8 @@ body {
     min-width: 22vh;
     max-width: 82%;
     background: linear-gradient(135deg, rgba(14, 22, 17, 0.97) 0%, rgba(8, 18, 12, 0.97) 100%);
-    backdrop-filter: blur(20px) saturate(1.8);
-    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    backdrop-filter: blur(10px) saturate(1.2);
+    -webkit-backdrop-filter: blur(10px) saturate(1.2);
     border: 1px solid rgba(52, 199, 89, 0.38);
     border-top: 1px solid rgba(52, 199, 89, 0.55);
     margin: 0 auto;
@@ -1281,48 +1281,6 @@ body {
     text-overflow: ellipsis;
 }
 
-/* Phone Noti Not Used mostly */
-.screen-notifications-container {
-    display: none;
-    position: absolute;
-    background: rgba(29, 160, 242, 0.9);
-    height: 9vh;
-    width: 34vh;
-    bottom: 5vh;
-    right: -35vh;
-    border-radius: 1.7vh;
-    z-index: -5;
-}
-
-.screen-notification-icon {
-    position: absolute;
-    line-height: 9.3vh;
-    left: 2vh;
-    font-size: 3.75vh;
-    color: white;
-}
-
-.screen-notification-title {
-    position: absolute;
-    line-height: 5.5vh;
-    left: 7.5vh;
-    font-size: 1.5vh;
-    color: white;
-    font-family: 'Poppins', sans-serif;
-}
-
-.screen-notification-content {
-    position: absolute;
-    top: 4.2vh;
-    left: 7.5vh;
-    font-size: 1.2vh;
-    color: white;
-    font-family: 'Poppins', sans-serif;
-    height: 3.5vh;
-    width: 26vh;
-    overflow: hidden;
-}
-
 /* Phone App Alert */
 .app-unread-alerts {
     position: absolute;
@@ -1450,3 +1408,45 @@ body {
 .custom-control, .custom-switch, .custom-control-input {
     color: white
 }
+
+body.reduced-motion .container,
+body.reduced-motion .phone-application-container,
+body.reduced-motion .phone-page-container,
+body.reduced-motion .phone-currentcall-container,
+body.reduced-motion .pulses-list,
+body.reduced-motion .mail-home,
+body.reduced-motion .mail-details-view {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+}
+
+body.reduced-motion * {
+    scroll-behavior: auto !important;
+}
+
+:root {
+    --phone-text-scale: 1;
+}
+
+.container {
+    font-size: calc(1em * var(--phone-text-scale));
+}
+
+body.keyboard-navigation :focus-visible {
+    outline: 0.12vh solid rgba(96, 165, 250, 0.95) !important;
+    outline-offset: 0.14vh;
+}
+
+body.high-contrast .settings-app,
+body.high-contrast .message-app,
+body.high-contrast .phone-app,
+body.high-contrast .calendar-app {
+    filter: contrast(1.12) saturate(1.08);
+}
+
+body.high-contrast .message-openedchat-message,
+body.high-contrast .phone-contact,
+body.high-contrast .calendar-item {
+    border-color: rgba(191, 219, 254, 0.45) !important;
+}
+
