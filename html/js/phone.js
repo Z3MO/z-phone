@@ -210,6 +210,7 @@ function resetPhoneCallScreen() {
     QB.Phone.Functions.ToggleApp('phone-call', 'none');
     QB.Phone.Functions.HeaderTextColor('white', 250);
     QB.Phone.Data.CallActive = false;
+    CanOpenApp = true;
     CallData = {};
 
     QB.Phone.Data.currentApplication = null;

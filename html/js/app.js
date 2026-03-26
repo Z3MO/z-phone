@@ -1003,17 +1003,29 @@ $(document).ready(function(){
                 CancelOutgoingCall();
                 break;
             case "IncomingCallAlert":
-                $.post(`https://${GetParentResourceName()}/HasPhone`, JSON.stringify({}), function(HasPhone){
-                    if (HasPhone) {
-                        IncomingCallAlert(event.data.CallData, event.data.Canceled, event.data.AnonymousCall);
-                    }
-                });
+                if (event.data.Canceled) {
+                    IncomingCallAlert(event.data.CallData, true, event.data.AnonymousCall);
+                } else {
+                    $.post(`https://${GetParentResourceName()}/HasPhone`, JSON.stringify({}), function(HasPhone){
+                        if (HasPhone) {
+                            IncomingCallAlert(event.data.CallData, false, event.data.AnonymousCall);
+                        }
+                    });
+                }
                 break;
             case "refreshInvoice":
                     QB.Phone.Functions.LoadBankInvoices(event.data.invoices);
                 break;
             case "SetupHomeCall":
                 QB.Phone.Functions.SetupCurrentCall(event.data.CallData);
+                if (!event.data.CallData || !event.data.CallData.InCall) {
+                    var needsReset = QB.Phone.Data.currentApplication === "phone-call"
+                        || $('.phone-call-app').is(':visible')
+                        || $('.phone-app').css('display') === 'none';
+                    if (needsReset && typeof resetPhoneCallScreen === 'function') {
+                        resetPhoneCallScreen();
+                    }
+                }
                 break;
             case "AnswerCall":
                 QB.Phone.Functions.AnswerCall(event.data.CallData);
