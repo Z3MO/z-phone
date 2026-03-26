@@ -25,24 +25,30 @@ body {
     transform: translateY(100%);
     opacity: 0;
     filter: none;
+    --phone-frame-width: 29.3vh;
+    --phone-frame-height: 59vh;
+    --phone-frame-right: 2.2vh;
+    --phone-frame-bottom: 3.25vh;
+    --phone-screen-inset-x: 0.72vh;
+    --phone-screen-inset-y: 0.88vh;
 }
 
 .phone-frame {
     position: absolute;
-    width: 16.5vw;
-    height: 59vh;
-    bottom: 3.25vh;
-    right: 1.25vw;
+    width: var(--phone-frame-width);
+    height: var(--phone-frame-height);
+    bottom: var(--phone-frame-bottom);
+    right: var(--phone-frame-right);
     z-index: 150;
     pointer-events: none;
 }
 
 #phone-side-button-power {
     position: absolute;
-    width: 1.5vw;
+    width: 0.9vh;
     height: 4.6vh;
     bottom: 45.9vh;
-    right: 1.25vw;
+    right: var(--phone-frame-right);
     z-index: 160;
     cursor: pointer;
 }
@@ -51,8 +57,8 @@ body {
 #phone-volume-up,
 #phone-volume-down {
     position: absolute;
-    right: 17.5vw; /* left edge of phone frame ~ 1.25 + 16.5 - button width */
-    width: 0.50vw;
+    right: calc(var(--phone-frame-right) + var(--phone-frame-width) - 0.45vh);
+    width: 0.50vh;
     height: 2.6vh;
     background: rgba(180, 180, 180, 0.0);
     border-radius: 0.4vh 0 0 0.4vh;
@@ -147,13 +153,16 @@ body {
 
 .phone-background {
     position: absolute;
-    width: 15.8vw; /*265.00399999999996px*/
-    height: 57.5vh; /*479.61px*/
-    bottom: 4vh;
-    right: 1.6vw;
+    width: calc(var(--phone-frame-width) - (var(--phone-screen-inset-x) * 2));
+    height: calc(var(--phone-frame-height) - (var(--phone-screen-inset-y) * 2));
+    bottom: calc(var(--phone-frame-bottom) + var(--phone-screen-inset-y));
+    right: calc(var(--phone-frame-right) + var(--phone-screen-inset-x));
     overflow: hidden;
     background-size: cover;
-    border-radius: 3vh;
+    border-radius: 2.7vh;
+    clip-path: inset(0 round 2.7vh);
+    -webkit-clip-path: inset(0 round 2.7vh);
+    box-shadow: inset 0 0 0 0.1vh rgba(0, 0, 0, 0.35);
     background-position-x: center;
     background-repeat: no-repeat;
     background-image: url('../img/backgrounds/default-qbcore.png');

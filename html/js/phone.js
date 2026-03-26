@@ -205,13 +205,14 @@ function resetPhoneCallScreen() {
     $('.phone-call-incoming, .phone-call-outgoing, .phone-call-ongoing').hide();
     $('.phone-call-app').hide();
     $('.phone-currentcall-container').hide();
+    $('.phone-app').css({"display":"block"});
+    $('.phone-application-container').css({"top":"0%"});
     QB.Phone.Functions.ToggleApp('phone-call', 'none');
     QB.Phone.Functions.HeaderTextColor('white', 250);
     QB.Phone.Data.CallActive = false;
+    CallData = {};
 
-    if (QB.Phone.Data.currentApplication === 'phone-call') {
-        QB.Phone.Data.currentApplication = null;
-    }
+    QB.Phone.Data.currentApplication = null;
 }
 
 function requestPhoneCall(contactData) {

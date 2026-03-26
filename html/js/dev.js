@@ -32,7 +32,7 @@
         gallery: { app: "gallery", tooltipText: "Gallery", icon: "gallery.svg", tooltipPos: "bottom", style: "font-size: 2.7vh", job: false, blockedjobs: [], slot: 11, Alerts: 0 },
         garage: { app: "garage", tooltipText: "Garages", icon: "garages.svg", style: "font-size: 3.3vh", job: false, blockedjobs: [], slot: 12, Alerts: 0 },
         bank: { app: "bank", tooltipText: "Bank", icon: "fleeca.svg", style: "font-size: 2.7vh", job: false, blockedjobs: [], slot: 13, Alerts: 0 },
-        taxi: { app: "taxi", tooltipText: "Services", icon: "services.svg", tooltipPos: "bottom", style: "font-size: 3vh", job: false, blockedjobs: [], slot: 14, Alerts: 0 }
+        services: { app: "services", tooltipText: "Services", icon: "services.svg", tooltipPos: "bottom", style: "font-size: 3vh", job: false, blockedjobs: [], slot: 14, Alerts: 0 }
     };
 
     function clone(data) {

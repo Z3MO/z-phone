@@ -1000,11 +1000,7 @@ $(document).ready(function(){
                 QB.Phone.Functions.ReloadMessageAlerts(event.data.Chats);
                 break;
             case "CancelOutgoingCall":
-                $.post(`https://${GetParentResourceName()}/HasPhone`, JSON.stringify({}), function(HasPhone){
-                    if (HasPhone) {
-                        CancelOutgoingCall();
-                    }
-                });
+                CancelOutgoingCall();
                 break;
             case "IncomingCallAlert":
                 $.post(`https://${GetParentResourceName()}/HasPhone`, JSON.stringify({}), function(HasPhone){
@@ -1295,21 +1291,41 @@ $(document).on('click', '.widget-battery', function(e) {
 // App Closing Gesture (Swipe Up from Bottom)
 var appSwipeStartY = 0;
 var isAppSwiping = false;
+var appSwipeDistanceToClose = 50;
+
+function getPointerClientY(e) {
+    if (e.type && e.type.indexOf('touch') === 0) {
+        var touchEvent = e.originalEvent || e;
+        if (touchEvent.touches && touchEvent.touches.length > 0) {
+            return touchEvent.touches[0].clientY;
+        }
+        if (touchEvent.changedTouches && touchEvent.changedTouches.length > 0) {
+            return touchEvent.changedTouches[0].clientY;
+        }
+    }
+    return e.clientY;
+}
 
 $(document).on('mousedown touchstart', '.phone-application-container', function(e) {
     if (QB.Phone.Data.currentApplication === null) return;
-    
+
     var container = $(this);
-    var height = container.height();
-    var pageY = e.type === 'touchstart' ? e.originalEvent.touches[0].pageY : e.pageY;
-    var containerOffset = container.offset().top;
-    var relativeY = pageY - containerOffset;
-    
-    // Only trigger if starting from the bottom 60px
-    if (relativeY > (height - 60)) {
+    var element = container.get(0);
+    if (!element) return;
+
+    var rect = element.getBoundingClientRect();
+    var currentY = getPointerClientY(e);
+    if (typeof currentY !== 'number') return;
+
+    var relativeY = currentY - rect.top;
+    var activationZone = Math.max(22, Math.min(60, rect.height * 0.14));
+    appSwipeDistanceToClose = Math.max(36, Math.min(90, rect.height * 0.1));
+
+    // Only trigger if starting from the lower area of the current app view
+    if (relativeY > (rect.height - activationZone)) {
         isAppSwiping = true;
-        appSwipeStartY = pageY;
-        
+        appSwipeStartY = currentY;
+
         // Prepare container for manual manipulation
         $('.phone-application-container').css({
             'transition': 'none',
@@ -1320,17 +1336,21 @@ $(document).on('mousedown touchstart', '.phone-application-container', function(
 
 $(document).on('mousemove touchmove', function(e) {
     if (!isAppSwiping || QB.Phone.Data.currentApplication === null) return;
-    
-    var currentY = e.type === 'touchmove' ? e.originalEvent.touches[0].clientY : e.clientY;
+
+    var currentY = getPointerClientY(e);
+    if (typeof currentY !== 'number') return;
     var deltaY = currentY - appSwipeStartY;
-    
+
     // Only handle upward movement (negative deltaY)
     if (deltaY < 0) {
+        var element = $('.phone-application-container').get(0);
+        var dragDistance = element ? Math.max(120, element.getBoundingClientRect().height * 0.35) : 200;
+
         // Calculate scale: 1 -> 0.8 as we drag up
-        var progress = Math.min(Math.abs(deltaY) / 200, 1);
+        var progress = Math.min(Math.abs(deltaY) / dragDistance, 1);
         var scale = 1 - (progress * 0.2);
         var translateY = deltaY;
-        
+
         $('.phone-application-container').css({
             'transform': `translateY(${translateY}px) scale(${scale})`,
             'border-radius': `${progress * 20}px`
@@ -1340,12 +1360,15 @@ $(document).on('mousemove touchmove', function(e) {
 
 $(document).on('mouseup touchend', function(e) {
     if (!isAppSwiping || QB.Phone.Data.currentApplication === null) return;
-    
+
     isAppSwiping = false;
-    var currentY = e.type === 'touchend' ? e.originalEvent.changedTouches[0].clientY : e.clientY;
+    var currentY = getPointerClientY(e);
+    if (typeof currentY !== 'number') {
+        currentY = appSwipeStartY;
+    }
     var deltaY = currentY - appSwipeStartY;
-    
-    if (deltaY < -50) { // Threshold to close
+
+    if (deltaY < -appSwipeDistanceToClose) { // Threshold to close
         QB.Phone.Functions.CloseApplication();
     } else {
         // Reset
