@@ -1058,7 +1058,7 @@
             case "GetPulses":
                 return {
                     PulseData: clone(mockState.pulses),
-                    hasVPN: true
+                    hasVPN: false
                 };
             case "GetPulseCommentCounts": {
                 const counts = {};

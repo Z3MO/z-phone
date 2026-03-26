@@ -401,8 +401,7 @@ function renderProfile(Pulses) {
 }
 
 QB.Phone.Notifications.LoadPulses = function(Pulses, hasVPN=false, isTabSwitch = false, isUpdate = false) {
-    QB.Phone.Data.hasVPN = true; // Forced to true for browser testing
-    hasVPN = true; // Forced to true for browser testing
+    QB.Phone.Data.hasVPN = !!hasVPN;
     
     if (CurrentPulsesView === 'feed') {
         if (Pulses && Pulses.length > 0) {
@@ -420,7 +419,7 @@ QB.Phone.Notifications.LoadPulses = function(Pulses, hasVPN=false, isTabSwitch =
     }
 
     // This part is for the anonymous pulse indicator, which is not directly part of the footer/profile
-    if (hasVPN) {
+    if (QB.Phone.Data.hasVPN) {
         $(".pulse-anonymous").css("display", "block");
     } else {
         $(".pulse-anonymous").css("display", "none");

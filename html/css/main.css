@@ -45,12 +45,26 @@ body {
 
 #phone-side-button-power {
     position: absolute;
-    width: 0.9vh;
+    width: 0.5vh;
     height: 4.6vh;
     bottom: 45.9vh;
     right: var(--phone-frame-right);
+    background: rgba(180, 180, 180, 0.0);
+    border-radius: 0 0.4vh 0.4vh 0;
     z-index: 160;
     cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+    transform-origin: right center;
+}
+
+#phone-side-button-power:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scaleX(1.2);
+}
+
+#phone-side-button-power:active {
+    background: rgba(255, 255, 255, 0.55);
+    transform: scaleX(1.1);
 }
 
 /* Volume side buttons – left side of phone frame */
@@ -472,139 +486,6 @@ body {
     text-transform: uppercase;
 }
 
-
-.widget-quick {
-    grid-area: widget-quick;
-    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-    justify-content: center;
-    gap: 0.5vh;
-}
-
-.widget-quick .quick-icon {
-    font-size: 3vh;
-    background: rgba(255,255,255,0.2);
-    width: 5vh;
-    height: 5vh;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.widget-quick .quick-label {
-    font-size: 1.2vh;
-    font-weight: 600;
-}
-
-.widget-recent {
-    grid-area: widget-recent;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    text-align: left;
-    padding: 1.5vh;
-    gap: 1.5vh;
-}
-
-.music-icon {
-    font-size: 3vh;
-    background: rgba(255,255,255,0.2);
-    width: 5vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.music-content {
-    flex: 1;
-    overflow: hidden;
-}
-.music-title {
-    font-size: 1.4vh;
-    font-weight: 700;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.music-artist { 
-    font-size: 1.1vh;
-    opacity: 0.8;
-}
-
-.music-wave {
-    display: flex;
-    align-items: flex-end;
-    height: 2vh;
-    gap: 2px;
-}
-
-.music-wave span {
-    width: 3px;
-    background: white;
-    border-radius: 2px;
-    animation: wave 1s infinite ease-in-out;
-}
-
-.music-wave span:nth-child(1) { animation-duration: 0.8s; height: 60%; }
-.music-wave span:nth-child(2) { animation-duration: 1.1s; height: 100%; }
-.music-wave span:nth-child(3) { animation-duration: 1.3s; height: 40%; }
-.music-wave span:nth-child(4) { animation-duration: 0.9s; height: 80%; }
-
-@keyframes wave {
-    0%, 100% { transform: scaleY(0.5); }
-    50% { transform: scaleY(1); }
-}
-
-.widget-battery {
-    grid-area: widget-battery;
-    background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
-    padding: 0;
-}
-
-.battery-ring {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.circular-chart {
-    display: block;
-    margin: 0 auto;
-    max-width: 80%;
-    max-height: 250px;
-}
- 
-.circle-bg {
-    fill: none;
-    stroke: rgba(255, 255, 255, 0.2);
-    stroke-width: 3.8;
-}
-
-.circle {
-    fill: none;
-    stroke-width: 2.8;
-    stroke-linecap: round;
-    stroke: #fff;
-    animation: progress 1s ease-out forwards;
-}
-
-@keyframes progress {
-    0% { stroke-dasharray: 0 100; }
-}
-
-.battery-level-text {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 1.4vh;
-    font-weight: 700;
-}
 /* Home page app sections */
 .home-apps-section .phone-application,
 .home-quick-section .phone-application {
@@ -950,18 +831,6 @@ body {
     animation-delay: 0.3s;
 }
 
-.widget-recent {
-    animation-delay: 0.4s;
-}
-
-.widget-quick {
-    animation-delay: 0.5s;
-}
-
-.widget-battery {
-    animation-delay: 0.6s;
-}
-
 .phone-application > i {
     margin: 2vh 0.3vw 0.5vh 0.3vw;
 }
@@ -1056,10 +925,6 @@ body {
     50% {
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 0 0 5px rgba(52, 199, 89, 0.0);
     }
-}
-
-.phone-currentcall-icon-square {
-    display: none;
 }
 
 .phone-currentcall-icon {
@@ -1400,24 +1265,6 @@ body {
     text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
-/* Tooltip css*/
-.tooltip-inner {
-    font-size: 0.5vw;
-    color: white;
-}
-
-.toggle.ios, .toggle-on.ios, .toggle-off.ios { 
-    border-radius: 20px; 
-}
-
-.toggle.ios .toggle-handle { 
-    border-radius: 20px; 
-}
-
-.custom-control, .custom-switch, .custom-control-input {
-    color: white
-}
-
 body.reduced-motion .container,
 body.reduced-motion .phone-application-container,
 body.reduced-motion .phone-page-container,
@@ -1448,14 +1295,12 @@ body.keyboard-navigation :focus-visible {
 
 body.high-contrast .settings-app,
 body.high-contrast .message-app,
-body.high-contrast .phone-app,
-body.high-contrast .calendar-app {
+body.high-contrast .phone-app {
     filter: contrast(1.12) saturate(1.08);
 }
 
 body.high-contrast .message-openedchat-message,
-body.high-contrast .phone-contact,
-body.high-contrast .calendar-item {
+body.high-contrast .phone-contact {
     border-color: rgba(191, 219, 254, 0.45) !important;
 }
 

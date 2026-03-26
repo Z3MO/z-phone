@@ -158,9 +158,12 @@ function updateDialerPreview() {
 }
 
 function setCallVisualState(state, contactData) {
-    var safeName = sanitizePhoneText(contactData && contactData.name, formatPhoneDisplay(contactData && contactData.number), 48);
-    var safeNumber = formatPhoneDisplay(contactData && contactData.number);
-    var avatarLabel = createAvatarLabel(safeName, safeNumber, contactData && contactData.anonymous);
+    var sourceData = (contactData && contactData.TargetData) ? contactData.TargetData : (contactData || {});
+    var rawNumber = sanitizePhoneNumber(sourceData.number || sourceData.phone || sourceData.id || '');
+    var safeNumber = formatPhoneDisplay(rawNumber);
+    var safeName = sanitizePhoneText(sourceData.name, safeNumber, 48);
+    var isAnonymous = !!(sourceData.anonymous || (contactData && contactData.anonymous));
+    var avatarLabel = createAvatarLabel(safeName, safeNumber, isAnonymous);
 
     $('.phone-call-incoming, .phone-call-outgoing, .phone-call-ongoing').hide();
     $('.phone-call-' + state).show();
@@ -226,6 +229,12 @@ function resetPhoneCallScreen() {
         isAppSwiping = false;
     }
 
+    if (PhoneTabTransitionTimer !== null) {
+        clearTimeout(PhoneTabTransitionTimer);
+        PhoneTabTransitionTimer = null;
+    }
+    PhoneTabAnimating = false;
+
     QB.Phone.Functions.ToggleApp('phone-call', 'none');
     QB.Phone.Functions.HeaderTextColor('white', 250);
     QB.Phone.Data.CallActive = false;
@@ -233,6 +242,10 @@ function resetPhoneCallScreen() {
     CallData = {};
 
     QB.Phone.Data.currentApplication = null;
+
+    if (QB.Phone.Functions.ResetPhoneAppView) {
+        QB.Phone.Functions.ResetPhoneAppView();
+    }
 }
 
 function requestPhoneCall(contactData) {
@@ -386,7 +399,14 @@ QB.Phone.Functions.ResetPhoneAppView = function() {
     $('.phone-edit-contact').hide().removeClass('phone-edit-contact-visible phone-edit-contact-closing').attr('aria-hidden', 'true');
     $('.phone-nearby-share-modal').hide().attr('aria-hidden', 'true');
 
-    $('.phone-contacts, .phone-recent, .phone-keypad, .phone-suggestedcontacts').hide();
+    $('.phone-contacts, .phone-recent, .phone-keypad, .phone-suggestedcontacts')
+        .stop(true, true)
+        .removeClass('phone-tab-enter-left phone-tab-enter-right phone-tab-leave-left phone-tab-leave-right')
+        .css({ zIndex: '', pointerEvents: '', transform: '', opacity: '' })
+        .hide();
+
+    $('.phone-app-footer').find('.phone-app-footer-button').removeClass('phone-selected-footer-tab');
+    $('.phone-app-footer').find('[data-phonefootertab="' + CurrentFooterTab + '"]').addClass('phone-selected-footer-tab');
     $('.phone-' + CurrentFooterTab).show();
     togglePhonePrimaryHeader();
 };
@@ -1257,7 +1277,9 @@ QB.Phone.Functions.SetupCurrentCall = function(cData) {
                 $(".phone-currentcall-title").text("In call ("+cData.CallTime+")");
         }
 
-            $(".phone-currentcall-contact").text(sanitizePhoneText(cData.TargetData.name, 'Unknown', 48));
+            var currentCallNumber = sanitizePhoneNumber(cData.TargetData && cData.TargetData.number);
+            var currentCallName = sanitizePhoneText(cData.TargetData && cData.TargetData.name, formatPhoneDisplay(currentCallNumber), 48);
+            $(".phone-currentcall-contact").text(currentCallName || formatPhoneDisplay(currentCallNumber) || 'Unknown Number');
     } else {
         $(".phone-currentcall-container").css({"display":"none"});
     }

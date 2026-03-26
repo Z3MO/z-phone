@@ -48,19 +48,6 @@ function setElementText(selector, value) {
     }
 }
 
-function setElementDisplay(selector, value) {
-    const element = getElement(selector);
-    if (element) {
-        element.style.display = value;
-    }
-}
-
-function hideElements(selectors) {
-    document.querySelectorAll(selectors).forEach((element) => {
-        element.style.display = "none";
-    });
-}
-
 function waitForDuration(duration) {
     return new Promise((resolve) => {
         window.setTimeout(resolve, duration);

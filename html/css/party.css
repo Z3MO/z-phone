@@ -284,22 +284,6 @@ input.jobcenter-input-password, input.jobcenter-input-password2, .jobcenter-inpu
     display: none;
 }
 
-.jobcenter-div-active-stage{
-    width: 100%;
-    padding: 1.5vh;
-    display: flex;
-    align-items: center;
-    gap: 1vh;
-    color: white;
-    font-size: 1.5vh;
-    position: relative;
-    height: auto;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 1vh;
-    margin-bottom: 1vh;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
 .jobcenter-div-job-group{
     width: 100%;
     height: auto;

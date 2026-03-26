@@ -26,6 +26,12 @@
     color: rgba(221, 235, 248, 0.58);
     font-size: 1.8vh;
     font-weight: 500;
+    max-width: 86%;
+    margin: 0 auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    z-index: 3;
 }
 
 .phone-call-incoming-caller,
@@ -37,6 +43,14 @@
     color: white;
     font-size: 3vh;
     font-weight: 700;
+    max-width: 82%;
+    margin: 0 auto;
+    padding: 0 1.2vh;
+    line-height: 1.12;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    z-index: 3;
 }
 
 .phone-call-incoming-picture,
@@ -46,7 +60,7 @@
     margin: 0 auto;
     left: 0;
     right: 0;
-    top: 15vh;
+    top: 17vh;
     height: 16vh;
     width: 16vh;
     border-radius: 50%;
@@ -61,6 +75,7 @@
     color: white;
     font-size: 5vh;
     font-weight: 800;
+    z-index: 1;
 }
 
 #incoming-answer,
@@ -594,15 +609,6 @@
     box-shadow: 0 0.4vh 1vh rgba(0, 0, 0, 0.2);
 }
 
-.phone-contact-info {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 1.2vh;
-    width: 100%;
-    box-sizing: border-box;
-}
-
 .phone-contact-main {
     position: relative;
     display: flex;
@@ -613,14 +619,6 @@
 }
 
 .phone-contact-main .phone-contact-details {
-    flex: 1;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.2vh;
-}
-
-.phone-contact-info .phone-contact-details {
     flex: 1;
     min-width: 0;
     display: flex;
@@ -655,10 +653,6 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.phone-contact-number {
-    font-size: 1.3vh;
 }
 
 .phone-contact-context-menu {
@@ -2118,32 +2112,6 @@
 
 /* Check Box Input */
 
-.phone-menu-checkbox-title{
-    position: relative;
-    bottom: 2.5vh;
-    left: 0.5vh;
-    font-size: 1.4vh;
-    color: white;
-}
-
-.phone-menu-checkbox{
-    position: relative;
-    margin-left: 35%;
-    margin-bottom: -10%;
-    width: 100%;
-    border: none;
-    background: none;
-    outline: none;
-    text-indent: 3vh;
-    text-align: left;
-    line-height: 3.0vh;
-    font-size: 1.45vh;
-    overflow: hidden;
-    color: white;
-    border-bottom: .1vh solid #fff;
-    transition: 0.25s;
-}
-
 /* Regular Input Menu */
 
 .phone-menu-body{
@@ -2237,25 +2205,6 @@
 .phone-menu-big-text:focus {
     border-color: #fbda03;
     background: #353535;
-}
-
-#phone-menu-icon{
-    position: relative;
-    top: 0vh;
-    right: 0vw;
-    font-size: 2vh;
-    color: white;
-}
-
-.phone-menu-title{
-    position: relative;
-    left: 0;
-    opacity: 0.7;
-    font-size: 1.8vh;
-    color: white;
-    text-align: center;
-    width: 100%;
-    margin-bottom: 1vh;
 }
 
 .phone-menu-button{

@@ -28,7 +28,7 @@ QB.Phone.Data = {
     AnonymousCall: false,
     currentPage: 0,
     totalPages: 0,
-    hasVPN: true, // Forced to true for browser testing
+    hasVPN: false,
 }
 
 OpenedChatData = {
@@ -317,6 +317,44 @@ $(document).on('click', '.phone-application', function(e){
     var PressedApplication = $(this).data('app');
     var AppObject = $("."+PressedApplication+"-app");
 
+    if (PressedApplication === "phone" && AppObject.length !== 0 && !QB.Phone.Data.CallActive) {
+        CanOpenApp = true;
+
+        if (QB.Phone.Functions.HideAllApplicationViews) {
+            QB.Phone.Functions.HideAllApplicationViews();
+        }
+
+        if (QB.Phone.Functions.ResetPhoneAppView) {
+            QB.Phone.Functions.ResetPhoneAppView();
+        }
+
+        QB.Phone.Functions.ToggleApp("phone", "block");
+        QB.Phone.Data.currentApplication = "phone";
+
+        var appContainer = $('.phone-application-container');
+        if (appContainer.css('display') === 'none') {
+            QB.Phone.Animations.TopSlideDown('.phone-application-container', 300, 0);
+        } else {
+            appContainer.css({
+                "display":"block",
+                "top":"0%",
+                "transform":"translateY(0) scale(1)",
+                "transition":"none",
+                "border-radius":"0px",
+                "opacity":"1"
+            });
+        }
+
+        $.post(`https://${GetParentResourceName()}/GetMissedCalls`, JSON.stringify({}), function(recent){
+            QB.Phone.Functions.SetupRecentCalls(recent);
+        });
+        $.post(`https://${GetParentResourceName()}/GetSuggestedContacts`, JSON.stringify({}), function(suggested){
+            QB.Phone.Functions.SetupSuggestedContacts(suggested);
+        });
+        $.post(`https://${GetParentResourceName()}/ClearGeneralAlerts`, JSON.stringify({ app: "phone" }));
+        return;
+    }
+
     if (QB.Phone.Data.currentApplication !== null) {
         var CurrentAppName = QB.Phone.Data.currentApplication;
         var CurrentAppObject = $("." + CurrentAppName + "-app");
@@ -499,6 +537,8 @@ $(document).on('click', '.phone-silent-button', function(event){
 });
 
 QB.Phone.Functions.Open = function(data) {
+    data = data || { CallData: { InCall: false } };
+
     CanOpenApp = true;
 
     if (!data.CallData || !data.CallData.InCall) {
@@ -519,7 +559,16 @@ QB.Phone.Functions.ToggleApp = function(app, show) {
 }
 
 QB.Phone.Functions.HideAllApplicationViews = function() {
-    $('.phone-application-container').children('div').css({"display":"none"});
+    $('.phone-application-container').children('div')
+        .stop(true, true)
+        .css({
+            "display":"none",
+            "top":"",
+            "opacity":"",
+            "transition":"",
+            "transform":"",
+            "border-radius":""
+        });
 }
 
 QB.Phone.Functions.Close = function() {
@@ -719,7 +768,14 @@ QB.Phone.Animations.TopSlideUp = function(Object, Timeout, Percentage, cb) {
         });
 
         setTimeout(function() {
-            $el.css('display', 'none');
+            $el.css({
+                'display': 'none',
+                'top': '',
+                'opacity': '',
+                'transition': '',
+                'transform': '',
+                'border-radius': ''
+            });
             if (cb) cb();
         }, Timeout);
     }
@@ -922,10 +978,9 @@ QB.Phone.Functions.UpdateTime = function(data) {
     if (NewMinute < 10) {
         Minutessss = "0" + NewMinute;
     }
-    var MessageTime = Hourssssss + ":" + Minutessss
 
     // Dynamically check for VPN item in player inventory or if the server explicitly passed it
-    var hasVPN = true; // Forced to true for browser testing
+    var hasVPN = false;
     if (QB.Phone.Data.hasVPN) {
         hasVPN = true;
     } else if (QB.Phone.Data.PlayerData && QB.Phone.Data.PlayerData.items) {
@@ -1286,6 +1341,30 @@ $(document).on('mouseleave mouseup', function() {
 
 // Keyboard navigation for testing (Arrow keys)
 $(document).on('keydown', function(e) {
+    var target = e.target;
+    var isTyping = $(target).is('input, textarea, select') || $(target).prop('isContentEditable');
+    if (isTyping) {
+        return;
+    }
+
+    var isBrowserPreview = typeof window.GetParentResourceName !== 'function';
+    if (!isBrowserPreview && typeof window.GetParentResourceName === 'function') {
+        isBrowserPreview = window.GetParentResourceName() === 'z-phone-dev';
+    }
+
+    if (isBrowserPreview && (e.key === 'm' || e.key === 'M' || e.code === 'KeyM')) {
+        e.preventDefault();
+
+        if (QB.Phone.Data.IsOpen) {
+            QB.Phone.Functions.Close();
+        } else {
+            QB.Phone.Functions.Open({
+                CallData: QB.Phone.Data.CallActive ? { InCall: true } : { InCall: false }
+            });
+        }
+        return;
+    }
+
     if (QB.Phone.Data.IsOpen && QB.Phone.Data.currentApplication === null) {
         if (e.key === 'ArrowLeft') {
             e.preventDefault();
@@ -1304,15 +1383,6 @@ $(document).on('keydown', function(e) {
 });
 
 // Widget click handlers
-$(document).on('click', '.widget-quick', function(e) {
-    e.preventDefault();
-    // Quick call functionality - you can customize this
-    QB.Phone.Notifications.Add("fas fa-phone", "Quick Call", "Opening phone app...", "default", 1500);
-    setTimeout(function() {
-        $('.phone-application[data-app="phone"]').click();
-    }, 500);
-});
-
 $(document).on('click', '.widget-stats', function(e) {
     e.preventDefault();
     // Open bank app
@@ -1325,21 +1395,6 @@ $(document).on('click', '.widget-stats', function(e) {
 $(document).on('click', '.widget-weather', function(e) {
     e.preventDefault();
     QB.Phone.Notifications.Add("fas fa-cloud-sun", "Weather", "Weather information updated!", "default", 2000);
-});
-
-$(document).on('click', '.widget-recent', function(e) {
-    e.preventDefault();
-    // Open messages or notifications
-    QB.Phone.Notifications.Add("fas fa-bell", "Recent Activity", "Opening recent notifications...", "default", 1500);
-});
-
-$(document).on('click', '.widget-battery', function(e) {
-    e.preventDefault();
-    // Open settings app
-    QB.Phone.Notifications.Add("fas fa-battery-three-quarters", "Battery", "Opening settings...", "default", 1500);
-    setTimeout(function() {
-        $('.phone-application[data-app="settings"]').click();
-    }, 500);
 });
 
 // App Closing Gesture (Swipe Up from Bottom)
