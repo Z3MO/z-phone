@@ -1043,8 +1043,7 @@ $(document).ready(function(){
                 QB.Phone.Functions.SetupCurrentCall(event.data.CallData);
                 if (!event.data.CallData || !event.data.CallData.InCall) {
                     var needsReset = QB.Phone.Data.currentApplication === "phone-call"
-                        || $('.phone-call-app').is(':visible')
-                        || $('.phone-app').css('display') === 'none';
+                        || $('.phone-call-app').is(':visible');
                     if (needsReset && typeof resetPhoneCallScreen === 'function') {
                         resetPhoneCallScreen();
                     }

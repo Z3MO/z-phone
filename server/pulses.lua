@@ -159,12 +159,14 @@ RegisterNetEvent('qb-phone:server:PostPulseComment', function(pulseId, comment)
     
     if not Player then return end
     
+    local sanitizedComment = tostring(comment or ''):gsub("[%<>\"()\'$]","")
+
     MySQL.Async.execute('INSERT INTO phone_pulse_comments (pulseId, citizenid, firstName, lastName, comment, date) VALUES (?, ?, ?, ?, ?, ?)', {
         pulseId,
         Player.PlayerData.citizenid,
         Player.PlayerData.charinfo.firstname,
         Player.PlayerData.charinfo.lastname,
-        comment:gsub("[%<>\"()\'$]",""),
+        sanitizedComment,
         os.date('%Y-%m-%d %H:%M:%S')
     })
 
@@ -178,7 +180,7 @@ RegisterNetEvent('qb-phone:server:PostPulseComment', function(pulseId, comment)
             Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname,
             pulseId,
             'comment',
-            comment:gsub("[%<>\"()\'$]","")
+            sanitizedComment
         })
 
         local ownerPlayer = QBCore.Functions.GetPlayerByCitizenId(ownerCid)
