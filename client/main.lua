@@ -288,6 +288,7 @@ local function GenerateCallId(caller, target)
 end
 
 local function CancelCall()
+    local activeCallType = PhoneData.CallData.CallType
     TriggerServerEvent('qb-phone:server:CancelCall', PhoneData.CallData)
     if PhoneData.CallData.CallType == "ongoing" then
         exports['pma-voice']:removePlayerFromCall(PhoneData.CallData.CallId)
@@ -313,7 +314,7 @@ local function CancelCall()
     })
 
     SendNUIMessage({
-        action = "CancelOutgoingCall",
+        action = activeCallType == "ongoing" and "CancelOngoingCall" or "CancelOutgoingCall",
     })
 
     TriggerEvent('qb-phone:client:CustomNotification',
@@ -847,6 +848,7 @@ RegisterNetEvent('qb-phone:client:AddRecentCall', function(data, time, type)
 end)
 
 RegisterNetEvent('qb-phone:client:CancelCall', function()
+    local activeCallType = PhoneData.CallData.CallType
     if PhoneData.CallData.CallType == "ongoing" then
         SendNUIMessage({
             action = "CancelOngoingCall"
@@ -857,6 +859,7 @@ RegisterNetEvent('qb-phone:client:CancelCall', function()
     PhoneData.CallData.InCall = false
     PhoneData.CallData.AnsweredCall = false
     PhoneData.CallData.TargetData = {}
+    PhoneData.CallData.CallId = nil
 
     if not PhoneData.isOpen then
         StopAnimTask(PlayerPedId(), PhoneData.AnimationData.lib, PhoneData.AnimationData.anim, 2.5)
@@ -873,7 +876,7 @@ RegisterNetEvent('qb-phone:client:CancelCall', function()
     })
 
     SendNUIMessage({
-        action = "CancelOutgoingCall",
+        action = activeCallType == "ongoing" and "CancelOngoingCall" or "CancelOutgoingCall",
     })
 
     TriggerEvent('qb-phone:client:CustomNotification',
