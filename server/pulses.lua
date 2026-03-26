@@ -171,14 +171,26 @@ RegisterNetEvent('qb-phone:server:PostPulseComment', function(pulseId, comment)
     -- Add notification for the pulse owner
     local pulseOwner = MySQL.query.await('SELECT citizenid FROM phone_pulses WHERE pulseId = ?', {pulseId})
     if pulseOwner and pulseOwner[1] and pulseOwner[1].citizenid ~= Player.PlayerData.citizenid then
+        local ownerCid = pulseOwner[1].citizenid
         MySQL.Async.execute('INSERT INTO phone_pulse_notifications (citizenid, sender_cid, sender_name, pulseId, type, text) VALUES (?, ?, ?, ?, ?, ?)', {
-            pulseOwner[1].citizenid,
+            ownerCid,
             Player.PlayerData.citizenid,
             Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname,
             pulseId,
             'comment',
             comment:gsub("[%<>\"()\'$]","")
         })
+
+        local ownerPlayer = QBCore.Functions.GetPlayerByCitizenId(ownerCid)
+        if ownerPlayer then
+            TriggerClientEvent('qb-phone:client:CustomNotification', ownerPlayer.PlayerData.source,
+                'Pulses',
+                (Player.PlayerData.charinfo.firstname .. ' ' .. Player.PlayerData.charinfo.lastname) .. ' commented on your pulse.',
+                'fas fa-comment',
+                '#1DA1F2',
+                3500
+            )
+        end
     end
 
     -- Broadcast the updated pulses to all clients to refresh comment counts

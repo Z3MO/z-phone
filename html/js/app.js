@@ -483,6 +483,12 @@ $(document).on('click', '.phone-silent-button', function(event){
 });
 
 QB.Phone.Functions.Open = function(data) {
+    CanOpenApp = true;
+
+    if ((!data.CallData || !data.CallData.InCall) && typeof resetPhoneCallScreen === 'function') {
+        resetPhoneCallScreen();
+    }
+
     QB.Phone.Animations.BottomSlideUp('.container', 500, 0);
     QB.Phone.Data.IsOpen = true;
 }
@@ -519,6 +525,18 @@ QB.Phone.Functions.Close = function() {
     $('.publicphonebase').css('display', 'none')
     QB.Phone.Animations.BottomSlideDown('.container', 500, -100);
     $.post(`https://${GetParentResourceName()}/Close`);
+    CanOpenApp = true;
+
+    if (QB.Phone.Data.currentApplication !== null) {
+        QB.Phone.Functions.ToggleApp(QB.Phone.Data.currentApplication, "none");
+    }
+
+    QB.Phone.Functions.ToggleApp('phone-call', 'none');
+    $('.phone-call-app').css({"display":"none"});
+    $('.phone-app').css({"display":"block"});
+    $('.phone-application-container').css({"display":"none", "top":"0%"});
+    QB.Phone.Data.currentApplication = null;
+
     QB.Phone.Data.IsOpen = false;
 }
 
