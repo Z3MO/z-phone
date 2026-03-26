@@ -373,6 +373,9 @@ $(document).on('click', '.phone-application', function(e){
                         QB.Phone.Functions.LoadMessageChats(chats);
                     });
                 } else if (PressedApplication == "phone") {
+                    if (QB.Phone.Functions.ResetPhoneAppView) {
+                        QB.Phone.Functions.ResetPhoneAppView();
+                    }
                     $.post(`https://${GetParentResourceName()}/GetMissedCalls`, JSON.stringify({}), function(recent){
                         QB.Phone.Functions.SetupRecentCalls(recent);
                     });

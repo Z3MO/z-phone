@@ -933,66 +933,14 @@ function setupEventListeners() {
                 number: inputNum,
                 name: inputNum
             };
-            
-            postNUI('CallContact', {
-                ContactData: cData,
-                Anonymous: QB.Phone.Data.AnonymousCall
-            })
-            .then(readNuiJson)
-            .then(status => {
-                if (!status) {
-                    return;
-                }
 
-                if (cData.number !== QB.Phone.Data.PlayerData.charinfo.phone) {
-                    if (status.IsOnline) {
-                        if (status.CanCall) {
-                            if (!status.InCall) {
-                                const phoneNewBox = document.querySelector('.phone-new-box-body');
-                                if (phoneNewBox) phoneNewBox.style.display = 'none';
-                                
-                                ClearInputNew();
-                                
-                                const outgoing = document.querySelector('.phone-call-outgoing');
-                                const incoming = document.querySelector('.phone-call-incoming');
-                                const ongoing = document.querySelector('.phone-call-ongoing');
-                                const caller = document.querySelector('.phone-call-outgoing-caller');
-                                
-                                if (outgoing) outgoing.style.display = 'block';
-                                if (incoming) incoming.style.display = 'none';
-                                if (ongoing) ongoing.style.display = 'none';
-                                if (caller) caller.textContent = cData.name;
-                                
-                                QB.Phone.Functions.HeaderTextColor("white", 400);
-                                QB.Phone.Animations.TopSlideUp('.phone-application-container', 250, -100);
-                                QB.Phone.Animations.TopSlideUp('.' + QB.Phone.Data.currentApplication + "-app", 400, -100);
-                                
-                                setTimeout(function() {
-                                    QB.Phone.Functions.ToggleApp(QB.Phone.Data.currentApplication, "none");
-                                    QB.Phone.Animations.TopSlideDown('.phone-application-container', 400, 0);
-                                    QB.Phone.Functions.ToggleApp("phone-call", "block");
-                                }, 450);
-                                
-                                if (typeof CallData !== 'undefined') {
-                                    CallData.name = cData.name;
-                                    CallData.number = cData.number;
-                                }
-                                
-                                QB.Phone.Data.currentApplication = "phone-call";
-                            } else {
-                                QB.Phone.Notifications.Add("fas fa-phone", "Phone", "You're already in a call!");
-                            }
-                        } else {
-                            QB.Phone.Notifications.Add("fas fa-phone", "Phone", "This person is busy!");
-                        }
-                    } else {
-                        QB.Phone.Notifications.Add("fas fa-phone", "Phone", "This person is not available!");
-                    }
-                } else {
-                    QB.Phone.Notifications.Add("fas fa-phone", "Phone", "You can't call yourself!");
-                }
-            })
-            .catch(err => console.error('Error calling contact:', err));
+            const phoneNewBox = document.querySelector('.phone-new-box-body');
+            if (phoneNewBox) phoneNewBox.style.display = 'none';
+            ClearInputNew();
+
+            if (typeof SetupCall === 'function') {
+                SetupCall(cData);
+            }
         }
     });
     

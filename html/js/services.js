@@ -582,59 +582,22 @@ async function startServiceCall(number, name) {
         name: name || number
     };
 
-    try {
-        const status = await postServiceRequest("CallContact", {
-            ContactData: cData,
-            Anonymous: QB.Phone.Data.AnonymousCall
-        });
+    const newCallBox = getElement(PHONE_SELECTORS.newCallBox);
+    if (newCallBox) {
+        newCallBox.style.transition = `opacity ${NEW_CALL_BOX_FADE_DURATION_MS}ms ease`;
+        newCallBox.style.opacity = "0";
 
-        if (cData.number !== QB.Phone.Data.PlayerData.charinfo.phone) {
-            if (status.IsOnline) {
-                if (status.CanCall) {
-                    if (!status.InCall) {
-                        const newCallBox = getElement(PHONE_SELECTORS.newCallBox);
-                        if (newCallBox) {
-                            newCallBox.style.transition = `opacity ${NEW_CALL_BOX_FADE_DURATION_MS}ms ease`;
-                            newCallBox.style.opacity = "0";
+        window.setTimeout(() => {
+            newCallBox.style.display = "none";
+            newCallBox.style.opacity = "";
+            newCallBox.style.transition = "";
+        }, NEW_CALL_BOX_FADE_DURATION_MS);
+    }
 
-                            window.setTimeout(() => {
-                                newCallBox.style.display = "none";
-                                newCallBox.style.opacity = "";
-                                newCallBox.style.transition = "";
-                            }, NEW_CALL_BOX_FADE_DURATION_MS);
-                        }
+    ClearInputNew();
 
-                        ClearInputNew();
-                        hideElements(".phone-call-outgoing, .phone-call-incoming, .phone-call-ongoing");
-                        setElementText(PHONE_SELECTORS.outgoingCaller, cData.name);
-                        QB.Phone.Functions.HeaderTextColor("white", 400);
-                        QB.Phone.Animations.TopSlideUp(PHONE_SELECTORS.appContainer, 400, -160);
-
-                        window.setTimeout(() => {
-                            setElementDisplay(PHONE_SELECTORS.phoneApp, "none");
-                            QB.Phone.Animations.TopSlideDown(PHONE_SELECTORS.appContainer, 400, -160);
-                            QB.Phone.Functions.ToggleApp("phone-call", "block");
-                            setElementDisplay(PHONE_SELECTORS.currentCallContainer, "block");
-                            setElementDisplay(PHONE_SELECTORS.incomingAnswer, "none");
-                        }, 450);
-
-                        CallData.name = cData.name;
-                        CallData.number = cData.number;
-                        QB.Phone.Data.currentApplication = "phone-call";
-                    } else {
-                        QB.Phone.Notifications.Add("fas fa-phone", "Phone", "You're already in a call!");
-                    }
-                } else {
-                    QB.Phone.Notifications.Add("fas fa-phone", "Phone", "This person is busy!");
-                }
-            } else {
-                QB.Phone.Notifications.Add("fas fa-phone", "Phone", "This person is not available!");
-            }
-        } else {
-            QB.Phone.Notifications.Add("fas fa-phone", "Phone", "You can't call yourself!");
-        }
-    } catch (error) {
-        console.error(`Failed to start the service call for ${cData.name} (${cData.number}).`, error);
+    if (typeof SetupCall === 'function') {
+        SetupCall(cData);
     }
 }
 

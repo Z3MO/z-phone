@@ -372,6 +372,25 @@ function setPhoneFooterTab(tabName) {
     togglePhonePrimaryHeader();
 }
 
+QB.Phone.Functions.ResetPhoneAppView = function() {
+    if (PhoneTabTransitionTimer !== null) {
+        clearTimeout(PhoneTabTransitionTimer);
+        PhoneTabTransitionTimer = null;
+    }
+
+    PhoneTabAnimating = false;
+    closeContactContextMenu();
+    closeOpenedContactCard();
+
+    $('.phone-add-contact').hide().removeClass('phone-add-contact-visible phone-add-contact-closing').attr('aria-hidden', 'true');
+    $('.phone-edit-contact').hide().removeClass('phone-edit-contact-visible phone-edit-contact-closing').attr('aria-hidden', 'true');
+    $('.phone-nearby-share-modal').hide().attr('aria-hidden', 'true');
+
+    $('.phone-contacts, .phone-recent, .phone-keypad, .phone-suggestedcontacts').hide();
+    $('.phone-' + CurrentFooterTab).show();
+    togglePhonePrimaryHeader();
+};
+
 function createContactEmptyState(message) {
     return $('<div class="phone-contact-empty"></div>').text(message);
 }

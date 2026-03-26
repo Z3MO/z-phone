@@ -138,50 +138,17 @@ $(document).on('click','.proxi-contact-info',function(e){
         var InputNum = Number;
 
         if (InputNum != ""){
-            cData = {
+            var cData = {
                 number: InputNum,
                 name: InputNum,
             }
-            $.post(`https://${GetParentResourceName()}/CallContact`, JSON.stringify({
-                ContactData: cData,
-                Anonymous: QB.Phone.Data.AnonymousCall,
-            }), function(status){
-                if (cData.number !== QB.Phone.Data.PlayerData.charinfo.phone) {
-                    if (status.IsOnline) {
-                        if (status.CanCall) {
-                            if (!status.InCall) {
-                                $('#proxi-box-textt').animate({opacity: 0}, 350, function(){ $(this).css("display", "none"); });
-                                ClearProxiInput();
-                                $(".phone-call-outgoing").css({"display":"block"});
-                                $(".phone-call-incoming").css({"display":"none"});
-                                $(".phone-call-ongoing").css({"display":"none"});
-                                $(".phone-call-outgoing-caller").html(cData.name);
-                                QB.Phone.Functions.HeaderTextColor("white", 400);
-                                QB.Phone.Animations.TopSlideUp('.phone-application-container', 250, -100);
-                                QB.Phone.Animations.TopSlideUp('.'+QB.Phone.Data.currentApplication+"-app", 400, -100);
-                                setTimeout(function(){
-                                    QB.Phone.Functions.ToggleApp(QB.Phone.Data.currentApplication, "none");
-                                    QB.Phone.Animations.TopSlideDown('.phone-application-container', 400, 0);
-                                    QB.Phone.Functions.ToggleApp("phone-call", "block");
-                                }, 450);
 
-                                CallData.name = cData.name;
-                                CallData.number = cData.number;
+            $('#proxi-box-textt').animate({opacity: 0}, 350, function(){ $(this).css("display", "none"); });
+            ClearProxiInput();
 
-                                QB.Phone.Data.currentApplication = "phone-call";
-                            } else {
-                                QB.Phone.Notifications.Add("fas fa-phone", "Phone", "You're already in a call!");
-                            }
-                        } else {
-                            QB.Phone.Notifications.Add("fas fa-phone", "Phone", "This person is busy!");
-                        }
-                    } else {
-                        QB.Phone.Notifications.Add("fas fa-phone", "Phone", "This person is not available!");
-                    }
-                } else {
-                    QB.Phone.Notifications.Add("fas fa-phone", "Phone", "You can't call yourself!");
-                }
-            });
+            if (typeof SetupCall === 'function') {
+                SetupCall(cData);
+            }
         }
     }
 })
