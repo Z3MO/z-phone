@@ -317,9 +317,22 @@ $(document).on('click', '.phone-application', function(e){
     var PressedApplication = $(this).data('app');
     var AppObject = $("."+PressedApplication+"-app");
 
+    if (QB.Phone.Data.currentApplication !== null) {
+        var CurrentAppName = QB.Phone.Data.currentApplication;
+        var CurrentAppObject = $("." + CurrentAppName + "-app");
+        var CurrentAppVisible = CurrentAppObject.is(':visible') || (CurrentAppName === 'phone-call' && $('.phone-call-app').is(':visible'));
+        var AppContainerVisible = $('.phone-application-container').css('display') !== 'none';
+
+        if (!CurrentAppVisible || !AppContainerVisible) {
+            QB.Phone.Data.currentApplication = null;
+            CanOpenApp = true;
+        }
+    }
+
     if (AppObject.length !== 0) {
         if (CanOpenApp) {
             if (QB.Phone.Data.currentApplication == null) {
+                QB.Phone.Functions.HideAllApplicationViews();
                 QB.Phone.Functions.ToggleApp(PressedApplication, "block");
                 QB.Phone.Animations.TopSlideDown('.phone-application-container', 300, 0);
 
@@ -500,6 +513,10 @@ QB.Phone.Functions.Open = function(data) {
 
 QB.Phone.Functions.ToggleApp = function(app, show) {
     $("."+app+"-app").css({"display":show});
+}
+
+QB.Phone.Functions.HideAllApplicationViews = function() {
+    $('.phone-application-container').children('div').css({"display":"none"});
 }
 
 QB.Phone.Functions.Close = function() {
