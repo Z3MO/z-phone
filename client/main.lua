@@ -800,19 +800,21 @@ RegisterNUICallback("TakePhoto", function(_, cb)
             OpenPhone()
             break
         elseif IsControlJustPressed(1, 176) then
-            QBCore.Functions.TriggerCallback("qb-phone:server:GetWebhook",function(hook)
-                QBCore.Functions.Notify('Touching up photo...', 'primary')
-                exports['screenshot-basic']:requestScreenshotUpload(tostring(hook), "files[]", function(uploadData)
-                    local image = json.decode(uploadData)
-                    DestroyMobilePhone()
-                    CellCamActivate(false, false)
-                    TriggerServerEvent('qb-phone:server:addImageToGallery', image.attachments[1].proxy_url)
-                    Wait(400)
+            QBCore.Functions.Notify('Touching up photo...', 'primary')
+            QBCore.Functions.TriggerCallback('qb-phone:server:CaptureAndUploadPhoto', function(result)
+                DestroyMobilePhone()
+                CellCamActivate(false, false)
+
+                if result and result.success and result.url then
                     TriggerServerEvent('qb-phone:server:getImageFromGallery')
-                    cb(json.encode(image.attachments[1].proxy_url))
-                    QBCore.Functions.Notify('Photo saved!', "success")
-                    OpenPhone()
-                end)
+                    cb(json.encode(result.url))
+                    QBCore.Functions.Notify('Photo saved!', 'success')
+                else
+                    cb(json.encode({ url = nil }))
+                    QBCore.Functions.Notify((result and result.message) or 'Photo upload failed.', 'error')
+                end
+
+                OpenPhone()
             end)
             break
         end

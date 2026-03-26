@@ -101,6 +101,7 @@ CREATE TABLE IF NOT EXISTS `player_contacts` (
   `citizenid` varchar(50) DEFAULT NULL,
   `name` varchar(50) DEFAULT NULL,
   `number` varchar(50) DEFAULT NULL,
+  `iban` varchar(32) DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `citizenid` (`citizenid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
@@ -150,7 +151,7 @@ CREATE TABLE `phone_chatroom_messages` (
     `message` TEXT NOT NULL,
      `is_pinned` BOOLEAN DEFAULT FALSE,
      `created` DATETIME DEFAULT NOW(),
-    PRIMARY KEY (`id`)z
+  PRIMARY KEY (`id`)
 );
 
 DROP TABLE IF EXISTS `player_jobs`;

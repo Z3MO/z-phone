@@ -1,7 +1,5 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 local Calls = {}
-local WebHook = Config.Webhook
-local ContactsHasIban = false
 local ContactShareCooldowns = {}
 local CallRequestCooldowns = {}
 local CONTACT_SHARE_COOLDOWN_MS = 1500
@@ -96,21 +94,30 @@ local function buildSuggestionData(player)
     }
 end
 
-local function ensureContactsSchema()
-    local hasIbanColumn = tonumber(exports.oxmysql:scalarSync("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'player_contacts' AND COLUMN_NAME = 'iban'") or 0)
-
-    if hasIbanColumn == 0 then
-        exports.oxmysql:executeSync("ALTER TABLE player_contacts ADD COLUMN iban VARCHAR(32) DEFAULT ''")
-        hasIbanColumn = tonumber(exports.oxmysql:scalarSync("SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'player_contacts' AND COLUMN_NAME = 'iban'") or 0)
-    end
-
-    ContactsHasIban = hasIbanColumn > 0
+local function normalizeImageUrl(url)
+    if type(url) ~= 'string' then return nil end
+    url = url:match('^%s*(.-)%s*$')
+    if not url or #url < 8 or #url > 1000 then return nil end
+    if not url:match('^https?://') then return nil end
+    return url
 end
 
-CreateThread(function()
-    Wait(500)
-    ensureContactsSchema()
-end)
+local function extractUploadedImageUrl(uploadData)
+    if type(uploadData) ~= 'string' or uploadData == '' then
+        return nil
+    end
+
+    local ok, decoded = pcall(json.decode, uploadData)
+    if not ok or type(decoded) ~= 'table' then
+        return nil
+    end
+
+    if decoded.attachments and decoded.attachments[1] and decoded.attachments[1].proxy_url then
+        return normalizeImageUrl(decoded.attachments[1].proxy_url)
+    end
+
+    return normalizeImageUrl(decoded.url)
+end
 
 local function sendContactSuggestion(sourceId, targetId, radius)
     local src = tonumber(sourceId)
@@ -282,9 +289,51 @@ QBCore.Functions.CreateCallback('qb-phone:server:FetchResult', function(_, cb, i
     end
 end)
 
--- Webhook needs to get fixed, right now anyone can grab this and use it to spam dick pics in Discord servers
-QBCore.Functions.CreateCallback("qb-phone:server:GetWebhook",function(_, cb)
-	cb(WebHook)
+QBCore.Functions.CreateCallback('qb-phone:server:CaptureAndUploadPhoto', function(source, cb)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    if not Player then
+        cb({ success = false, message = 'Player not found.' })
+        return
+    end
+
+    local webhook = tostring(Config.Webhook or ''):match('^%s*(.-)%s*$')
+    if webhook == '' then
+        cb({ success = false, message = 'Camera webhook is not configured.' })
+        return
+    end
+
+    local success, callbackError = pcall(function()
+        exports['screenshot-basic']:requestClientScreenshot(src, {
+            encoding = 'jpg',
+            quality = 0.92,
+            uploadURL = webhook,
+            uploadField = 'files[]',
+        }, function(err, uploadData)
+            if err then
+                cb({ success = false, message = 'Screenshot capture failed.' })
+                return
+            end
+
+            local imageUrl = extractUploadedImageUrl(uploadData)
+            if not imageUrl then
+                cb({ success = false, message = 'Invalid upload response.' })
+                return
+            end
+
+            exports.oxmysql:insert(
+                'INSERT INTO phone_gallery (`citizenid`, `image`) VALUES (?, ?)',
+                { Player.PlayerData.citizenid, imageUrl }
+            )
+
+            cb({ success = true, url = imageUrl })
+        end)
+    end)
+
+    if not success then
+        print(('[z-phone] Camera capture error for %s: %s'):format(src, tostring(callbackError)))
+        cb({ success = false, message = 'Camera resource is unavailable.' })
+    end
 end)
 
 QBCore.Functions.CreateCallback('qb-phone:server:GetNearbyPhonePlayers', function(source, cb)
@@ -383,13 +432,8 @@ RegisterNetEvent('qb-phone:server:EditContact', function(newName, newNumber, New
         return TriggerClientEvent('qb-phone:client:CustomNotification', src, 'Phone', 'Another contact already uses that number.', 'fas fa-user-pen', '#e84118', 2500)
     end
 
-    if ContactsHasIban then
-        exports.oxmysql:execute('UPDATE player_contacts SET name = ?, number = ?, iban = ? WHERE citizenid = ? AND name = ? AND number = ?',
-            {newName, newNumber, NewIban, Player.PlayerData.citizenid, oldName, oldNumber})
-    else
-        exports.oxmysql:execute('UPDATE player_contacts SET name = ?, number = ? WHERE citizenid = ? AND name = ? AND number = ?',
-            {newName, newNumber, Player.PlayerData.citizenid, oldName, oldNumber})
-    end
+    exports.oxmysql:execute('UPDATE player_contacts SET name = ?, number = ?, iban = ? WHERE citizenid = ? AND name = ? AND number = ?',
+        {newName, newNumber, NewIban, Player.PlayerData.citizenid, oldName, oldNumber})
 end)
 
 RegisterNetEvent('qb-phone:server:RemoveContact', function(Name, Number)
@@ -422,11 +466,7 @@ RegisterNetEvent('qb-phone:server:AddNewContact', function(name, number, iban)
         return TriggerClientEvent('qb-phone:client:CustomNotification', src, 'Phone', 'That contact already exists.', 'fas fa-address-book', '#e84118', 2500)
     end
 
-    if ContactsHasIban then
-        exports.oxmysql:insert('INSERT INTO player_contacts (citizenid, name, number, iban) VALUES (?, ?, ?, ?)', {Player.PlayerData.citizenid, tostring(name), number, iban})
-    else
-        exports.oxmysql:insert('INSERT INTO player_contacts (citizenid, name, number) VALUES (?, ?, ?)', {Player.PlayerData.citizenid, tostring(name), number})
-    end
+    exports.oxmysql:insert('INSERT INTO player_contacts (citizenid, name, number, iban) VALUES (?, ?, ?, ?)', {Player.PlayerData.citizenid, tostring(name), number, iban})
 end)
 
 RegisterNetEvent('qb-phone:server:AddRecentCall', function(type, data)
