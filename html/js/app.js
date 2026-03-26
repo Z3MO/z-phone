@@ -485,8 +485,13 @@ $(document).on('click', '.phone-silent-button', function(event){
 QB.Phone.Functions.Open = function(data) {
     CanOpenApp = true;
 
-    if ((!data.CallData || !data.CallData.InCall) && typeof resetPhoneCallScreen === 'function') {
-        resetPhoneCallScreen();
+    if (!data.CallData || !data.CallData.InCall) {
+        QB.Phone.Data.CallActive = false;
+        QB.Phone.Functions.ToggleApp('phone-call', 'none');
+        $('.phone-call-app').css({"display":"none"});
+        if (QB.Phone.Data.currentApplication === 'phone-call') {
+            QB.Phone.Data.currentApplication = null;
+        }
     }
 
     QB.Phone.Animations.BottomSlideUp('.container', 500, 0);
@@ -533,7 +538,7 @@ QB.Phone.Functions.Close = function() {
 
     QB.Phone.Functions.ToggleApp('phone-call', 'none');
     $('.phone-call-app').css({"display":"none"});
-    $('.phone-app').css({"display":"block"});
+    $('.phone-app').css({"display":"none"});
     $('.phone-application-container').css({"display":"none", "top":"0%"});
     QB.Phone.Data.currentApplication = null;
 

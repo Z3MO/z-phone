@@ -205,7 +205,7 @@ function resetPhoneCallScreen() {
     $('.phone-call-incoming, .phone-call-outgoing, .phone-call-ongoing').hide();
     $('.phone-call-app').hide();
     $('.phone-currentcall-container').hide();
-    $('.phone-app').css({"display":"block"});
+    $('.phone-app').css({"display":"none"});
     $('.phone-application-container').css({"top":"0%"});
     QB.Phone.Functions.ToggleApp('phone-call', 'none');
     QB.Phone.Functions.HeaderTextColor('white', 250);
