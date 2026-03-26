@@ -189,7 +189,9 @@ function openPhoneCallScreen(contactData) {
     }
 
     setTimeout(function() {
-        if (currentApp !== 'phone-call') {
+        if (typeof QB.Phone.Functions.HideAllApplicationViews === 'function') {
+            QB.Phone.Functions.HideAllApplicationViews();
+        } else if (currentApp !== 'phone-call') {
             QB.Phone.Functions.ToggleApp(currentApp, 'none');
         }
         QB.Phone.Animations.TopSlideDown('.phone-application-container', 400, 0);
@@ -202,6 +204,11 @@ function openPhoneCallScreen(contactData) {
 }
 
 function resetPhoneCallScreen() {
+    if (typeof QB.Phone.Functions.HideAllApplicationViews === 'function') {
+        QB.Phone.Functions.HideAllApplicationViews();
+    }
+
+    $('.phone-application-container').stop(true, true);
     $('.phone-call-incoming, .phone-call-outgoing, .phone-call-ongoing').hide();
     $('.phone-call-app').hide();
     $('.phone-currentcall-container').hide();
@@ -214,6 +221,11 @@ function resetPhoneCallScreen() {
         "border-radius":"0px",
         "opacity":"1"
     });
+
+    if (typeof isAppSwiping !== 'undefined') {
+        isAppSwiping = false;
+    }
+
     QB.Phone.Functions.ToggleApp('phone-call', 'none');
     QB.Phone.Functions.HeaderTextColor('white', 250);
     QB.Phone.Data.CallActive = false;
@@ -1186,7 +1198,9 @@ IncomingCallAlert = function(CallData, Canceled, AnonymousCall) {
             setTimeout(function(){
                 $(".phone-app").css({"display":"none"});
                 QB.Phone.Functions.HeaderTextColor("white", 400);
-                if (previousApp && previousApp !== 'phone-call') {
+                if (typeof QB.Phone.Functions.HideAllApplicationViews === 'function') {
+                    QB.Phone.Functions.HideAllApplicationViews();
+                } else if (previousApp && previousApp !== 'phone-call') {
                     $('.' + previousApp + '-app').css({"display":"none"});
                 }
                 $(".phone-call-app").css({"display":"block"});
