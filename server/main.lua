@@ -500,12 +500,14 @@ RegisterNetEvent('qb-phone:server:GiveContactDetails', function(PlayerId)
 end)
 
 RegisterNetEvent('qb-phone:server:CancelCall', function(ContactData)
+    if not ContactData or not ContactData.TargetData or not ContactData.TargetData.number then return end
     local Ply = QBCore.Functions.GetPlayerByPhone(tostring(ContactData.TargetData.number))
     if not Ply then return end
     TriggerClientEvent('qb-phone:client:CancelCall', Ply.PlayerData.source)
 end)
 
 RegisterNetEvent('qb-phone:server:AnswerCall', function(CallData)
+    if not CallData or not CallData.TargetData or not CallData.TargetData.number then return end
     local Ply = QBCore.Functions.GetPlayerByPhone(CallData.TargetData.number)
     if not Ply then return end
 

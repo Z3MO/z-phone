@@ -934,6 +934,21 @@ RegisterNetEvent('qb-phone:client:GetCalled', function(CallerNumber, CallId, Ano
         anonymous = AnonymousCall
     }
     if hasPhone() then
+        local function clearIncomingState()
+            PhoneData.CallData.CallType = nil
+            PhoneData.CallData.InCall = false
+            PhoneData.CallData.AnsweredCall = false
+            PhoneData.CallData.TargetData = {}
+            PhoneData.CallData.CallId = nil
+
+            TriggerServerEvent('qb-phone:server:SetCallState', false)
+
+            SendNUIMessage({
+                action = "SetupHomeCall",
+                CallData = PhoneData.CallData,
+            })
+        end
+
         if AnonymousCall then
             CallData.name = "Unknown Number"
         end
@@ -978,6 +993,7 @@ RegisterNetEvent('qb-phone:client:GetCalled', function(CallerNumber, CallId, Ano
                             Canceled = true,
                             AnonymousCall = AnonymousCall,
                         })
+                        clearIncomingState()
                         TriggerServerEvent('qb-phone:server:AddRecentCall', "missed", CallData)
                         break
                     end
@@ -989,11 +1005,11 @@ RegisterNetEvent('qb-phone:client:GetCalled', function(CallerNumber, CallId, Ano
                         Canceled = true,
                         AnonymousCall = AnonymousCall,
                     })
+                    clearIncomingState()
                     TriggerServerEvent('qb-phone:server:AddRecentCall', "missed", CallData)
                     break
                 end
             else
-                TriggerServerEvent('qb-phone:server:AddRecentCall', "missed", CallData)
                 break
             end
         end
@@ -1003,6 +1019,16 @@ RegisterNetEvent('qb-phone:client:GetCalled', function(CallerNumber, CallId, Ano
             CallData = PhoneData.CallData.TargetData,
             Canceled = true,
             AnonymousCall = AnonymousCall,
+        })
+        PhoneData.CallData.CallType = nil
+        PhoneData.CallData.InCall = false
+        PhoneData.CallData.AnsweredCall = false
+        PhoneData.CallData.TargetData = {}
+        PhoneData.CallData.CallId = nil
+        TriggerServerEvent('qb-phone:server:SetCallState', false)
+        SendNUIMessage({
+            action = "SetupHomeCall",
+            CallData = PhoneData.CallData,
         })
         TriggerServerEvent('qb-phone:server:AddRecentCall', "missed", CallData)
     end
