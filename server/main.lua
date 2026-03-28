@@ -121,17 +121,31 @@ local function buildScreenshotUploadUrl(webhook)
     return cleanWebhook
 end
 
+local function isDiscordWebhook(url)
+    if type(url) ~= 'string' then return false end
+    return url:find('discord.com/api/webhooks', 1, true)
+        or url:find('discordapp.com/api/webhooks', 1, true)
+end
+
 local function extractUploadedImageUrl(uploadData)
     if type(uploadData) ~= 'string' or uploadData == '' then
         return nil
     end
 
-    local directUrl = normalizeImageUrl(uploadData)
+    local directUrl = normalizeImageUrl(uploadData:gsub('^"(.*)"$', '%1'))
     if directUrl then return directUrl end
 
     local ok, decoded = pcall(json.decode, uploadData)
     if not ok or type(decoded) ~= 'table' then
         return nil
+    end
+
+    if decoded[1] and type(decoded[1]) == 'table' then
+        decoded = decoded[1]
+    end
+
+    if decoded.body and type(decoded.body) == 'table' then
+        decoded = decoded.body
     end
 
     if decoded.attachments and decoded.attachments[1] then
@@ -339,61 +353,42 @@ QBCore.Functions.CreateCallback('qb-phone:server:CaptureAndUploadPhoto', functio
         return
     end
 
-    local preferredField = tostring(Config.WebhookUploadField or ''):match('^%s*(.-)%s*$')
-    local uploadFields = {}
-    local added = {}
-
-    local function addUploadField(field)
-        if type(field) ~= 'string' then return end
-        local clean = field:match('^%s*(.-)%s*$')
-        if clean == '' or added[clean] then return end
-        added[clean] = true
-        uploadFields[#uploadFields + 1] = clean
+    local configuredField = tostring(Config.WebhookUploadField or ''):match('^%s*(.-)%s*$')
+    if configuredField == '' then
+        configuredField = 'file'
     end
 
-    addUploadField(preferredField)
-    addUploadField('file')
-    addUploadField('files[]')
-    addUploadField('image')
+    local uploadField = isDiscordWebhook(webhook) and 'file' or configuredField
 
-    local function tryUpload(index)
-        if index > #uploadFields then
+    exports['screenshot-basic']:requestClientScreenshot(src, {
+        encoding = 'jpg',
+        quality = 0.92,
+        uploadURL = webhook,
+        uploadField = uploadField,
+    }, function(err, uploadData)
+        if err then
+            cb({ success = false, message = 'Screenshot capture failed.' })
+            return
+        end
+
+        if not uploadData then
+            cb({ success = false, message = 'No response from upload server.' })
+            return
+        end
+
+        local imageUrl = extractUploadedImageUrl(uploadData)
+        if not imageUrl then
             cb({ success = false, message = 'Upload succeeded but no image URL was returned.' })
             return
         end
 
-        exports['screenshot-basic']:requestClientScreenshot(src, {
-            encoding = 'jpg',
-            quality = 0.92,
-            uploadURL = webhook,
-            uploadField = uploadFields[index],
-        }, function(err, uploadData)
-            if err then
-                cb({ success = false, message = 'Screenshot capture failed.' })
-                return
-            end
+        exports.oxmysql:insert(
+            'INSERT INTO phone_gallery (`citizenid`, `image`) VALUES (?, ?)',
+            { Player.PlayerData.citizenid, imageUrl }
+        )
 
-            if not uploadData then
-                cb({ success = false, message = 'No response from upload server.' })
-                return
-            end
-
-            local imageUrl = extractUploadedImageUrl(uploadData)
-            if not imageUrl then
-                tryUpload(index + 1)
-                return
-            end
-
-            exports.oxmysql:insert(
-                'INSERT INTO phone_gallery (`citizenid`, `image`) VALUES (?, ?)',
-                { Player.PlayerData.citizenid, imageUrl }
-            )
-
-            cb({ success = true, url = imageUrl })
-        end)
-    end
-
-    tryUpload(1)
+        cb({ success = true, url = imageUrl })
+    end)
 end)
 
 QBCore.Functions.CreateCallback('qb-phone:server:GetNearbyPhonePlayers', function(source, cb)
