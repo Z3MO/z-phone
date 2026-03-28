@@ -20,7 +20,7 @@ end)
 RegisterNUICallback('PlaySound', function(data, cb)
     -- Respect mute / vibrate modes set in Sound & Vibration settings
     if not (PhoneSettings and (PhoneSettings.muted or PhoneSettings.vibrate)) then
-        PlaySound(-1, data.sound, data.table, 0, 0, 1)
+        PlaySoundFrontend(-1, data.sound, data.table, true)
     end
     cb('ok')
 end)

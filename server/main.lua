@@ -244,24 +244,36 @@ end)
 
 -- Can't even wrap my head around this lol diffently needs a good old rewrite
 QBCore.Functions.CreateCallback('qb-phone:server:FetchResult', function(_, cb, input)
-    local search = escape_sqli(input)
+    local search = trim(input)
     local searchData = {}
     local ApaData = {}
-    local query = 'SELECT * FROM `players` WHERE `citizenid` = "' .. search .. '"'
-    local searchParameters = SplitStringToArray(search)
-    if #searchParameters > 1 then
-        query = query .. ' OR `charinfo` LIKE "%' .. searchParameters[1] .. '%"'
-        for i = 2, #searchParameters do
-            query = query .. ' AND `charinfo` LIKE  "%' .. searchParameters[i] .. '%"'
-        end
-    else
-        query = query .. ' OR `charinfo` LIKE "%' .. search .. '%"'
+    if search == '' then
+        cb(nil)
+        return
     end
+
+    local searchParameters = SplitStringToArray(search)
+    local query = 'SELECT * FROM `players` WHERE `citizenid` = ?'
+    local parameters = { search }
+
+    if #searchParameters > 0 then
+        query = query .. ' OR ('
+        for i = 1, #searchParameters do
+            if i > 1 then
+                query = query .. ' AND '
+            end
+
+            query = query .. '`charinfo` LIKE ?'
+            parameters[#parameters + 1] = ('%%' .. searchParameters[i] .. '%%')
+        end
+        query = query .. ')'
+    end
+
     local ApartmentData = exports.oxmysql:executeSync('SELECT * FROM apartments', {})
     for k, v in pairs(ApartmentData) do
         ApaData[v.citizenid] = ApartmentData[k]
     end
-    local result = exports.oxmysql:executeSync(query)
+    local result = exports.oxmysql:executeSync(query, parameters)
     if result[1] then
         for _, v in pairs(result) do
             local charinfo = json.decode(v.charinfo)

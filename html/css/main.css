@@ -213,14 +213,14 @@ body {
 }
 
 .phone-application-container {
-    top: -100%;
+    top: 0;
     display: none;
     position: absolute;
     height: 100%;
     width: 100%;
     z-index: 100;
     transform-origin: center bottom;
-    will-change: transform, opacity, filter;
+    will-change: transform;
     backface-visibility: hidden;
     transform-style: preserve-3d;
     perspective: 1000px;

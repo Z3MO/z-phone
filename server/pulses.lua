@@ -1,6 +1,22 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
 Pulses = {}
+local PulseCooldowns = {
+    post = {},
+    comment = {},
+}
+
+local function isRateLimited(cache, key, durationMs)
+    local now = GetGameTimer()
+    local lastTick = cache[key] or 0
+
+    if (now - lastTick) < durationMs then
+        return true
+    end
+
+    cache[key] = now
+    return false
+end
 
 -- Events
 
@@ -46,6 +62,12 @@ end)
 RegisterNetEvent('qb-phone:server:UpdatePulses', function(PulseData)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
+    if not Player then return end
+
+    if isRateLimited(PulseCooldowns.post, src, 1800) then
+        return
+    end
+
     local HasVPN = Player.Functions.GetItemByName(Config.VPNItem)
 
     if (PulseData.showAnonymous and HasVPN) then
@@ -158,6 +180,10 @@ RegisterNetEvent('qb-phone:server:PostPulseComment', function(pulseId, comment)
     local Player = QBCore.Functions.GetPlayer(src)
     
     if not Player then return end
+
+    if isRateLimited(PulseCooldowns.comment, src, 700) then
+        return
+    end
     
     local sanitizedComment = tostring(comment or ''):gsub("[%<>\"()\'$]","")
 

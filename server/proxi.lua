@@ -1,10 +1,29 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 Proxis = {}
 local ProxiID = 0
+local ProxiPostCooldowns = {}
+
+local function isRateLimited(cache, key, durationMs)
+    local now = GetGameTimer()
+    local lastTick = cache[key] or 0
+
+    if (now - lastTick) < durationMs then
+        return true
+    end
+
+    cache[key] = now
+    return false
+end
 
 RegisterNetEvent('qb-phone:server:AddProxi', function(msg, url)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
+    if not Player then return end
+
+    if isRateLimited(ProxiPostCooldowns, src, 1600) then
+        return
+    end
+
     local name = ("%s %s"):format(Player.PlayerData.charinfo.firstname, Player.PlayerData.charinfo.lastname)
     if not url then url = "" else url = url:gsub("[%<>\"()\'$]","") end
 

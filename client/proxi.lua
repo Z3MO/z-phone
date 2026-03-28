@@ -1,4 +1,17 @@
 -- Functions
+local NUIActionCooldowns = {}
+
+local function isNuiRateLimited(action, durationMs)
+    local now = GetGameTimer()
+    local lastTick = NUIActionCooldowns[action] or 0
+
+    if (now - lastTick) < durationMs then
+        return true
+    end
+
+    NUIActionCooldowns[action] = now
+    return false
+end
 
 local function GetKeyByNumber(Number)
     if PhoneData.Chats then
@@ -13,6 +26,11 @@ end
 -- NUI Callback
 
 RegisterNUICallback('PostProxi', function(data, cb)
+    if isNuiRateLimited('post-proxi', 1200) then
+        cb({ success = false, message = 'Please wait before posting again.' })
+        return
+    end
+
     local url
 
     if data.url and string.match(data.url, '[a-z]*://[^ >,;]*') then
@@ -20,7 +38,7 @@ RegisterNUICallback('PostProxi', function(data, cb)
     end
 
     TriggerServerEvent('qb-phone:server:AddProxi', data.message, url)
-    cb("ok")
+    cb({ success = true })
 end)
 
 

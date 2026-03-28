@@ -1,4 +1,17 @@
 local QBCore = exports['qb-core']:GetCoreObject()
+local NUIActionCooldowns = {}
+
+local function isNuiRateLimited(action, durationMs)
+    local now = GetGameTimer()
+    local lastTick = NUIActionCooldowns[action] or 0
+
+    if (now - lastTick) < durationMs then
+        return true
+    end
+
+    NUIActionCooldowns[action] = now
+    return false
+end
 
 -- Functions
 
@@ -25,6 +38,10 @@ RegisterNUICallback('GetPulses', function(_, cb)
 end)
 
 RegisterNUICallback('PostNewPulse', function(data, cb)
+    if isNuiRateLimited('post-pulse', 1200) then
+        cb({ success = false, message = 'Please wait before posting again.' })
+        return
+    end
 
     local URL
 
@@ -47,7 +64,7 @@ RegisterNUICallback('PostNewPulse', function(data, cb)
     }
 
     TriggerServerEvent('qb-phone:server:UpdatePulses', PulseMessage)
-    cb("ok")
+    cb({ success = true })
 end)
 
 RegisterNUICallback('DeletePulse',function(data)
@@ -78,6 +95,11 @@ RegisterNUICallback('GetPulseCommentCounts', function(data, cb)
 end)
 
 RegisterNUICallback('PostPulseComment', function(data, cb)
+    if isNuiRateLimited('post-pulse-comment', 500) then
+        cb({success = false, message = 'You are commenting too quickly.'})
+        return
+    end
+
     TriggerServerEvent('qb-phone:server:PostPulseComment', data.pulseId, data.comment)
     cb({success = true})
 end)

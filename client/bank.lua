@@ -1,4 +1,17 @@
 local QBCore = exports['qb-core']:GetCoreObject()
+local NUIActionCooldowns = {}
+
+local function isNuiRateLimited(action, durationMs)
+    local now = GetGameTimer()
+    local lastTick = NUIActionCooldowns[action] or 0
+
+    if (now - lastTick) < durationMs then
+        return true
+    end
+
+    NUIActionCooldowns[action] = now
+    return false
+end
 
 local function normalizeTransferAmount(value)
     local amount = math.floor(tonumber(value) or 0)
@@ -46,6 +59,15 @@ RegisterNUICallback('GetBankContacts', function(_, cb)
 end)
 
 RegisterNUICallback('CanTransferMoney', function(data, cb)
+    if isNuiRateLimited('bank-transfer', 900) then
+        cb({
+            TransferedMoney = false,
+            NewBalance = PlayerData.money['bank'],
+            message = 'Please wait a moment before sending again.'
+        })
+        return
+    end
+
     local amount = normalizeTransferAmount(data and data.amountOf)
     local iban = normalizeBankAccount(data and data.sendTo)
     local reference = normalizeReference(data and data.reference)
@@ -82,6 +104,11 @@ RegisterNUICallback('GetInvoices', function(_, cb)
 end)
 
 RegisterNUICallback('PayInvoice', function(data, cb)
+    if isNuiRateLimited('pay-invoice', 900) then
+        cb({ success = false, message = 'Please wait a moment before trying again.' })
+        return
+    end
+
     local invoiceId = tonumber(data and data.invoiceId)
     if not invoiceId then
         cb({ success = false, message = 'Invalid invoice.' })

@@ -1,4 +1,21 @@
 local QBCore = exports['qb-core']:GetCoreObject()
+local ActionCooldowns = {
+    transfer = {},
+    payInvoice = {},
+    declineInvoice = {},
+}
+
+local function isRateLimited(cache, key, durationMs)
+    local now = GetGameTimer()
+    local lastTick = cache[key] or 0
+
+    if (now - lastTick) < durationMs then
+        return true
+    end
+
+    cache[key] = now
+    return false
+end
 
 local function normalizeAmount(value)
     local amount = math.floor(tonumber(value) or 0)
@@ -195,6 +212,11 @@ QBCore.Functions.CreateCallback('qb-phone:server:CanTransferMoney', function(sou
         return
     end
 
+    if isRateLimited(ActionCooldowns.transfer, source, 1200) then
+        cb(false, Player.PlayerData.money.bank, 'Please wait before sending another transfer.')
+        return
+    end
+
     local senderAccount = normalizeBankAccount(Player.PlayerData.charinfo.account or '')
     if senderAccount and senderAccount == iban then
         cb(false, Player.PlayerData.money.bank, 'You cannot transfer to your own account.')
@@ -237,18 +259,40 @@ QBCore.Functions.CreateCallback('qb-phone:server:CanTransferMoney', function(sou
 end)
 
 QBCore.Functions.CreateCallback('qb-phone:server:PayMyInvoice', function(source, cb, invoiceId)
+    local actionKey = ('%s:%s'):format(source, tonumber(invoiceId) or 0)
+    if isRateLimited(ActionCooldowns.payInvoice, actionKey, 1400) then
+        cb({ success = false, message = 'Please wait before trying again.' })
+        return
+    end
+
     cb(payInvoiceForPlayer(source, invoiceId))
 end)
 
 QBCore.Functions.CreateCallback('qb-phone:server:DeclineMyInvoice', function(source, cb, invoiceId)
+    local actionKey = ('%s:%s'):format(source, tonumber(invoiceId) or 0)
+    if isRateLimited(ActionCooldowns.declineInvoice, actionKey, 1000) then
+        cb({ success = false, message = 'Please wait before trying again.' })
+        return
+    end
+
     cb(declineInvoiceForPlayer(source, invoiceId))
 end)
 
 RegisterNetEvent('qb-phone:server:PayMyInvoice', function(invoiceId)
+    local actionKey = ('%s:%s'):format(source, tonumber(invoiceId) or 0)
+    if isRateLimited(ActionCooldowns.payInvoice, actionKey, 1400) then
+        return
+    end
+
     payInvoiceForPlayer(source, invoiceId)
 end)
 
 RegisterNetEvent('qb-phone:server:DeclineMyInvoice', function(invoiceId)
+    local actionKey = ('%s:%s'):format(source, tonumber(invoiceId) or 0)
+    if isRateLimited(ActionCooldowns.declineInvoice, actionKey, 1000) then
+        return
+    end
+
     declineInvoiceForPlayer(source, invoiceId)
 end)
 

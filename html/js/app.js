@@ -39,6 +39,20 @@ var CanOpenApp = true;
 var up = false
 var isClickBlocked = false; // Flag to prevent clicks after dragging
 var WidgetUpdateInterval = null;
+var LastUiSoundAt = 0;
+
+QB.Phone.Functions.PlayUISound = function(type) {
+    var now = Date.now();
+    if (now - LastUiSoundAt < 45) {
+        return;
+    }
+
+    var sound = type === 'pop' ? 'Menu_Back' : 'Menu_Accept';
+    var soundSet = 'Phone_SoundSet_Default';
+
+    LastUiSoundAt = now;
+    $.post(`https://${GetParentResourceName()}/PlaySound`, JSON.stringify({ sound: sound, table: soundSet }));
+}
 
 
 function IsAppJobBlocked(joblist, myjob) {
@@ -337,10 +351,8 @@ $(document).on('click', '.phone-application', function(e){
         } else {
             appContainer.css({
                 "display":"block",
-                "top":"0%",
                 "transform":"translateY(0) scale(1)",
                 "transition":"none",
-                "border-radius":"0px",
                 "opacity":"1"
             });
         }
@@ -504,6 +516,7 @@ $(document).on('click', '.phone-application', function(e){
 
 $(document).on('click', '#phone-side-button-power', function(e){
     e.preventDefault();
+    QB.Phone.Functions.PlayUISound('pop');
     QB.Phone.Functions.Close();
 });
 
@@ -525,6 +538,7 @@ $(document).on('click', '.phone-take-camera-button', function(event){
 
 $(document).on('click', '.phone-silent-button', function(event){
     event.preventDefault();
+    QB.Phone.Functions.PlayUISound('tick');
     $.post(`https://${GetParentResourceName()}/phone-silent-button`, JSON.stringify({}),function(Data){
         if(Data){
             $(".silent-mode-two").css({"display":"block"});
@@ -608,7 +622,7 @@ QB.Phone.Functions.Close = function() {
     QB.Phone.Functions.ToggleApp('phone-call', 'none');
     $('.phone-call-app').css({"display":"none"});
     $('.phone-app').css({"display":"none"});
-    $('.phone-application-container').css({"display":"none", "top":"0%"});
+    $('.phone-application-container').css({"display":"none"});
     QB.Phone.Data.currentApplication = null;
 
     QB.Phone.Data.IsOpen = false;
@@ -711,7 +725,6 @@ QB.Phone.Animations.TopSlideDown = function(Object, Timeout, Percentage) {
         var $el = $(Object);
         $el.css({
             'display': 'block',
-            'top': '0',
             'transform': 'translateY(100%) scale(0.94)',
             'opacity': '0',
             'transition': 'none'
@@ -751,12 +764,11 @@ QB.Phone.Animations.TopSlideUp = function(Object, Timeout, Percentage, cb) {
         $el.css({
             'transition': `transform ${duration}ms cubic-bezier(0.4, 0, 1, 1), opacity ${duration}ms cubic-bezier(0.4, 0, 1, 1)`,
             'transform': 'scale(0.94) translateY(10px)',
-            'opacity': '0',
-            'border-radius': '30px'
+            'opacity': '0'
         });
 
         setTimeout(function() {
-            $el.css({'display': 'none', 'border-radius': '0px'});
+            $el.css({'display': 'none'});
             if (cb) cb();
         }, duration);
     } else {
@@ -936,7 +948,7 @@ $(document).on('click', ".phone-notification-container", function() {
 $(document).on('click', ".notification-accept", function() {
     QB.Phone.Notifications.ClearTimers();
     $.post(`https://${GetParentResourceName()}/AcceptNotification`, JSON.stringify({})),
-    $.post(`https://${GetParentResourceName()}/PlaySound`, JSON.stringify({sound: "Menu_Accept", table: "Phone_SoundSet_Default"}));
+    QB.Phone.Functions.PlayUISound('tick');
     QB.Phone.Animations.TopSlideUp(".phone-notification-container-new", 500, -10);
 
     if (!QB.Phone.Data.IsOpen == true) {
@@ -947,7 +959,7 @@ $(document).on('click', ".notification-accept", function() {
 $(document).on('click', ".notification-deny", function() {
     QB.Phone.Notifications.ClearTimers();
     $.post(`https://${GetParentResourceName()}/DenyNotification`, JSON.stringify({})),
-    $.post(`https://${GetParentResourceName()}/PlaySound`, JSON.stringify({sound: "Menu_Back", table: "Phone_SoundSet_Default"}));
+    QB.Phone.Functions.PlayUISound('pop');
 
     QB.Phone.Animations.TopSlideUp(".phone-notification-container-new", 500, -10);
 
@@ -1247,8 +1259,16 @@ QB.Phone.Functions.PreviousPage = function() {
 // Page Navigation Event Handlers
 $(document).on('click', '.page-dot', function(e) {
     e.preventDefault();
+    QB.Phone.Functions.PlayUISound('tick');
     var pageIndex = parseInt($(this).data('page'));
     QB.Phone.Functions.NavigateToPage(pageIndex);
+});
+
+$(document).on('click', '.phone-background button, .phone-application, .phone-footer-application, .settings-menu-item, #phone-volume-up, #phone-volume-down', function() {
+    if ($(this).is('.notification-accept, .notification-deny, #phone-side-button-power')) {
+        return;
+    }
+    QB.Phone.Functions.PlayUISound('tick');
 });
 
 // Touch/Swipe Navigation
@@ -1461,8 +1481,7 @@ $(document).on('mousemove touchmove', function(e) {
         var translateY = deltaY;
 
         $('.phone-application-container').css({
-            'transform': `translateY(${translateY}px) scale(${scale})`,
-            'border-radius': `${progress * 20}px`
+            'transform': `translateY(${translateY}px) scale(${scale})`
         });
     }
 });
@@ -1482,9 +1501,8 @@ $(document).on('mouseup touchend', function(e) {
     } else {
         // Reset
         $('.phone-application-container').css({
-            'transition': 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
-            'transform': 'translateY(0) scale(1)',
-            'border-radius': '0px'
+            'transition': 'transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
+            'transform': 'translateY(0) scale(1)'
         });
     }
 });
