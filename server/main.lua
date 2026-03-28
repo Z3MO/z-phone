@@ -104,61 +104,30 @@ end
 
 local function extractUploadedImageUrl(uploadData)
     if type(uploadData) ~= 'string' or uploadData == '' then
-        print('[z-phone] Camera: uploadData is empty')
         return nil
     end
 
     local ok, decoded = pcall(json.decode, uploadData)
-    if not ok then
-        print(('[z-phone] Camera: JSON decode failed - %s'):format(tostring(decoded)))
+    if not ok or type(decoded) ~= 'table' then
         return nil
     end
 
-    if type(decoded) ~= 'table' then
-        print(('[z-phone] Camera: decoded response is not a table, got %s'):format(type(decoded)))
-        print(('[z-phone] Camera: Raw response: %s'):format(tostring(uploadData)))
-        return nil
-    end
-
-    -- Try Discord webhook format (attachments array)
-    if decoded.attachments and type(decoded.attachments) == 'table' and decoded.attachments[1] then
-        if decoded.attachments[1].proxy_url then
-            return normalizeImageUrl(decoded.attachments[1].proxy_url)
-        elseif decoded.attachments[1].url then
-            return normalizeImageUrl(decoded.attachments[1].url)
+    -- Discord webhook format (attachments array)
+    if decoded.attachments and decoded.attachments[1] then
+        local attachment = decoded.attachments[1]
+        if attachment.proxy_url then
+            return normalizeImageUrl(attachment.proxy_url)
+        elseif attachment.url then
+            return normalizeImageUrl(attachment.url)
         end
     end
 
-    -- Try direct URL format
+    -- Direct URL format
     if decoded.url then
         return normalizeImageUrl(decoded.url)
     end
 
-    -- Try other common formats
-    if decoded.image then
-        return normalizeImageUrl(decoded.image)
-    end
-    if decoded.imageUrl then
-        return normalizeImageUrl(decoded.imageUrl)
-    end
-    if decoded.link then
-        return normalizeImageUrl(decoded.link)
-    end
-
-    -- Log what we received for debugging
-    print('[z-phone] Camera: Unable to extract URL from response structure')
-    print(('[z-phone] Camera: Response keys: %s'):format(table.concat(getkeys(decoded) or {}, ', ')))
-    print(('[z-phone] Camera: Raw response: %s'):format(uploadData))
     return nil
-end
-
-local function getkeys(t)
-    if type(t) ~= 'table' then return {} end
-    local keys = {}
-    for k in pairs(t) do
-        table.insert(keys, tostring(k))
-    end
-    return keys
 end
 
 local function sendContactSuggestion(sourceId, targetId, radius)
@@ -352,58 +321,40 @@ QBCore.Functions.CreateCallback('qb-phone:server:CaptureAndUploadPhoto', functio
     end
 
     local webhook = tostring(Config.Webhook or ''):match('^%s*(.-)%s*$')
-    if webhook == '' or webhook == 'your-webhook-url-here' then
-        print(('[z-phone] Camera error for player %s: Webhook not configured (Config.Webhook is empty)'):format(src))
-        cb({ success = false, message = 'Camera webhook is not configured. Contact an admin.' })
+    if webhook == '' then
+        cb({ success = false, message = 'Camera webhook is not configured.' })
         return
     end
 
-    if not webhook:match('^https?://') then
-        print(('[z-phone] Camera error for player %s: Invalid webhook URL format'):format(src))
-        cb({ success = false, message = 'Camera webhook URL is invalid.' })
-        return
-    end
+    exports['screenshot-basic']:requestClientScreenshot(src, {
+        encoding = 'jpg',
+        quality = 0.92,
+        uploadURL = webhook,
+        uploadField = 'files[]',
+    }, function(err, uploadData)
+        if err then
+            cb({ success = false, message = 'Screenshot capture failed.' })
+            return
+        end
 
-    local success, callbackError = pcall(function()
-        exports['screenshot-basic']:requestClientScreenshot(src, {
-            encoding = 'jpg',
-            quality = 0.92,
-            uploadURL = webhook,
-            uploadField = 'files[]',
-        }, function(err, uploadData)
-            if err then
-                print(('[z-phone] Camera capture failed for player %s: %s'):format(src, tostring(err)))
-                cb({ success = false, message = 'Screenshot capture failed. Check your internet connection.' })
-                return
-            end
+        if not uploadData then
+            cb({ success = false, message = 'No response from upload server.' })
+            return
+        end
 
-            if not uploadData then
-                print(('[z-phone] Camera error for player %s: No upload response received'):format(src))
-                cb({ success = false, message = 'No response from image server.' })
-                return
-            end
+        local imageUrl = extractUploadedImageUrl(uploadData)
+        if not imageUrl then
+            cb({ success = false, message = 'Invalid upload response.' })
+            return
+        end
 
-            local imageUrl = extractUploadedImageUrl(uploadData)
-            if not imageUrl then
-                print(('[z-phone] Camera error for player %s: Failed to parse upload response'):format(src))
-                cb({ success = false, message = 'Invalid upload response format. Check server webhook configuration.' })
-                return
-            end
+        exports.oxmysql:insert(
+            'INSERT INTO phone_gallery (`citizenid`, `image`) VALUES (?, ?)',
+            { Player.PlayerData.citizenid, imageUrl }
+        )
 
-            exports.oxmysql:insert(
-                'INSERT INTO phone_gallery (`citizenid`, `image`) VALUES (?, ?)',
-                { Player.PlayerData.citizenid, imageUrl }
-            )
-
-            print(('[z-phone] Camera: Successfully saved photo for player %s'):format(src))
-            cb({ success = true, url = imageUrl })
-        end)
+        cb({ success = true, url = imageUrl })
     end)
-
-    if not success then
-        print(('[z-phone] Camera resource error for player %s: %s'):format(src, tostring(callbackError)))
-        cb({ success = false, message = 'Camera resource is unavailable. Ensure screenshot-basic is running.' })
-    end
 end)
 
 QBCore.Functions.CreateCallback('qb-phone:server:GetNearbyPhonePlayers', function(source, cb)

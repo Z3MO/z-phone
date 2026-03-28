@@ -9,11 +9,8 @@ Config.BillingCommissions = { -- This is a percentage (0.10) == 10%
 }
 
 -- Web hook for camera ( NOT GO PRO )
--- IMPORTANT: You must set this to a valid Discord webhook URL or image hosting service
--- Example Discord webhook: https://discordapp.com/api/webhooks/YOUR_WEBHOOK_ID/YOUR_WEBHOOK_TOKEN
--- The webhook should support file uploads in the 'files[]' field (Discord-compatible format)
--- Without this configured, players will see "Invalid upload response" when taking photos
-Config.Webhook = '' -- Set this to your webhook URL
+-- Set to your Discord webhook or compatible image hosting service
+Config.Webhook = ''
 Config.VPNItem = 'vpn' -- create a item named 'vpn' in your qb-core shared items for this to work, if you want to use the vpn for anonymous pings
 Config.SellGarage = 'altastreet' -- set this to a garage that is not used for anything else, this is where vehicles will be sent when sold to players
 Config.Timeout = 30 -- Set this to how long you want the player to have to accept the ping, after they accept it the blip will appear on their map for the duration of Config.BlipDuration
