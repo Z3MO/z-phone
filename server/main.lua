@@ -102,9 +102,33 @@ local function normalizeImageUrl(url)
     return url
 end
 
+local function buildScreenshotUploadUrl(webhook)
+    local cleanWebhook = tostring(webhook or ''):match('^%s*(.-)%s*$')
+    if cleanWebhook == '' then
+        return ''
+    end
+
+    local isDiscord = cleanWebhook:find('discord.com/api/webhooks', 1, true)
+        or cleanWebhook:find('discordapp.com/api/webhooks', 1, true)
+
+    if isDiscord and not cleanWebhook:find('wait=', 1, true) then
+        if cleanWebhook:find('?', 1, true) then
+            return cleanWebhook .. '&wait=true'
+        end
+        return cleanWebhook .. '?wait=true'
+    end
+
+    return cleanWebhook
+end
+
 local function extractUploadedImageUrl(uploadData)
     if type(uploadData) ~= 'string' or uploadData == '' then
         return nil
+    end
+
+    local directUrl = normalizeImageUrl(uploadData)
+    if directUrl then
+        return directUrl
     end
 
     local ok, decoded = pcall(json.decode, uploadData)
@@ -320,7 +344,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:CaptureAndUploadPhoto', functio
         return
     end
 
-    local webhook = tostring(Config.Webhook or ''):match('^%s*(.-)%s*$')
+    local webhook = buildScreenshotUploadUrl(Config.Webhook)
     if webhook == '' then
         cb({ success = false, message = 'Camera webhook is not configured.' })
         return
