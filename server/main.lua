@@ -339,35 +339,61 @@ QBCore.Functions.CreateCallback('qb-phone:server:CaptureAndUploadPhoto', functio
         return
     end
 
-    exports['screenshot-basic']:requestClientScreenshot(src, {
-        encoding = 'jpg',
-        quality = 0.92,
-        uploadURL = webhook,
-        uploadField = 'files[]',
-    }, function(err, uploadData)
-        if err then
-            cb({ success = false, message = 'Screenshot capture failed.' })
-            return
-        end
+    local preferredField = tostring(Config.WebhookUploadField or ''):match('^%s*(.-)%s*$')
+    local uploadFields = {}
+    local added = {}
 
-        if not uploadData then
-            cb({ success = false, message = 'No response from upload server.' })
-            return
-        end
+    local function addUploadField(field)
+        if type(field) ~= 'string' then return end
+        local clean = field:match('^%s*(.-)%s*$')
+        if clean == '' or added[clean] then return end
+        added[clean] = true
+        uploadFields[#uploadFields + 1] = clean
+    end
 
-        local imageUrl = extractUploadedImageUrl(uploadData)
-        if not imageUrl then
+    addUploadField(preferredField)
+    addUploadField('file')
+    addUploadField('files[]')
+    addUploadField('image')
+
+    local function tryUpload(index)
+        if index > #uploadFields then
             cb({ success = false, message = 'Upload succeeded but no image URL was returned.' })
             return
         end
 
-        exports.oxmysql:insert(
-            'INSERT INTO phone_gallery (`citizenid`, `image`) VALUES (?, ?)',
-            { Player.PlayerData.citizenid, imageUrl }
-        )
+        exports['screenshot-basic']:requestClientScreenshot(src, {
+            encoding = 'jpg',
+            quality = 0.92,
+            uploadURL = webhook,
+            uploadField = uploadFields[index],
+        }, function(err, uploadData)
+            if err then
+                cb({ success = false, message = 'Screenshot capture failed.' })
+                return
+            end
 
-        cb({ success = true, url = imageUrl })
-    end)
+            if not uploadData then
+                cb({ success = false, message = 'No response from upload server.' })
+                return
+            end
+
+            local imageUrl = extractUploadedImageUrl(uploadData)
+            if not imageUrl then
+                tryUpload(index + 1)
+                return
+            end
+
+            exports.oxmysql:insert(
+                'INSERT INTO phone_gallery (`citizenid`, `image`) VALUES (?, ?)',
+                { Player.PlayerData.citizenid, imageUrl }
+            )
+
+            cb({ success = true, url = imageUrl })
+        end)
+    end
+
+    tryUpload(1)
 end)
 
 QBCore.Functions.CreateCallback('qb-phone:server:GetNearbyPhonePlayers', function(source, cb)
