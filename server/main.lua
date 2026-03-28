@@ -127,31 +127,20 @@ local function extractUploadedImageUrl(uploadData)
     end
 
     local directUrl = normalizeImageUrl(uploadData)
-    if directUrl then
-        return directUrl
-    end
+    if directUrl then return directUrl end
 
     local ok, decoded = pcall(json.decode, uploadData)
     if not ok or type(decoded) ~= 'table' then
         return nil
     end
 
-    -- Discord webhook format (attachments array)
     if decoded.attachments and decoded.attachments[1] then
         local attachment = decoded.attachments[1]
-        if attachment.proxy_url then
-            return normalizeImageUrl(attachment.proxy_url)
-        elseif attachment.url then
-            return normalizeImageUrl(attachment.url)
-        end
+        local attachmentUrl = normalizeImageUrl(attachment.proxy_url or attachment.url)
+        if attachmentUrl then return attachmentUrl end
     end
 
-    -- Direct URL format
-    if decoded.url then
-        return normalizeImageUrl(decoded.url)
-    end
-
-    return nil
+    return normalizeImageUrl(decoded.url)
 end
 
 local function sendContactSuggestion(sourceId, targetId, radius)
@@ -368,7 +357,7 @@ QBCore.Functions.CreateCallback('qb-phone:server:CaptureAndUploadPhoto', functio
 
         local imageUrl = extractUploadedImageUrl(uploadData)
         if not imageUrl then
-            cb({ success = false, message = 'Invalid upload response.' })
+            cb({ success = false, message = 'Upload succeeded but no image URL was returned.' })
             return
         end
 
